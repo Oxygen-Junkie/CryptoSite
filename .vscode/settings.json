@@ -1,0 +1,24 @@
+{
+  "prettier.enable": false,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  "files.associations": {
+    "*.css": "postcss"
+  },
+  "editor.formatOnSave": false,
+  "i18n-ally.localesPaths": [
+    "src/locales"
+  ],
+  "cSpell.words": [
+    "headlessui",
+    "huntersofbook",
+    "iconify",
+    "nuxt",
+    "nuxtjs",
+    "pinia",
+    "tailwindcss",
+    "unocss",
+    "walletconnect"
+  ]
+}
