@@ -11,13 +11,21 @@
     "src/locales"
   ],
   "cSpell.words": [
+    "antfu",
+    "automerge",
+    "Datasources",
+    "ethersproject",
     "headlessui",
     "huntersofbook",
     "iconify",
+    "nomicfoundation",
+    "nomiclabs",
+    "nuxi",
     "nuxt",
     "nuxtjs",
     "pinia",
     "tailwindcss",
+    "typechain",
     "unocss",
     "walletconnect"
   ]

@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import { acceptHMRUpdate, defineStore } from 'pinia'
-import { ethers } from 'ethers'
+import { ethers } from 'hardhat'
 import contractABI from '../artifacts/contracts/WavePortal.sol/WavePortal.json'
 const contractAddress = '0xEb3B8A7bF4E853d11aD233e15438852Ac067e253'
 

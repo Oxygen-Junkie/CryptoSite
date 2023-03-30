@@ -10,14 +10,14 @@
       "automerge": true
     },
     {
-      "matchDatasources": ["npm"],
+      "matchDatasources": ["pnpm"],
       "matchUpdateTypes": ["major"],
-      "groupName": "NPM dependencies (major)"
+      "groupName": "PNPM dependencies (major)"
     },
     {
-      "matchDatasources": ["npm"],
+      "matchDatasources": ["pnpm"],
       "matchUpdateTypes": ["minor", "patch"],
-      "groupName": "NPM dependencies (non-major)"
+      "groupName": "PNPM dependencies (non-major)"
     }
   ]
 }

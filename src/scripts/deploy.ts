@@ -1,5 +1,6 @@
 /* eslint-disable no-console */
 import hre from 'hardhat'
+import '@nomicfoundation/hardhat-toolbox'
 
 async function main() {
   const [deployer] = await hre.ethers.getSigners()

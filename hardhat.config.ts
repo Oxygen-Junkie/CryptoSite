@@ -1,7 +1,9 @@
-require('dotenv').config()
-require('@nomiclabs/hardhat-waffle')
+import dot from 'dotenv'
+import { HardhatUserConfig } from 'hardhat/config'
+import '@nomicfoundation/hardhat-toolbox'
+dot.config()
 
-module.exports = {
+const config: HardhatUserConfig = {
   solidity: '0.8.4',
   paths: {
     artifacts: './src/artifacts',
@@ -16,3 +18,5 @@ module.exports = {
     },
   },
 }
+
+export default config

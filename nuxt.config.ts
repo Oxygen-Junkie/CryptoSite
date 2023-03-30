@@ -1,11 +1,11 @@
 import presetIcons from '@unocss/preset-icons'
+import '@nomicfoundation/hardhat-toolbox'
 
 export default defineNuxtConfig({
   srcDir: 'src',
   modules: [
     '@vueuse/nuxt',
     '@nuxtjs/tailwindcss',
-    // pinia plugin - https://pinia.esm.dev
     '@pinia/nuxt',
     // unocss plugin - https://github.com/unocss/unocss
     '@unocss/nuxt',
@@ -17,6 +17,7 @@ export default defineNuxtConfig({
   build: {
     transpile: ['@headlessui/vue'],
   },
+  plugins: ['plugins/web3.ts'],
   unocss: {
     uno: false,
     preflight: false,
