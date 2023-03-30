@@ -24,6 +24,7 @@
     "nuxt",
     "nuxtjs",
     "pinia",
+    "postcss",
     "tailwindcss",
     "typechain",
     "unocss",

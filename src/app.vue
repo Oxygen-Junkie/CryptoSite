@@ -6,9 +6,7 @@ const locale = useState<string>('locale.i18n')
 
 <template>
   <Html :lang="locale">
-    <Body
-      class="bg-white text-gray-800 antialiased transition-colors duration-300 dark:bg-gray-900 dark:text-gray-200"
-    >
+    <Body>
       <NuxtLayout>
         <NuxtPage />
       </NuxtLayout>
@@ -18,9 +16,40 @@ const locale = useState<string>('locale.i18n')
 
 <style lang="postcss">
 body {
-  @apply bg-gray-50 dark:bg-gray-800;
+  background-color: rgb(226, 226, 226);
 }
-.global-text {
-  @apply text-gray-900 dark:text-gray-50;
+
+* {
+  padding: 0;
+  margin: 0;
+  font-family: "Oxygen", sans-serif;
+}
+body {
+  background-color: rgb(226, 226, 226);
+}
+/* Scrollbar */
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+}
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #bbbbbb;
+  border-radius: 10px;
+}
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+.btn-success {
+  background-color: #27bd90;
+  border: 0;
+}
+.btn-success:hover {
+  background-color: #299c7a;
 }
 </style>
