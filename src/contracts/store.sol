@@ -1,14 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0
 
-pragma solidity ^0.8.4;
+pragma solidity ^0.8.18;
 
 import "hardhat/console.sol";
 
 contract storeUsers {
-    uint public userCount;
+    address private contractOwner;
 
     constructor() {
-        userCount = 0;
         contractOwner = msg.sender;
     }
 
@@ -26,9 +25,7 @@ contract storeUsers {
 
     function storeUser(string memory _identity) public checkDuplicate() {
 
-        userCount++;
-
-        users[msg.sender] = User(msg.sender,_identity,Reputation.None,0);
+        users[convertAdrToId(msg.sender)] = User(msg.sender,_identity,Reputation.None,0);
 
         emit UserStored();
     }
@@ -39,7 +36,7 @@ contract storeUsers {
     }
 
     event UserStored();
-    event BadActorPuniched(address indexed _adr);
+    event BadActorPunished(address indexed _adr);
 
     error OnlyOwner();
     error RespectableUser();
@@ -47,7 +44,7 @@ contract storeUsers {
     error ReputationDoesntAllow();
 
     modifier checkDuplicate() {
-        if (msg.sender == users[_userId].userAddress)
+        if (users[msg.sender].exists)
             revert AlreadyStored();
         _;
     }
@@ -113,5 +110,9 @@ contract storeUsers {
         users[_adr].reputation = Reputation.None;
 
         emit BadActorPunished(_adr);
+    }
+
+    function convertAdrToId(address _adr) external returns (bytes20 id) {
+        id = bytes20(keccak256(_adr));
     }
 }

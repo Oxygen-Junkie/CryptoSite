@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable no-console */
-import hre from 'hardhat'
-import '@nomicfoundation/hardhat-toolbox'
+const hre = require('hardhat')
+require('@nomicfoundation/hardhat-toolbox')
 
 async function main() {
   const [deployer] = await hre.ethers.getSigners()
@@ -9,12 +10,19 @@ async function main() {
     'Deploying contracts with the account:',
     deployer.address,
   )
-  const ContractPortal = await hre.ethers.getContractFactory('WavePortal')
-  const contract = await ContractPortal.deploy()
+  const DealSol = await hre.ethers.getContractFactory('deal')
+  const deal = await DealSol.deploy()
 
-  await contract.waitForDeployment()
+  await deal.waitForDeployment()
 
-  console.log('Wae portal deployed to:', contract.getAddress())
+  console.log('Deal deployed to:', deal.getAddress())
+
+  const StoreSol = await hre.ethers.getContractFactory('store')
+  const store = await StoreSol.deploy()
+
+  await store.waitForDeployment()
+
+  console.log('Store deployed to:', store.getAddress())
 }
 
 main()

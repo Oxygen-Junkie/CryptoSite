@@ -29,5 +29,6 @@
     "typechain",
     "unocss",
     "walletconnect"
-  ]
+  ],
+  "dotenv.enableAutocloaking": true
 }

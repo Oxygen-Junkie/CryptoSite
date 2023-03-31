@@ -6,7 +6,10 @@
     "build": "nuxi build",
     "generate": "nuxi generate",
     "start": "node .output/server/index.mjs",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "compile": "npx hardhat compile",
+    "hardhat": "npx hardhat node",
+    "compileLocal": "npx hardhat run --network localhost src/scripts/deploy.ts"
   },
   "dependencies": {
     "@babel/core": "^7.21.3",
@@ -20,6 +23,7 @@
     "@nomiclabs/hardhat-ethers": "^2.2.2",
     "@nomiclabs/hardhat-etherscan": "^3.1.7",
     "@nuxtjs/i18n": "8.0.0-beta.10",
+    "@openzeppelin/contracts": "^4.8.2",
     "@pinia/nuxt": "0.4.7",
     "@tailwindcss/aspect-ratio": "0.4.2",
     "@tailwindcss/forms": "0.5.3",
@@ -31,7 +35,7 @@
     "@types/mocha": ">=10.0.1",
     "@types/node": ">=18.15.11",
     "dotenv": "^16.0.3",
-    "ethers": "^6.2.3",
+    "ethers": "^5.0.0",
     "hardhat-gas-reporter": "^1.0.9",
     "nuxt3": "latest",
     "pinia": "2.0.33",

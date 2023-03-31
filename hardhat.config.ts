@@ -1,10 +1,10 @@
-import dot from 'dotenv'
-import { HardhatUserConfig } from 'hardhat/config'
-import '@nomicfoundation/hardhat-toolbox'
+require('@nomicfoundation/hardhat-toolbox')
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const dot = require('dotenv')
 dot.config()
 
-const config: HardhatUserConfig = {
-  solidity: '0.8.4',
+exports.config = {
+  solidity: '0.8.18',
   paths: {
     artifacts: './src/artifacts',
   },
@@ -18,5 +18,3 @@ const config: HardhatUserConfig = {
     },
   },
 }
-
-export default config
