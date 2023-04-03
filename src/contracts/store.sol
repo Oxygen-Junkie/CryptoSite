@@ -6,9 +6,11 @@ import "hardhat/console.sol";
 
 contract storeUsers {
     address private contractOwner;
+    string private salt;
 
-    constructor() {
+    constructor(string memory _salt) {
         contractOwner = msg.sender;
+        salt = _salt;
     }
 
     mapping(uint => User) public users;
@@ -23,16 +25,16 @@ contract storeUsers {
     }
 
 
-    function storeUser(string memory _identity) public checkDuplicate() {
+    function storeUser(string memory _identity) external checkDuplicate() {
 
-        users[convertAdrToId(msg.sender)] = User(msg.sender,_identity,Reputation.None,0);
+        users[convertAdrToId(msg.sender)] = User(msg.sender, _identity,Reputation.None, 0);
 
         emit UserStored();
     }
 
-    function getKey() public {
+    function getKey() external returns (string calldata) {
 
-        return users[msg.sender].identity;
+        return users[convertAdrToId(msg.sender)].identity;
     }
 
     event UserStored();
@@ -44,7 +46,7 @@ contract storeUsers {
     error ReputationDoesntAllow();
 
     modifier checkDuplicate() {
-        if (users[msg.sender].exists)
+        if (users[convertAdrToId(msg.sender)].userAddress == msg.sender)
             revert AlreadyStored();
         _;
     }
@@ -56,36 +58,36 @@ contract storeUsers {
     }
 
     modifier userHasStatus(address _adr, Reputation rep_) {
-        if (users[_adr] != rep_)
+        if (users[convertAdrToId(_adr)].reputation != rep_)
             revert ReputationDoesntAllow();
         _;
     }
 
     modifier userDoesntHaveStatus(address _adr, Reputation rep_) {
-        if (users[_adr] == rep_)
+        if (users[convertAdrToId(_adr)].reputation == rep_)
             revert ReputationDoesntAllow();
         _;
     }
 
     modifier updateReputation() {
-        uint locCounter = users[msg.sender].dealCount;
+        User memory locCounter = users[convertAdrToId(msg.sender)];
 
-            if (users[msg.sender].reputation == Reputation.BadActor) {
+            if (users[convertAdrToId(msg.sender)].reputation == Reputation.BadActor) {
                 revert();
             } else if (locCounter > 10) {
-                users[msg.sender].reputation = Reputation.Established;
+                users[convertAdrToId(msg.sender)].reputation = Reputation.Established;
             } else if (locCounter > 2) {
-                users[msg.sender].reputation = Reputation.FewDeals;
+                users[convertAdrToId(msg.sender)].reputation = Reputation.FewDeals;
             } else if (locCounter == 1) {
-                users[msg.sender].reputation = Reputation.OneDeal;
+                users[convertAdrToId(msg.sender)].reputation = Reputation.OneDeal;
             } else {
                 revert();
             }
             _;
     }
 
-    function getReputation() public updateReputation() {
-        Reputation locRep = users[msg.sender].reputation;
+    function getReputation() external updateReputation() {
+        Reputation locRep = users[convertAdrToId(msg.sender)].reputation;
 
         if (locRep == Reputation.None) {
                 return uint(0);
@@ -112,7 +114,7 @@ contract storeUsers {
         emit BadActorPunished(_adr);
     }
 
-    function convertAdrToId(address _adr) external returns (bytes20 id) {
-        id = bytes20(keccak256(_adr));
+    function convertAdrToId(address _adr) private returns (uint) {
+        return uint(keccak256(_adr, salt));
     }
 }
