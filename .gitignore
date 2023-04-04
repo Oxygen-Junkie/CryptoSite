@@ -5,3 +5,7 @@ nuxt.d.ts
 .output
 .idea
 pnpm-lock.yaml
+/src/types/typechain
+/src/artifacts
+/.env
+/cache
