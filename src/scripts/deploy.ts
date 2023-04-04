@@ -1,28 +1,28 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable no-console */
-const hre = require('hardhat')
-require('@nomicfoundation/hardhat-toolbox')
+import { ethers } from 'hardhat'
+import dot from 'dotenv'
 
 async function main() {
-  const [deployer] = await hre.ethers.getSigners()
+  dot.config()
+  const salt = process.env.NUXT_SALT
+  const currentTimestampInSeconds = Math.round(Date.now() / 1000)
+  const unlockTime = currentTimestampInSeconds + 60
 
-  console.log(
-    'Deploying contracts with the account:',
-    deployer.address,
-  )
-  const DealSol = await hre.ethers.getContractFactory('deal')
-  const deal = await DealSol.deploy()
+  // const lockedAmount = ethers.utils.parseEther('0.001')
 
-  await deal.waitForDeployment()
+  const dealFile = await ethers.getContractFactory('deal')
+  const deal = await dealFile.deploy()
 
-  console.log('Deal deployed to:', deal.getAddress())
+  await deal.deployed()
 
-  const StoreSol = await hre.ethers.getContractFactory('store')
-  const store = await StoreSol.deploy()
+  console.log(`Deal with unlock timestamp ${unlockTime} deployed to ${deal.address}`)
 
-  await store.waitForDeployment()
+  const storeFile = await ethers.getContractFactory('store')
+  const store = await storeFile.deploy(salt)
 
-  console.log('Store deployed to:', store.getAddress())
+  await store.deployed()
+
+  console.log(`Store with unlock timestamp ${unlockTime} deployed to ${store.address}`)
 }
 
 main()
