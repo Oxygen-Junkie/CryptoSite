@@ -4,7 +4,7 @@ const dot = require('dotenv')
 dot.config()
 
 exports.config = {
-  solidity: '0.8.18',
+  solidity: '0.8.19',
   paths: {
     artifacts: './src/artifacts',
   },

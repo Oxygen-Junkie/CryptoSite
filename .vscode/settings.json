@@ -30,5 +30,6 @@
     "unocss",
     "walletconnect"
   ],
-  "dotenv.enableAutocloaking": true
+  "dotenv.enableAutocloaking": true,
+  "solidity.compileUsingRemoteVersion": "v0.8.19+commit.7dd6d404"
 }

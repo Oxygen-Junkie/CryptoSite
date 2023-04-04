@@ -8,8 +8,8 @@
     "start": "node .output/server/index.mjs",
     "lint": "eslint .",
     "compile": "npx hardhat compile",
-    "hardhat": "npx hardhat node",
-    "compileLocal": "npx hardhat run --network localhost src/scripts/deploy.ts"
+    "hardhatLocal": "npx hardhat node",
+    "deployLocal": "npx hardhat run --network localhost src/scripts/deploy.ts"
   },
   "dependencies": {
     "@babel/core": "^7.21.3",

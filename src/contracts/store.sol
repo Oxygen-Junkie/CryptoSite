@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0
 
-pragma solidity ^0.8.18;
+pragma solidity ^0.8.19;
 
 import "hardhat/console.sol";
 
@@ -21,7 +21,7 @@ contract storeUsers {
         address userAddress;
         string identity;
         Reputation reputation;
-        string dealCounter;
+        uint dealCounter;
     }
 
 
@@ -32,7 +32,7 @@ contract storeUsers {
         emit UserStored();
     }
 
-    function getKey() external returns (string calldata) {
+    function getKey() view external returns (string memory) {
 
         return users[convertAdrToId(msg.sender)].identity;
     }
@@ -70,7 +70,7 @@ contract storeUsers {
     }
 
     modifier updateReputation() {
-        User memory locCounter = users[convertAdrToId(msg.sender)];
+        uint locCounter = users[convertAdrToId(msg.sender)].dealCounter;
 
             if (users[convertAdrToId(msg.sender)].reputation == Reputation.BadActor) {
                 revert();
@@ -86,7 +86,7 @@ contract storeUsers {
             _;
     }
 
-    function getReputation() external updateReputation() {
+    function getReputation() external updateReputation() returns (uint) {
         Reputation locRep = users[convertAdrToId(msg.sender)].reputation;
 
         if (locRep == Reputation.None) {
@@ -98,23 +98,23 @@ contract storeUsers {
             } else if (locRep == Reputation.Established) {
                 return uint(3);
             } else {
-                return uint(-1);
+                return uint(4);
             }
     }
 
     function convictABadActor(address _adr) external onlyOwner() userDoesntHaveStatus(_adr, Reputation.BadActor) userDoesntHaveStatus(_adr, Reputation.Established) {
-        users[_adr].reputation = Reputation.BadActor;
+        users[convertAdrToId(_adr)].reputation = Reputation.BadActor;
 
         emit BadActorPunished(_adr);
     }
 
     function destroyReputation(address _adr) external onlyOwner() userHasStatus(_adr, Reputation.Established) {
-        users[_adr].reputation = Reputation.None;
+        users[convertAdrToId(_adr)].reputation = Reputation.None;
 
         emit BadActorPunished(_adr);
     }
 
-    function convertAdrToId(address _adr) private returns (uint) {
-        return uint(keccak256(_adr, salt));
+    function convertAdrToId(address _adr) view private returns (uint) {
+        return uint(keccak256(abi.encodePacked(_adr, salt)));
     }
 }

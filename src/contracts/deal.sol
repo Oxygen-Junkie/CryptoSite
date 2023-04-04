@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity ^0.8.18;
+pragma solidity ^0.8.19;
 pragma experimental ABIEncoderV2;
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "hardhat/console.sol";
@@ -88,7 +88,7 @@ contract Delivery {
 
     event DeliveryAddedEvent(address indexed _buyer, address indexed _seller, uint indexed _dealId);
     event reportAborted(address indexed contractOwner, uint indexed _dealId);
-    event PurchaseConfirmed(address indexed _seller, uint indexed _dealId, string code);
+    event PurchaseConfirmed(address indexed _seller, uint indexed _dealId);
     event ItemReceived(address indexed _buyer, address indexed _seller, uint indexed _dealId);
     event SellerRefunded(address indexed _buyer, address indexed _seller, uint indexed _dealId);
     event RequestPayFromOwner(address indexed contractOwner, uint _dealId);
@@ -111,10 +111,11 @@ contract Delivery {
         external
         inState(_dealId, State.Created)
         onlySeller(_dealId)
+        returns (string memory)
     {
-        string memory code = Strings.toString(genCode());
-        emit PurchaseConfirmed(deals[_dealId].seller,_dealId, code);
+        emit PurchaseConfirmed(deals[_dealId].seller,_dealId);
         deals[_dealId].state = State.Agreed;
+        return Strings.toString(genCode());
     }
 
 
@@ -181,9 +182,10 @@ contract Delivery {
     function changeComissionRate(uint _rate)
         external
         onlyOwner()
+        returns(bool)
     {
         commission = _rate;
-        emit ComissionChangedTo(_rate);       
+        return true;    
     }
 
     function genCode() private view returns (uint) {
