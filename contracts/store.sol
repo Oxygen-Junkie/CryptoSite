@@ -5,7 +5,7 @@ pragma solidity ^0.8.9;
 import "hardhat/console.sol";
 
 contract storeUsers {
-    address private contractOwner;
+    address public contractOwner;
     string private salt;
 
     constructor(string memory _salt) {
@@ -25,16 +25,25 @@ contract storeUsers {
     }
 
 
-    function storeUser(string memory _identity) external checkDuplicate() {
+    function storeUser(string memory _identity) external returns(bool) {
 
         users[convertAdrToId(msg.sender)] = User(msg.sender, _identity,Reputation.None, 0);
-
-        emit UserStored();
+        return true;
+        
     }
 
     function getKey() view external returns (string memory) {
 
         return users[convertAdrToId(msg.sender)].identity;
+    }
+
+    function isStored() view external returns (bool) {
+        if (users[convertAdrToId(msg.sender)].userAddress == msg.sender) {
+                return true;
+        }
+        else {
+            return false;
+        }
     }
 
     event UserStored();
@@ -69,25 +78,25 @@ contract storeUsers {
         _;
     }
 
-    modifier updateReputation() {
-        uint locCounter = users[convertAdrToId(msg.sender)].dealCounter;
+    modifier updateReputation(address _adr) {
+        uint locCounter = users[convertAdrToId(_adr)].dealCounter;
 
-            if (users[convertAdrToId(msg.sender)].reputation == Reputation.BadActor) {
+            if (users[convertAdrToId(_adr)].reputation == Reputation.BadActor) {
                 revert();
             } else if (locCounter > 10) {
-                users[convertAdrToId(msg.sender)].reputation = Reputation.Established;
+                users[convertAdrToId(_adr)].reputation = Reputation.Established;
             } else if (locCounter > 2) {
-                users[convertAdrToId(msg.sender)].reputation = Reputation.FewDeals;
+                users[convertAdrToId(_adr)].reputation = Reputation.FewDeals;
             } else if (locCounter == 1) {
-                users[convertAdrToId(msg.sender)].reputation = Reputation.OneDeal;
+                users[convertAdrToId(_adr)].reputation = Reputation.OneDeal;
             } else {
                 revert();
             }
             _;
     }
 
-    function getReputation() external updateReputation() returns (uint) {
-        Reputation locRep = users[convertAdrToId(msg.sender)].reputation;
+    function getReputation(address _adr) external updateReputation(_adr) returns (uint) {
+        Reputation locRep = users[convertAdrToId(_adr)].reputation;
 
         if (locRep == Reputation.None) {
                 return uint(0);
