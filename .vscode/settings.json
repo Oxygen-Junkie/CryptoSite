@@ -27,6 +27,8 @@
     "nuxtjs",
     "pinia",
     "postcss",
+    "PUBLICPASSPHRASE",
+    "PUBLICUUID",
     "spacehq",
     "tailwindcss",
     "typechain",

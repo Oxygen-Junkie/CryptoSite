@@ -1,5 +1,3 @@
-import { MetaMaskInpageProvider } from '@metamask/providers'
-
 export interface ILink {
   id: number
   title: string
@@ -9,6 +7,6 @@ export interface ILink {
 
 declare global {
   interface Window {
-    ethereum?: MetaMaskInpageProvider
+    ethereum?: any
   }
 }
