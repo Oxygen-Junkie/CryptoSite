@@ -1,16 +1,14 @@
-import { Identity } from '@spacehq/sdk'
 import Deal from './deal'
 import ItemFull from './itemFull'
 
 export default class User {
   cryptoAddress!: string
-  keyPair!: Identity
+  vaultHash!: string
   postedItems: ItemFull[] | undefined
   buyDeals: Deal[] | undefined
   sellDeals: Deal[] | undefined
 
-  constructor(cryptAddress: string, keyPair: Identity) {
+  constructor(cryptAddress: string) {
     this.cryptoAddress = cryptAddress
-    this.keyPair = keyPair
   }
 }

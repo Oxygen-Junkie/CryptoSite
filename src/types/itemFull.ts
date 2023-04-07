@@ -1,7 +1,7 @@
 export default class ItemFull {
   id!: number
   name!: string
-  image!: string
+  imageCID!: string
   categoryId!: number
   availability!: number
   price!: number
@@ -12,7 +12,6 @@ export default class ItemFull {
 
   constructor(id: number,
     name: string,
-    image: string,
     categoryId: number,
     availability: number,
     price: number,
@@ -21,7 +20,6 @@ export default class ItemFull {
   ) {
     this.id = id
     this.name = name
-    this.image = image
     this.categoryId = categoryId
     this.availability = availability
     this.price = price

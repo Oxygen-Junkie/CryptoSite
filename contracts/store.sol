@@ -7,6 +7,7 @@ import "hardhat/console.sol";
 contract storeUsers {
     address public contractOwner;
     string private salt;
+    string public publicVaultHash;
 
     constructor(string memory _salt) {
         contractOwner = msg.sender;
@@ -19,22 +20,28 @@ contract storeUsers {
 
     struct User {
         address userAddress;
-        string identity;
+        string vaultHash;
         Reputation reputation;
         uint dealCounter;
     }
 
 
-    function storeUser(string memory _identity) external returns(bool) {
+    function storeUser(string memory _vaultHash) external returns(bool) {
 
-        users[convertAdrToId(msg.sender)] = User(msg.sender, _identity,Reputation.None, 0);
+        users[convertAdrToId(msg.sender)] = User(msg.sender, _vaultHash,Reputation.None, 0);
         return true;
         
     }
 
-    function getKey() view external returns (string memory) {
+    function changeVaultHash(string memory _vaultHash) external returns(bool) {
 
-        return users[convertAdrToId(msg.sender)].identity;
+        users[convertAdrToId(msg.sender)].vaultHash = _vaultHash;
+        return true;
+    }
+
+    function getHash() view external returns (string memory) {
+
+        return users[convertAdrToId(msg.sender)].vaultHash;
     }
 
     function isStored() view external returns (bool) {
@@ -121,6 +128,12 @@ contract storeUsers {
         users[convertAdrToId(_adr)].reputation = Reputation.None;
 
         emit BadActorPunished(_adr);
+    }
+
+    function changePublicVaultHash(string memory _vaultHash) external returns(bool) {
+
+        publicVaultHash = _vaultHash;
+        return true;
     }
 
     function convertAdrToId(address _adr) view private returns (uint) {
