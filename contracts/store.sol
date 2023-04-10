@@ -7,7 +7,8 @@ import "hardhat/console.sol";
 contract storeUsers {
     address public contractOwner;
     string private salt;
-    string public publicVaultHash;
+    string private publicVaultItemHash;
+    string private publicVaultTagHash;
 
     constructor(string memory _salt) {
         contractOwner = msg.sender;
@@ -33,7 +34,7 @@ contract storeUsers {
         
     }
 
-    function changeVaultHash(string memory _vaultHash) external returns(bool) {
+    function changeVaultItemHash(string memory _vaultHash) external returns(bool) {
 
         users[convertAdrToId(msg.sender)].vaultHash = _vaultHash;
         return true;
@@ -57,6 +58,7 @@ contract storeUsers {
     event BadActorPunished(address indexed _adr);
 
     error OnlyOwner();
+    error OnlyParticipant();
     error RespectableUser();
     error AlreadyStored();
     error ReputationDoesntAllow();
@@ -70,6 +72,12 @@ contract storeUsers {
     modifier onlyOwner() {
         if (msg.sender != contractOwner)
             revert OnlyOwner();
+        _;
+    }
+
+    modifier onlyParticipant() {
+        if (msg.sender != users[convertAdrToId(msg.sender)].userAddress)
+            revert OnlyParticipant();
         _;
     }
 
@@ -130,10 +138,26 @@ contract storeUsers {
         emit BadActorPunished(_adr);
     }
 
-    function changePublicVaultHash(string memory _vaultHash) external returns(bool) {
+    function changePublicVaultItemHash(string memory _vaultHash) external returns(bool) {
 
-        publicVaultHash = _vaultHash;
+        publicVaultItemHash = _vaultHash;
         return true;
+    }
+
+    function getPublicVaultItemHash() external view onlyParticipant() returns(string memory) {
+
+        return publicVaultItemHash;
+    }
+
+    function changePublicVaultTagHash(string memory _vaultHash) external returns(bool) {
+
+        publicVaultTagHash = _vaultHash;
+        return true;
+    }
+
+    function getPublicVaultTagHash() external view onlyParticipant() returns(string memory) {
+
+        return publicVaultTagHash;
     }
 
     function convertAdrToId(address _adr) view private returns (uint) {

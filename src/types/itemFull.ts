@@ -2,7 +2,7 @@ export default class ItemFull {
   id!: number
   name!: string
   imageCID!: string
-  categoryId!: number
+  tagId!: number
   availability!: number
   price!: number
   description!: string
@@ -12,7 +12,7 @@ export default class ItemFull {
 
   constructor(id: number,
     name: string,
-    categoryId: number,
+    tagId: number,
     availability: number,
     price: number,
     description: string,
@@ -20,7 +20,7 @@ export default class ItemFull {
   ) {
     this.id = id
     this.name = name
-    this.categoryId = categoryId
+    this.tagId = tagId
     this.availability = availability
     this.price = price
     this.producer = producer

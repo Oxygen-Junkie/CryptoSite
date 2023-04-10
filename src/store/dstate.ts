@@ -8,16 +8,19 @@ import User from '../types/user'
 import { StoreUsers, StoreUsers__factory } from '../types/typechain'
 import ItemLimited from '../types/itemLimited'
 import ItemFull from '../types/itemFull'
+import Tag from '../types/tag'
 
 const contractAddress = '0xEb3B8A7bF4E853d11aD233e15438852Ac067e253'
 const storedUser = localStorage.getItem('user')
 
 export const useDstateStore = defineStore('dstate', () => {
-  const loading = ref(false)
+  const loadingUser = ref(false)
+  const loadingItems = ref(false)
   let user: User = storedUser ? JSON.parse(storedUser) : null
   let store: StoreUsers
   let userAddress = ''
   let itemList: ItemLimited[]
+  let tagList: Tag[]
   const alert = ref('')
 
   async function connectWallet() {
@@ -35,26 +38,27 @@ export const useDstateStore = defineStore('dstate', () => {
   }
 
   async function authUser(ethereum: ExternalProvider | JsonRpcFetchFunc) {
-    setLoader(true)
+    setUserLoader(true)
+    setItemLoader(true)
     try {
       const provider = new ethers.providers.Web3Provider(ethereum)
       userAddress = await provider.getSigner()._address
       store = StoreUsers__factory.connect(contractAddress, provider)
-      await updateItemList()
       if (!user) {
         if (await store.isStored())
           await authThroughIPFS()
         else
           await createIPFSRecord()
-
-        setLoader(false)
+        setUserLoader(false)
+        await updateItemList()
+        setItemLoader(false)
       }
       else {
         userAddress = user.cryptoAddress
       }
     }
     catch (e) {
-      setLoader(false)
+      setUserLoader(false)
       //console.log('e', e)
     }
   }
@@ -77,22 +81,21 @@ export const useDstateStore = defineStore('dstate', () => {
   }
 
   async function addItem(item: ItemFull, image: any) {
-    setLoader(true)
+    setUserLoader(true)
     try {
       //https://ipfs.io/ipfs/${cid}`
-      let res = await IPFS.add(JSON.stringify(image))
+      const res = await IPFS.add(JSON.stringify(image))
       item.imageCID = res.cid.toString()
       user.postedItems?.push(item)
       updatePersonalInfo()
       await updateItemList()
       itemList.push(personaToLimited(item))
 
-      res = await IPFS.add(JSON.stringify(itemList))
-      store.changePublicVaultHash(res.cid.toString())
-      setLoader(false)
+      store.changePublicVaultItemHash((await IPFS.add(JSON.stringify(itemList))).cid.toString())
+      setUserLoader(false)
     }
     catch (e) {
-      setLoader(false)
+      setUserLoader(false)
       //console.log('e', e)
     }
   }
@@ -103,13 +106,17 @@ export const useDstateStore = defineStore('dstate', () => {
 
   async function updatePersonalInfo() {
     const res = await IPFS.add(JSON.stringify(user))
-    await store.changeVaultHash(res.cid.toString())
+    await store.changeVaultItemHash(res.cid.toString())
     localStorage.removeItem('user')
     localStorage.setItem('user', JSON.stringify(user))
   }
 
-  function setLoader(value: boolean) {
-    loading.value = value
+  function setUserLoader(value: boolean) {
+    loadingUser.value = value
+  }
+
+  function setItemLoader(value: boolean) {
+    loadingItems.value = value
   }
 
   function personaToLimited(item: ItemFull) {
@@ -119,19 +126,31 @@ export const useDstateStore = defineStore('dstate', () => {
   }
 
   async function updateItemList() {
-    const publicRepHash = await store.publicVaultHash()
+    const publicRepItemHash = await store.getPublicVaultItemHash()
+    const publicRepTagHash = await store.getPublicVaultTagHash()
     let itemData = ''
-    for await (const chunk of IPFS.cat(publicRepHash))
+    for await (const chunk of IPFS.cat(publicRepItemHash))
       itemData += chunk.toString()
-    itemList = JSON.parse(itemData)
+    itemList = JSON.parse(itemData) as ItemLimited[]
+    let tagData = ''
+    for await (const chunk of IPFS.cat(publicRepTagHash))
+      tagData += chunk.toString()
+    tagList = JSON.parse(tagData) as Tag[]
+  }
+
+  function getItems() {
+    return { itemList, tagList }
   }
 
   return {
-    setLoader,
-    loading,
+    setUserLoader,
+    loadingUser,
+    setItemLoader,
+    loadingItems,
     connectWallet,
     addItem,
     getReputationValueOfUser,
     alert,
+    getItems,
   }
 })

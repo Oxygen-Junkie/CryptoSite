@@ -1,21 +1,42 @@
 <script setup lang="ts">
+import { useDstateStore } from '../store/dstate'
+import ItemLimited from '../types/itemLimited'
+import Tag from '../types/tag'
 
-</script>
-
-<script>
-
+const paging = ref(false)
+const pagingIndex = ref(1)
+const itemsOnPage: Ref<{
+  items: ItemLimited[]
+}[]> = ref([])
+let content: {
+  itemList: ItemLimited[]
+  tagList: Tag[]
+}
+const state = useDstateStore()
+state.connectWallet().then(() => {
+  content = state.getItems()
+  if (content.itemList.length > 12) {
+    let i = 0
+    content.itemList.forEach((element, index) => {
+      if ((index + 1) % 12)
+        i += 1
+      itemsOnPage.value?.[i].items.push(element)
+    })
+    paging.value = true
+  }
+})
 </script>
 
 <template>
   <div id="home" class="container mx-auto mb-3">
     <img src="https://source.unsplash.com/800x300/?Japan" class="w-100">
     <Container>
-      <div v-if="userLoaded === false" class="loading">
+      <div v-if="!state.loadingUser" class="loading">
         <div class="spinner-border" role="status">
           <span class="visually-hidden">Loading...</span>
         </div>
       </div>
-      <div v-show="userLoaded" class="loaded">
+      <div v-show="state.loadingUser" class="loaded">
         <div class="row">
           <div class="col-md p-5">
             <h1>Здравствуйте! 👋</h1>
@@ -36,7 +57,7 @@
       </div>
     </Container>
     <div class="row">
-      <div v-if="user !== 'Visitante'" class="col-md">
+      <div v-if="'gfgf' !== 'Visitante'" class="col-md">
         <router-link to="/profile" class="text-decoration-none text-black">
           <Container class="text-center p-5">
             <h2><ion-icon name="cube-outline" /> Pedidos</h2>
@@ -48,30 +69,18 @@
           </Container>
         </router-link>
       </div>
-      <div v-if="user !== 'Visitante'" class="col-md">
-        <router-link to="/admin" class="text-decoration-none text-black">
-          <Container class="text-center p-5">
-            <h2><ion-icon name="cog-outline" /> Gerenciar</h2>
-            <img
-              src="https://image.freepik.com/vetores-gratis/ilustracao-de-um-roda-dentada_53876-6328.jpg"
-              alt="Gerenciar"
-              class="block-image"
-            >
-          </Container>
-        </router-link>
-      </div>
     </div>
     <Container>
       <h1><ion-icon name="apps-outline" /> Категории</h1>
-      <div v-if="tagLoaded === false" class="loading">
+      <div v-if="!state.loadingItems" class="loading">
         <div class="spinner-border" role="status">
           <span class="visually-hidden">Loading...</span>
         </div>
       </div>
-      <div v-show="tagLoaded" class="loaded">
+      <div v-show="state.loadingItems" class="loaded">
         <div class="row">
           <div class="wrapper">
-            <div v-for="tag in tags" :key="tag.id" class="col">
+            <div v-for="tag in content.tagList" :key="tag.id" class="col">
               <Block
                 :name="tag.name"
                 @click="
@@ -88,70 +97,52 @@
     <Container>
       <h1>
         <ion-icon name="balloon-outline" /> Товары ({{
-          products.length
+          content.itemList.length
         }})
       </h1>
-      <div v-if="producstsLoaded === false" class="loading">
+      <div v-if="!state.loadingItems" class="loading">
         <div class="spinner-border" role="status">
           <span class="visually-hidden">Loading...</span>
         </div>
       </div>
-      <div v-show="producstsLoaded">
-        <div class="row">
-          <div v-for="product in products" :key="product.id" class="col-md-3">
+      <div v-show="state.loadingItems">
+        <div v-if="itemsOnPage" class="row">
+          <div v-for="product in itemsOnPage[pagingIndex].items" :key="product.id" class="col-md-3">
             <Card
               :id="product.id"
-              :image="product.image"
+              :image="product.imageCID"
               :name="product.name"
               :price="product.price"
-              :perishable="product.perishable"
-              :tag="product.tag"
+              :tag="product.tagId"
             />
           </div>
         </div>
-        <div v-if="pages.per_page < pages.total" class="container text-center">
-          <nav>
-            <ul class="pagination">
-              <li class="page-item">
-                <a
-                  class="page-link"
-                  @click="loadProducts(`${pages.links[0].url}`)"
-                >Página anterior</a>
-              </li>
-              <li class="page-item active">
-                <a class="page-link">{{ pages.current_page }}</a>
-              </li>
-              <li
-                v-if="pages.current_page + 1 <= pages.last_page"
-                class="page-item"
-              >
-                <a
-                  class="page-link"
-                  @click="loadProducts(pages.next_page_url)"
-                >{{ pages.current_page + 1 }}</a>
-              </li>
-              <li
-                v-if="pages.current_page + 2 <= pages.last_page"
-                class="page-item"
-              >
-                <a
-                  class="page-link"
-                  @click="
-                    loadProducts(`${pages.links[pages.current_page + 2].url}`)
-                  "
-                >{{ pages.current_page + 2 }}</a>
-              </li>
-              <li class="page-item">
-                <a
-                  class="page-link"
-                  @click="loadProducts(`${pages.last_page_url}`)"
-                >Última página</a>
-              </li>
-            </ul>
-          </nav>
-        </div>
-        <p v-if="products.length < 1">
-          Não há produtos para listar.
+        <nav class="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
+          <a href="#" class="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0">
+            <span class="sr-only">Previous</span>
+            <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+              <path fill-rule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clip-rule="evenodd" />
+            </svg>
+          </a>
+          <!-- Current: "z-10 bg-indigo-600 text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600", Default: "text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:outline-offset-0" -->
+          <a v-if="pagingIndex > 2" href="#" aria-current="page" class="relative z-10 inline-flex items-center bg-indigo-600 px-4 py-2 text-sm font-semibold text-white focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" @click="pagingIndex = 0">1</a>
+          <a v-if="itemsOnPage[pagingIndex - 2]" href="#" class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0" @click="pagingIndex -= 2">{{ pagingIndex - 1 }}</a>
+          <a v-if="itemsOnPage[pagingIndex - 1]" href="#" class="relative hidden items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 md:inline-flex" @click="pagingIndex -= 1">{{ pagingIndex }}</a>
+          <span class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-700 ring-1 ring-inset ring-gray-300 focus:outline-offset-0">...</span>
+          // eslint-disable-next-line vue/no-parsing-error
+          <a href="#" class="relative hidden items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 md:inline-flex">{{ pagingIndex + 1 }}</a>
+          // eslint-disable-next-line vue/no-parsing-error
+          <a href="#" class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0" @click="pagingIndex + 1">{{ pagingIndex + 2 }}</a>
+          <a href="#" class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0" @click="pagingIndex = itemsOnPage.lastIndexOf">{{ itemsOnPage?.lastIndexOf + 1 }}</a>
+          <a href="#" class="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0">
+            <span class="sr-only">Next</span>
+            <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+              <path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd" />
+            </svg>
+          </a>
+        </nav>
+        <p v-if="content.itemList.length < 1">
+          List of Items is empty
         </p>
       </div>
     </Container>
