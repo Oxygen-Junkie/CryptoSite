@@ -5,7 +5,8 @@ import { ethers } from 'hardhat'
 import { ExternalProvider, JsonRpcFetchFunc } from '@ethersproject/providers'
 import IPFS from '../service/IPFS'
 import User from '../types/user'
-import { StoreUsers, StoreUsers__factory } from '../types/typechain'
+import { Delivery, Delivery__factory, StoreUsers, StoreUsers__factory } from '../types/typechain'
+
 import ItemLimited from '../types/itemLimited'
 import ItemFull from '../types/itemFull'
 import Tag from '../types/tag'
@@ -13,11 +14,13 @@ import Tag from '../types/tag'
 const contractAddress = '0xEb3B8A7bF4E853d11aD233e15438852Ac067e253'
 const storedUser = localStorage.getItem('user')
 
-export const useDstateStore = defineStore('dstate', () => {
+export const useUStateStore = defineStore('ustate', () => {
+  let isUserLogged = false
   const loadingUser = ref(false)
   const loadingItems = ref(false)
   let user: User = storedUser ? JSON.parse(storedUser) : null
   let store: StoreUsers
+  let dealProgram: Delivery
   let userAddress = ''
   let itemList: ItemLimited[]
   let tagList: Tag[]
@@ -31,6 +34,7 @@ export const useDstateStore = defineStore('dstate', () => {
         return
       }
       await authUser(ethereum)
+      isUserLogged = true
     }
     catch (error) {
       console.log(error)
@@ -56,6 +60,7 @@ export const useDstateStore = defineStore('dstate', () => {
       else {
         userAddress = user.cryptoAddress
       }
+      dealProgram = Delivery__factory.connect(contractAddress, provider)
     }
     catch (e) {
       setUserLoader(false)
@@ -138,6 +143,10 @@ export const useDstateStore = defineStore('dstate', () => {
     tagList = JSON.parse(tagData) as Tag[]
   }
 
+  function getDealProgram() {
+    return dealProgram
+  }
+
   function getItems() {
     return { itemList, tagList }
   }
@@ -152,5 +161,7 @@ export const useDstateStore = defineStore('dstate', () => {
     getReputationValueOfUser,
     alert,
     getItems,
+    getDealProgram,
+    isUserLogged,
   }
 })

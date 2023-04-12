@@ -2,7 +2,7 @@ export default class ItemLimited {
   id!: number
   name!: string
   imageCID!: string
-  tagId!: number
+  tagIds!: number[]
   availability!: number
   price!: number
   description!: string

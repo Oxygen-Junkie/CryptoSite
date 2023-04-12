@@ -35,6 +35,7 @@
     "tailwindcss",
     "typechain",
     "unocss",
+    "ustate",
     "walletconnect"
   ],
   "dotenv.enableAutocloaking": false,

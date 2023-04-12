@@ -1,30 +1,36 @@
 <script setup lang="ts">
-import { useDstateStore } from '../store/dstate'
+import { useUStateStore } from '../store/ustate'
 import ItemLimited from '../types/itemLimited'
 import Tag from '../types/tag'
 
-const paging = ref(false)
 const pagingIndex = ref(1)
 const itemsOnPage: Ref<{
   items: ItemLimited[]
 }[]> = ref([])
-let content: {
+let content: Ref<{
   itemList: ItemLimited[]
   tagList: Tag[]
-}
-const state = useDstateStore()
+}>
+const state = useUStateStore()
 state.connectWallet().then(() => {
-  content = state.getItems()
-  if (content.itemList.length > 12) {
+  content.value = state.getItems()
+  divideOnPages(content.value.itemList)
+})
+
+function divideOnPages(content: ItemLimited[]) {
+  if (content.length > 12) {
     let i = 0
-    content.itemList.forEach((element, index) => {
+    content.forEach((element, index) => {
       if ((index + 1) % 12)
         i += 1
       itemsOnPage.value?.[i].items.push(element)
     })
-    paging.value = true
   }
-})
+}
+
+function filterByTag(id: number) {
+  divideOnPages(content.value.itemList.filter(value => value.tagIds.includes(id)))
+}
 </script>
 
 <template>
@@ -56,7 +62,7 @@ state.connectWallet().then(() => {
         </div>
       </div>
     </Container>
-    <div class="row">
+    <!-- <div class="row">
       <div v-if="'gfgf' !== 'Visitante'" class="col-md">
         <router-link to="/profile" class="text-decoration-none text-black">
           <Container class="text-center p-5">
@@ -69,7 +75,7 @@ state.connectWallet().then(() => {
           </Container>
         </router-link>
       </div>
-    </div>
+    </div> -->
     <Container>
       <h1><ion-icon name="apps-outline" /> Категории</h1>
       <div v-if="!state.loadingItems" class="loading">
@@ -83,11 +89,7 @@ state.connectWallet().then(() => {
             <div v-for="tag in content.tagList" :key="tag.id" class="col">
               <Block
                 :name="tag.name"
-                @click="
-                  loadProducts(
-                    `http://127.0.0.1:8000/api/laravel/products/tag/${tag.id}`,
-                  )
-                "
+                @click="filterByTag(tag.id)"
               />
             </div>
           </div>
@@ -106,18 +108,17 @@ state.connectWallet().then(() => {
         </div>
       </div>
       <div v-show="state.loadingItems">
-        <div v-if="itemsOnPage" class="row">
+        <div class="row">
           <div v-for="product in itemsOnPage[pagingIndex].items" :key="product.id" class="col-md-3">
             <Card
               :id="product.id"
               :image="product.imageCID"
               :name="product.name"
               :price="product.price"
-              :tag="product.tagId"
             />
           </div>
         </div>
-        <nav class="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
+        <nav v-if="itemsOnPage.length < 2" class="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
           <a href="#" class="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0">
             <span class="sr-only">Previous</span>
             <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -133,7 +134,7 @@ state.connectWallet().then(() => {
           <a href="#" class="relative hidden items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 md:inline-flex">{{ pagingIndex + 1 }}</a>
           // eslint-disable-next-line vue/no-parsing-error
           <a href="#" class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0" @click="pagingIndex + 1">{{ pagingIndex + 2 }}</a>
-          <a href="#" class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0" @click="pagingIndex = itemsOnPage.lastIndexOf">{{ itemsOnPage?.lastIndexOf + 1 }}</a>
+          <a href="#" class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0" @click="pagingIndex = Number(itemsOnPage.lastIndexOf)">{{ Number(itemsOnPage?.lastIndexOf) + 1 }}</a>
           <a href="#" class="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0">
             <span class="sr-only">Next</span>
             <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
