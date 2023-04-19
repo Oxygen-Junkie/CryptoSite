@@ -11,10 +11,11 @@ import ItemLimited from '../types/itemLimited'
 import ItemFull from '../types/itemFull'
 import Tag from '../types/tag'
 
-const contractAddress = '0xEb3B8A7bF4E853d11aD233e15438852Ac067e253'
+const userContractAddress = '0xEb3B8A7bF4E853d11aD233e15438852Ac067e253'
+const storeContractAddress = '0xEb3B8A7bF4E853d11aD233e15438852Ac067e253'
 const storedUser = localStorage.getItem('user')
 
-export const useUStateStore = defineStore('ustate', () => {
+export const useUserStateStore = defineStore('ustate', () => {
   let isUserLogged = false
   const loadingUser = ref(false)
   const loadingItems = ref(false)
@@ -47,7 +48,7 @@ export const useUStateStore = defineStore('ustate', () => {
     try {
       const provider = new ethers.providers.Web3Provider(ethereum)
       userAddress = await provider.getSigner()._address
-      store = StoreUsers__factory.connect(contractAddress, provider)
+      store = StoreUsers__factory.connect(storeContractAddress, provider)
       if (!user) {
         if (await store.isStored())
           await authThroughIPFS()
@@ -60,7 +61,7 @@ export const useUStateStore = defineStore('ustate', () => {
       else {
         userAddress = user.cryptoAddress
       }
-      dealProgram = Delivery__factory.connect(contractAddress, provider)
+      dealProgram = Delivery__factory.connect(userContractAddress, provider)
     }
     catch (e) {
       setUserLoader(false)
@@ -149,6 +150,10 @@ export const useUStateStore = defineStore('ustate', () => {
 
   function getItems() {
     return { itemList, tagList }
+  }
+
+  function scanDeals() {
+
   }
 
   return {

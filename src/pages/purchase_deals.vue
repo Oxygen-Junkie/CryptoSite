@@ -2,7 +2,6 @@
 import { useUStateStore } from '../store/ustate'
 
 const store = useUStateStore()
-const dealProgram = store.getDealProgram()
 </script>
 
 <template>

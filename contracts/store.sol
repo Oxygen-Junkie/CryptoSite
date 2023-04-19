@@ -55,7 +55,7 @@ contract storeUsers {
     }
 
     event UserStored();
-    event BadActorPunished(address indexed _adr);
+    event reportBadItem(address indexed _adr);
 
     error OnlyOwner();
     error OnlyParticipant();
@@ -126,16 +126,20 @@ contract storeUsers {
             }
     }
 
-    function convictABadActor(address _adr) external onlyOwner() userDoesntHaveStatus(_adr, Reputation.BadActor) userDoesntHaveStatus(_adr, Reputation.Established) {
-        users[convertAdrToId(_adr)].reputation = Reputation.BadActor;
+    function reportBadItem(address _adr) external userDoesntHaveStatus(_adr, Reputation.BadActor) userDoesntHaveStatus(_adr, Reputation.Established) {
 
-        emit BadActorPunished(_adr);
+        emit BadITemFromUser(_adr);
     }
+    
+    function destroyReputation(address _adr) external onlyOwner()  {
+        
+        if (users[convertAdrToId(_adr)].reputation != Reputation.Established) {
+            users[convertAdrToId(_adr)].reputation = Reputation.None;
+        } else {
+            users[convertAdrToId(_adr)].reputation = Reputation.BadActor;
+        }
 
-    function destroyReputation(address _adr) external onlyOwner() userHasStatus(_adr, Reputation.Established) {
-        users[convertAdrToId(_adr)].reputation = Reputation.None;
-
-        emit BadActorPunished(_adr);
+        return true;
     }
 
     function changePublicVaultItemHash(string memory _vaultHash) external returns(bool) {

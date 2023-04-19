@@ -16,7 +16,9 @@ contract Delivery {
         uint value;
         string code;
         address seller;
+        uint sellerState;
         address buyer;
+        uint buyerState;
         State state;
         string itemId;
     }
@@ -187,6 +189,19 @@ contract Delivery {
         commission = _rate;
         return true;    
     }
+
+    function getDeals() public view returns (Deal[] memory) {
+        Deal[]    memory de = new Deal[](dealCount);
+        uint index = 0;
+        for (uint i = 0; i < memberCount; i++) {
+            if ((deals[i].seller == msg.sender) || (deals[i].buyer == msg.sender)) 
+            {
+                de[index] = deals[i];
+            }
+        }
+        return de;
+    }
+
 
     function genCode() private view returns (uint) {
         return (uint(keccak256(abi.encodePacked(block.timestamp,msg.sender))) % 100) * 909 + 10000;
