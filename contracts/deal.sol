@@ -106,7 +106,7 @@ contract Delivery {
         notInState(_dealId, State.Archived)
         notInState(_dealId, State.Complete)
     {
-        emit reportAborted(contractOwner,_dealId);
+        deals[_dealId].state = State.Aborted;
     }
 
     function confirmDeal(uint _dealId)
