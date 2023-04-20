@@ -16,11 +16,11 @@ contract Delivery {
         uint value;
         string code;
         address seller;
-        uint sellerState;
         address buyer;
-        uint buyerState;
         State state;
         string itemId;
+        string place;
+        string time;
     }
 
     mapping (uint => Deal) public deals;
@@ -33,10 +33,10 @@ contract Delivery {
 
     }
 
-    function addDeal(string memory _itemId, address _seller) payable public {
+    function addDeal(string memory _itemId, address _seller, string memory _place, string memory _time) payable public {
         uint loc_value = msg.value;
         payable(contractOwner).transfer(loc_value);
-        deals[dealCount] = Deal(dealCount,loc_value,"",msg.sender,_seller,State.Created,_itemId);
+        deals[dealCount] = Deal(dealCount,loc_value,"",msg.sender,_seller,State.Created,_itemId, _place, _time);
         emit DeliveryAddedEvent(msg.sender, _seller, dealCount);
         dealCount++;
     }
@@ -93,7 +93,7 @@ contract Delivery {
     event PurchaseConfirmed(address indexed _seller, uint indexed _dealId);
     event ItemReceived(address indexed _buyer, address indexed _seller, uint indexed _dealId);
     event SellerRefunded(address indexed _buyer, address indexed _seller, uint indexed _dealId);
-    event RequestPayFromOwner(address indexed contractOwner, uint _dealId);
+    event RequestPayFromOwner(address indexed contractOwner, uint _dealId, uint _money);
     event DealComplete(address indexed _buyer, address indexed _seller, uint indexed _dealId);
     event DealIsCalledOff(address indexed _buyer, address indexed _seller, uint indexed _dealId);
     event ProductIsNotWhatWasPromised(address indexed contractOwner, address indexed _seller, string indexed _itemId);
@@ -115,7 +115,6 @@ contract Delivery {
         onlySeller(_dealId)
         returns (string memory)
     {
-        emit PurchaseConfirmed(deals[_dealId].seller,_dealId);
         deals[_dealId].state = State.Agreed;
         return Strings.toString(genCode());
     }
@@ -127,9 +126,7 @@ contract Delivery {
         inState(_dealId, State.Agreed)
         codeIsCorrect(_code,_dealId)
     {
-        emit RequestPayFromOwner(contractOwner,_dealId);
-
-        emit ItemReceived(deals[_dealId].buyer,deals[_dealId].seller,_dealId);
+        emit RequestPayFromOwner(contractOwner,_dealId,  deals[_dealId].value);
         
         deals[_dealId].state = State.Complete;
 
@@ -142,7 +139,6 @@ contract Delivery {
         notInState(_dealId, State.Archived)
         notInState(_dealId, State.Aborted)
     {
-        emit DealIsCalledOff(deals[_dealId].buyer, deals[_dealId].seller, _dealId);
         
         deals[_dealId].state = State.Created;
 
@@ -165,7 +161,6 @@ contract Delivery {
         inState(_dealId, State.Complete)
     {
         payable(deals[_dealId].seller).transfer(deals[_dealId].value * (100 - commission) / 100);
-        emit DealComplete(deals[_dealId].buyer,deals[_dealId].seller,_dealId);
         
         deals[_dealId].state = State.Archived;
     }
@@ -190,10 +185,17 @@ contract Delivery {
         return true;    
     }
 
+    function changeRendezvous(uint _dealId, string memory _place, string memory _time) public onlySeller(_dealId) returns(bool) {
+        deals[_dealId].place = _place;
+        deals[_dealId].time = _time;
+
+        return true;
+    }
+
     function getDeals() public view returns (Deal[] memory) {
         Deal[]    memory de = new Deal[](dealCount);
         uint index = 0;
-        for (uint i = 0; i < memberCount; i++) {
+        for (uint i = 0; i < dealCount; i++) {
             if ((deals[i].seller == msg.sender) || (deals[i].buyer == msg.sender)) 
             {
                 de[index] = deals[i];

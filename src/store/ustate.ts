@@ -10,6 +10,8 @@ import { Delivery, Delivery__factory, StoreUsers, StoreUsers__factory } from '..
 import ItemLimited from '../types/itemLimited'
 import ItemFull from '../types/itemFull'
 import Tag from '../types/tag'
+import Deal from '../types/deal'
+import { bDealAction, sDealAction } from '../types/dealAction'
 
 const userContractAddress = '0xEb3B8A7bF4E853d11aD233e15438852Ac067e253'
 const storeContractAddress = '0xEb3B8A7bF4E853d11aD233e15438852Ac067e253'
@@ -152,7 +154,34 @@ export const useUserStateStore = defineStore('ustate', () => {
     return { itemList, tagList }
   }
 
-  function scanDeals() {
+  async function scanDeals() {
+    user.sellDeals = []
+    const allDeals = await dealProgram.getDeals()
+    allDeals.forEach((allDeal) => {
+      if (allDeal.buyer.match(userAddress)) {
+        const bd = user.buyDeals?.findIndex(value => value.id === allDeal.id)
+        if (bd)
+          user.buyDeals[bd].state = allDeal.state
+        else
+          user.buyDeals?.push(new Deal(allDeal.id, allDeal.state, allDeal.seller))
+      }
+      else if (allDeal.seller.match(userAddress)) {
+        const bd = user.sellDeals?.findIndex(value => value.id === allDeal.id)
+        if (bd)
+          user.sellDeals[bd].state = allDeal.state
+        else
+          user.sellDeals?.push(new Deal(allDeal.id, allDeal.state, allDeal.seller).setRendezvous(allDeal.place, allDeal.time))
+      }
+    })
+  }
+
+  async function bDealActions(actionId: bDealAction, dealId: number, code?: string) {
+    switch (actionId) {
+      case bDealAction.Delivered: dealProgram.deliverySuccessful(dealId, code!)
+    }
+  }
+
+  async function sDealActions(actionId: sDealAction, dealId: number, place?: string, time?: string) {
 
   }
 
@@ -168,5 +197,8 @@ export const useUserStateStore = defineStore('ustate', () => {
     getItems,
     getDealProgram,
     isUserLogged,
+    scanDeals,
+    bDealActions,
+    sDealActions,
   }
 })

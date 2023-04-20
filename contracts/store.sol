@@ -55,7 +55,7 @@ contract storeUsers {
     }
 
     event UserStored();
-    event reportBadItem(address indexed _adr);
+    event BadITemFromUser(address indexed _adr);
 
     error OnlyOwner();
     error OnlyParticipant();
@@ -131,7 +131,7 @@ contract storeUsers {
         emit BadITemFromUser(_adr);
     }
     
-    function destroyReputation(address _adr) external onlyOwner()  {
+    function destroyReputation(address _adr) external onlyOwner() returns(bool)  {
         
         if (users[convertAdrToId(_adr)].reputation != Reputation.Established) {
             users[convertAdrToId(_adr)].reputation = Reputation.None;
