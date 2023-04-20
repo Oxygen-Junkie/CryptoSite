@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useUserStateStore } from '../store/ustate'
+import { useUserStateStore } from '../store/state'
 import ItemLimited from '../types/itemLimited'
 import Tag from '../types/tag'
 
