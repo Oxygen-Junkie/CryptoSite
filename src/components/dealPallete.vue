@@ -34,7 +34,7 @@ function setForB() {
       break
     }
     case dealState.Complete: {
-      dealText.value.state = 'Продавец в процессе получения оплаты'
+      dealText.value.state = 'Продавец находится в процессе получения оплаты'
       break
     }
     case dealState.Aborted: {
