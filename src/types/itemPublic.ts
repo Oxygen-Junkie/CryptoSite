@@ -1,4 +1,6 @@
-export default class ItemLimited {
+import { reputation } from './enums'
+
+export default class ItemPublic {
   id!: string
   name!: string
   imageCID!: string
@@ -8,6 +10,7 @@ export default class ItemLimited {
   description!: string
   producer!: string
   seller!: string
+  sellerReputation!: reputation
   defaultPlace!: string
   defaultTime!: string
 }

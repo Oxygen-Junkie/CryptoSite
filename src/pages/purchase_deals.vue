@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useUserStateStore } from '../store/state'
+navigateTo('/')
 
 const store = useUserStateStore()
 </script>

@@ -32,6 +32,7 @@
     "postcss",
     "PUBLICPASSPHRASE",
     "PUBLICUUID",
+    "redaxios",
     "spacehq",
     "tailwindcss",
     "typechain",

@@ -93,11 +93,11 @@ contract storeUsers {
         _;
     }
 
-    modifier updateReputation(address _adr) {
+    function updateReputation(address _adr) external returns(bool a) {
         uint locCounter = users[convertAdrToId(_adr)].dealCounter;
 
             if (users[convertAdrToId(_adr)].reputation == Reputation.BadActor) {
-                revert();
+               return true;
             } else if (locCounter > 10) {
                 users[convertAdrToId(_adr)].reputation = Reputation.Established;
             } else if (locCounter > 2) {
@@ -105,30 +105,18 @@ contract storeUsers {
             } else if (locCounter == 1) {
                 users[convertAdrToId(_adr)].reputation = Reputation.OneDeal;
             } else {
-                revert();
-            }
-            _;
-    }
-
-    function getReputation(address _adr) external updateReputation(_adr) returns (uint) {
-        Reputation locRep = users[convertAdrToId(_adr)].reputation;
-
-        if (locRep == Reputation.None) {
-                return uint(0);
-            } else if (locRep == Reputation.OneDeal) {
-                return uint(1);
-            } else if (locRep == Reputation.FewDeals) {
-                return uint(2);
-            } else if (locRep == Reputation.Established) {
-                return uint(3);
-            } else {
-                return uint(4);
+                return true;
             }
     }
 
     function reportBadItem(address _adr) external userDoesntHaveStatus(_adr, Reputation.BadActor) userDoesntHaveStatus(_adr, Reputation.Established) {
 
         emit BadITemFromUser(_adr);
+    }
+
+    function getReputation(address _adr) view external onlyParticipant() returns (Reputation) {
+        
+        return users[convertAdrToId(_adr)].reputation;
     }
     
     function destroyReputation(address _adr) external onlyOwner() returns(bool)  {

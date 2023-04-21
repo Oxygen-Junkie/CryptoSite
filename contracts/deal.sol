@@ -14,6 +14,7 @@ contract Delivery {
     struct Deal{
         uint id;
         uint value;
+        uint amount;
         string code;
         address seller;
         address buyer;
@@ -33,10 +34,10 @@ contract Delivery {
 
     }
 
-    function addDeal(string memory _itemId, address _seller, string memory _place, string memory _time) payable public {
+    function addDeal(string memory _itemId, address _seller, uint _amount, string memory _place, string memory _time) payable public {
         uint loc_value = msg.value;
         payable(contractOwner).transfer(loc_value);
-        deals[dealCount] = Deal(dealCount,loc_value,"H",msg.sender,_seller,State.Created,_itemId, _place, _time);
+        deals[dealCount] = Deal(dealCount,loc_value,_amount,"H",msg.sender,_seller,State.Created,_itemId, _place, _time);
         emit DeliveryAddedEvent(msg.sender, _seller, dealCount);
         dealCount++;
     }
@@ -122,7 +123,6 @@ contract Delivery {
         deals[_dealId].code = code;
         return code;
     }
-
 
     function deliverySuccessful(uint _dealId, string memory _code)
         external

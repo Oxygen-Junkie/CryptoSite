@@ -6,18 +6,18 @@ import { ExternalProvider, JsonRpcFetchFunc } from '@ethersproject/providers'
 import IPFS from '../service/IPFS'
 import User from '../types/user'
 import { Delivery, Delivery__factory, StoreUsers, StoreUsers__factory } from '../types/typechain'
-
 import ItemPublic from '../types/itemPublic'
 import ItemPrivate from '../types/itemPrivate'
 import Tag from '../types/tag'
 import Deal from '../types/deal'
 import { bDealAction, sDealAction } from '../types/enums'
+import Currency from '../types/currency'
 
 const userContractAddress = '0xEb3B8A7bF4E853d11aD233e15438852Ac067e253'
 const storeContractAddress = '0xEb3B8A7bF4E853d11aD233e15438852Ac067e253'
 const storedUser = localStorage.getItem('user')
 
-export const useUserStateStore = defineStore('ustate', () => {
+export const useStateStore = defineStore('state', () => {
   let isUserLogged = false
   const loadingUser = ref(false)
   const loadingItems = ref(false)
@@ -29,6 +29,17 @@ export const useUserStateStore = defineStore('ustate', () => {
   let itemList: ItemPublic[]
   let tagList: Tag[]
   const alert = ref('')
+  let currency: Currency
+
+  async function determineCurrency() {
+    if (localStorage.getItem('currency')) {
+      currency = JSON.parse(localStorage.getItem('currency')!)
+    }
+    else {
+      await currency.determineValues()
+      localStorage.setItem('currency', JSON.stringify(currency))
+    }
+  }
 
   async function connectWallet() {
     try {
@@ -98,7 +109,7 @@ export const useUserStateStore = defineStore('ustate', () => {
       user.postedItems?.push(item)
       updatePersonalInfo()
       await updateItemList()
-      itemList.push(personalToPublic(item))
+      itemList.push(await personalToPublic(item))
 
       store.changePublicVaultItemHash((await IPFS.add(JSON.stringify(itemList))).cid.toString())
       setUserLoader(false)
@@ -110,7 +121,8 @@ export const useUserStateStore = defineStore('ustate', () => {
   }
 
   async function getReputationValueOfUser(address: string) {
-    return store.getReputation(address)
+    await store.updateReputation(address)
+    return await store.getReputation(address)
   }
 
   async function updatePersonalInfo() {
@@ -132,10 +144,11 @@ export const useUserStateStore = defineStore('ustate', () => {
     loadingDeals.value = value
   }
 
-  function personalToPublic(item: ItemPrivate) {
-    const itemL: ItemPublic = item as unknown as ItemPublic
-    itemL.seller = userAddress
-    return itemL
+  async function personalToPublic(item: ItemPrivate) {
+    const itemP: ItemPublic = item as unknown as ItemPublic
+    itemP.sellerReputation = await getReputationValueOfUser(userAddress)
+    itemP.seller = userAddress
+    return itemP
   }
 
   async function updateItemList() {
@@ -167,25 +180,25 @@ export const useUserStateStore = defineStore('ustate', () => {
       if (allDeal.buyer.match(userAddress)) {
         const bd = user.buyDeals?.findIndex(value => value.id === allDeal.id)
         if (bd)
-          user.buyDeals[bd].state = allDeal.state
+          user.buyDeals![bd].state = allDeal.state
         else
-          user.buyDeals?.push(new Deal(allDeal.id, allDeal.state, allDeal.seller))
+          user.buyDeals?.push(new Deal(allDeal.id, allDeal.amount, allDeal.state, allDeal.seller))
       }
       else if (allDeal.seller.match(userAddress)) {
         const bd = user.sellDeals?.findIndex(value => value.id === allDeal.id)
         if (bd)
-          user.sellDeals[bd].state = allDeal.state
+          user.sellDeals![bd].state = allDeal.state
         else
-          user.sellDeals?.push(new Deal(allDeal.id, allDeal.state, allDeal.seller).setRendezvous(allDeal.place, allDeal.time))
+          user.sellDeals?.push(new Deal(allDeal.id, allDeal.amount, allDeal.state, allDeal.seller).setRendezvous(allDeal.place, allDeal.time))
       }
     })
     setDealLoader(false)
   }
 
-  async function bDealActions(actionId: bDealAction, dealId: number, item?: ItemPublic, code?: string, complaint?: string) {
+  async function bDealActions(actionId: bDealAction, dealId: number, item?: ItemPublic, amount?: number, code?: string, complaint?: string) {
     switch (actionId) {
       case bDealAction.Start: {
-        dealProgram.addDeal(item!.id, item!.seller, item!.defaultPlace, item!.defaultTime)
+        dealProgram.addDeal(item!.id, item!.seller, amount!, item!.defaultPlace, item!.defaultTime)
         break
       }
       case bDealAction.Abort: {
@@ -224,6 +237,10 @@ export const useUserStateStore = defineStore('ustate', () => {
     }
   }
 
+  function getCurrency() {
+    return currency
+  }
+
   return {
     setUserLoader,
     loadingUser,
@@ -240,5 +257,7 @@ export const useUserStateStore = defineStore('ustate', () => {
     bDealActions,
     sDealActions,
     loadingDeals,
+    determineCurrency,
+    getCurrency,
   }
 })

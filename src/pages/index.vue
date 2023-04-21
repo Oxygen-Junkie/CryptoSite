@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { useUserStateStore } from '../store/state'
-import ItemLimited from '../types/itemLimited'
+import { useStateStore } from '../store/state'
+import ItemLimited from '../types/itemPublic'
 import Tag from '../types/tag'
 
 const pagingIndex = ref(1)
@@ -11,12 +11,15 @@ let content: Ref<{
   itemList: ItemLimited[]
   tagList: Tag[]
 }>
-const userState = useUserStateStore()
-userState.connectWallet().then(() => {
-  content.value = userState.getItems()
-  divideOnPages(content.value.itemList)
-})
+const state = useStateStore()
 
+if (state.isUserLogged) {
+  state.connectWallet().then(() => {
+    content.value = state.getItems()
+    divideOnPages(content.value.itemList)
+  })
+  state.determineCurrency()
+}
 function divideOnPages(content: ItemLimited[]) {
   if (content.length > 12) {
     let i = 0
@@ -37,12 +40,12 @@ function filterByTag(id: number) {
   <div id="home" class="container mx-auto mb-3">
     <img src="https://source.unsplash.com/800x300/?Japan" class="w-100">
     <Container>
-      <div v-if="!userState.loadingUser" class="loading">
+      <div v-if="!state.loadingUser" class="loading">
         <div class="spinner-border" role="status">
           <span class="visually-hidden">Loading...</span>
         </div>
       </div>
-      <div v-show="userState.loadingUser" class="loaded">
+      <div v-show="state.loadingUser" class="loaded">
         <div class="row">
           <div class="col-md p-5">
             <h1>Здравствуйте! 👋</h1>
@@ -78,12 +81,12 @@ function filterByTag(id: number) {
     </div> -->
     <Container>
       <h1><ion-icon name="apps-outline" /> Категории</h1>
-      <div v-if="!userState.loadingItems" class="loading">
+      <div v-if="!state.loadingItems" class="loading">
         <div class="spinner-border" role="status">
           <span class="visually-hidden">Loading...</span>
         </div>
       </div>
-      <div v-show="userState.loadingItems" class="loaded">
+      <div v-show="state.loadingItems" class="loaded">
         <div class="row">
           <div class="wrapper">
             <div v-for="tag in content.tagList" :key="tag.id" class="col">
@@ -102,12 +105,12 @@ function filterByTag(id: number) {
           content.itemList.length
         }})
       </h1>
-      <div v-if="!userState.loadingItems" class="loading">
+      <div v-if="!state.loadingItems" class="loading">
         <div class="spinner-border" role="status">
           <span class="visually-hidden">Loading...</span>
         </div>
       </div>
-      <div v-show="userState.loadingItems">
+      <div v-show="state.loadingItems">
         <div class="row">
           <div v-for="product in itemsOnPage[pagingIndex].items" :key="product.id" class="col-md-3">
             <Card

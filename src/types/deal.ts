@@ -1,17 +1,20 @@
 import { BigNumber } from 'ethers'
-import { DealState } from './enums'
+import { dealState } from './enums'
 
 export default class Deal {
   id!: BigNumber
-  state!: DealState
+  amount!: BigNumber
+  state!: dealState
   place?: string
   time?: string
   cryptoAddress!: string
   code?: string
 
   constructor(id: BigNumber,
-    state: number,
+    amount: BigNumber,
+    state: dealState,
     cryptoAddress: string) {
+    this.amount = amount
     this.id = id
     this.state = state
     this.cryptoAddress = cryptoAddress

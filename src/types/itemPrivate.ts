@@ -1,4 +1,4 @@
-export default class ItemFull {
+export default class ItemPrivate {
   id!: string
   name!: string
   imageCID!: string
