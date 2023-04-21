@@ -1,5 +1,5 @@
 export default class ItemFull {
-  id!: number
+  id!: string
   name!: string
   imageCID!: string
   tagIds!: number[]
@@ -10,7 +10,7 @@ export default class ItemFull {
   defaultPlace!: string
   defaultTime!: string
 
-  constructor(id: number,
+  constructor(id: string,
     name: string,
     tagIds: number[],
     availability: number,

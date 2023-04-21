@@ -7,11 +7,11 @@ import IPFS from '../service/IPFS'
 import User from '../types/user'
 import { Delivery, Delivery__factory, StoreUsers, StoreUsers__factory } from '../types/typechain'
 
-import ItemLimited from '../types/itemLimited'
-import ItemFull from '../types/itemFull'
+import ItemPublic from '../types/itemPublic'
+import ItemPrivate from '../types/itemPrivate'
 import Tag from '../types/tag'
 import Deal from '../types/deal'
-import { bDealAction, sDealAction } from '../types/dealAction'
+import { bDealAction, sDealAction } from '../types/enums'
 
 const userContractAddress = '0xEb3B8A7bF4E853d11aD233e15438852Ac067e253'
 const storeContractAddress = '0xEb3B8A7bF4E853d11aD233e15438852Ac067e253'
@@ -21,11 +21,12 @@ export const useUserStateStore = defineStore('ustate', () => {
   let isUserLogged = false
   const loadingUser = ref(false)
   const loadingItems = ref(false)
+  const loadingDeals = ref(false)
   let user: User = storedUser ? JSON.parse(storedUser) : null
   let store: StoreUsers
   let dealProgram: Delivery
   let userAddress = ''
-  let itemList: ItemLimited[]
+  let itemList: ItemPublic[]
   let tagList: Tag[]
   const alert = ref('')
 
@@ -88,7 +89,7 @@ export const useUserStateStore = defineStore('ustate', () => {
     store.storeUser(res.cid.toString())
   }
 
-  async function addItem(item: ItemFull, image: any) {
+  async function addItem(item: ItemPrivate, image: any) {
     setUserLoader(true)
     try {
       //https://ipfs.io/ipfs/${cid}`
@@ -97,7 +98,7 @@ export const useUserStateStore = defineStore('ustate', () => {
       user.postedItems?.push(item)
       updatePersonalInfo()
       await updateItemList()
-      itemList.push(personaToLimited(item))
+      itemList.push(personalToPublic(item))
 
       store.changePublicVaultItemHash((await IPFS.add(JSON.stringify(itemList))).cid.toString())
       setUserLoader(false)
@@ -127,8 +128,12 @@ export const useUserStateStore = defineStore('ustate', () => {
     loadingItems.value = value
   }
 
-  function personaToLimited(item: ItemFull) {
-    const itemL: ItemLimited = item as unknown as ItemLimited
+  function setDealLoader(value: boolean) {
+    loadingDeals.value = value
+  }
+
+  function personalToPublic(item: ItemPrivate) {
+    const itemL: ItemPublic = item as unknown as ItemPublic
     itemL.seller = userAddress
     return itemL
   }
@@ -139,7 +144,7 @@ export const useUserStateStore = defineStore('ustate', () => {
     let itemData = ''
     for await (const chunk of IPFS.cat(publicRepItemHash))
       itemData += chunk.toString()
-    itemList = JSON.parse(itemData) as ItemLimited[]
+    itemList = JSON.parse(itemData) as ItemPublic[]
     let tagData = ''
     for await (const chunk of IPFS.cat(publicRepTagHash))
       tagData += chunk.toString()
@@ -155,6 +160,7 @@ export const useUserStateStore = defineStore('ustate', () => {
   }
 
   async function scanDeals() {
+    setDealLoader(true)
     user.sellDeals = []
     const allDeals = await dealProgram.getDeals()
     allDeals.forEach((allDeal) => {
@@ -173,16 +179,49 @@ export const useUserStateStore = defineStore('ustate', () => {
           user.sellDeals?.push(new Deal(allDeal.id, allDeal.state, allDeal.seller).setRendezvous(allDeal.place, allDeal.time))
       }
     })
+    setDealLoader(false)
   }
 
-  async function bDealActions(actionId: bDealAction, dealId: number, code?: string) {
+  async function bDealActions(actionId: bDealAction, dealId: number, item?: ItemPublic, code?: string, complaint?: string) {
     switch (actionId) {
-      case bDealAction.Delivered: dealProgram.deliverySuccessful(dealId, code!)
+      case bDealAction.Start: {
+        dealProgram.addDeal(item!.id, item!.seller, item!.defaultPlace, item!.defaultTime)
+        break
+      }
+      case bDealAction.Abort: {
+        dealProgram.abort(dealId)
+        break
+      }
+      case bDealAction.Delivered: {
+        dealProgram.deliverySuccessful(dealId, code!)
+        break
+      }
+      case bDealAction.Complain: {
+        dealProgram.productIsntWhatWasPromised(dealId, complaint!)
+        break
+      }
     }
   }
 
   async function sDealActions(actionId: sDealAction, dealId: number, place?: string, time?: string) {
-
+    switch (actionId) {
+      case sDealAction.Confirm: {
+        dealProgram.confirmDeal(dealId)
+        break
+      }
+      case sDealAction.CallOff: {
+        dealProgram.deliveryCalledOff(dealId)
+        break
+      }
+      case sDealAction.ChangeRendezvous: {
+        dealProgram.changeRendezvous(dealId, place!, time!)
+        break
+      }
+      case sDealAction.Remove: {
+        dealProgram.removeDeal(dealId)
+        break
+      }
+    }
   }
 
   return {
@@ -200,5 +239,6 @@ export const useUserStateStore = defineStore('ustate', () => {
     scanDeals,
     bDealActions,
     sDealActions,
+    loadingDeals,
   }
 })

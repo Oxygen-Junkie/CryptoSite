@@ -1,5 +1,5 @@
 export default class ItemLimited {
-  id!: number
+  id!: string
   name!: string
   imageCID!: string
   tagIds!: number[]
@@ -8,4 +8,6 @@ export default class ItemLimited {
   description!: string
   producer!: string
   seller!: string
+  defaultPlace!: string
+  defaultTime!: string
 }

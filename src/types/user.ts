@@ -1,5 +1,5 @@
 import Deal from './deal'
-import ItemFull from './itemFull'
+import ItemFull from './itemPrivate'
 
 export default class User {
   cryptoAddress!: string

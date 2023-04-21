@@ -1,8 +1,9 @@
 import { BigNumber } from 'ethers'
+import { DealState } from './enums'
 
 export default class Deal {
   id!: BigNumber
-  state!: number
+  state!: DealState
   place?: string
   time?: string
   cryptoAddress!: string

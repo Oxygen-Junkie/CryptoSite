@@ -7,7 +7,7 @@ import "hardhat/console.sol";
 
 contract Delivery {
     
-    enum State { Created, Agreed, Complete, Aborted, Archived }
+    enum State { Created, Agreed, Complete, Aborted, Archived, Removed }
     address private contractOwner;
     uint private commission;
 
@@ -36,7 +36,7 @@ contract Delivery {
     function addDeal(string memory _itemId, address _seller, string memory _place, string memory _time) payable public {
         uint loc_value = msg.value;
         payable(contractOwner).transfer(loc_value);
-        deals[dealCount] = Deal(dealCount,loc_value,"",msg.sender,_seller,State.Created,_itemId, _place, _time);
+        deals[dealCount] = Deal(dealCount,loc_value,"H",msg.sender,_seller,State.Created,_itemId, _place, _time);
         emit DeliveryAddedEvent(msg.sender, _seller, dealCount);
         dealCount++;
     }
@@ -83,7 +83,8 @@ contract Delivery {
     }
 
     modifier codeIsCorrect(string memory _code, uint _dealId) {
-        if (keccak256(abi.encodePacked(deals[_dealId].code)) != keccak256(abi.encodePacked(_code)))
+        bytes32 hashcode = keccak256(abi.encodePacked(deals[_dealId].code));
+        if (hashcode == keccak256(abi.encodePacked(("H"))) && (hashcode != keccak256(abi.encodePacked(_code))))
             revert InvalidCode();
         _;
     }
@@ -96,7 +97,7 @@ contract Delivery {
     event RequestPayFromOwner(address indexed contractOwner, uint _dealId, uint _money);
     event DealComplete(address indexed _buyer, address indexed _seller, uint indexed _dealId);
     event DealIsCalledOff(address indexed _buyer, address indexed _seller, uint indexed _dealId);
-    event ProductIsNotWhatWasPromised(address indexed contractOwner, address indexed _seller, string indexed _itemId);
+    event ProductIsNotWhatWasPromised(address indexed contractOwner, address indexed _seller, string indexed _itemId, string _complaint);
     event ComissionChangedTo(uint indexed _rate);
 
     function abort(uint _dealId)
@@ -105,6 +106,7 @@ contract Delivery {
         notInState(_dealId, State.Aborted)
         notInState(_dealId, State.Archived)
         notInState(_dealId, State.Complete)
+        notInState(_dealId, State.Removed)
     {
         deals[_dealId].state = State.Aborted;
     }
@@ -115,8 +117,10 @@ contract Delivery {
         onlySeller(_dealId)
         returns (string memory)
     {
+        string memory code = Strings.toString(genCode());
         deals[_dealId].state = State.Agreed;
-        return Strings.toString(genCode());
+        deals[_dealId].code = code;
+        return code;
     }
 
 
@@ -138,18 +142,19 @@ contract Delivery {
         notInState(_dealId, State.Created)
         notInState(_dealId, State.Archived)
         notInState(_dealId, State.Aborted)
+        notInState(_dealId, State.Removed)
     {
-        
+        deals[_dealId].code = "H";
         deals[_dealId].state = State.Created;
 
     }
 
-    function productIsntWhatWasPromised(uint _dealId)
+    function productIsntWhatWasPromised(uint _dealId, string memory _complaint)
         external
         onlySeller(_dealId)
         inState(_dealId, State.Agreed)
     {
-        emit ProductIsNotWhatWasPromised(contractOwner, deals[_dealId].seller, deals[_dealId].itemId);
+        emit ProductIsNotWhatWasPromised(contractOwner, deals[_dealId].seller, deals[_dealId].itemId, _complaint);
         
         deals[_dealId].state = State.Created;
 
@@ -171,6 +176,7 @@ contract Delivery {
         notInState(_dealId, State.Aborted)
         notInState(_dealId, State.Archived)
         notInState(_dealId, State.Complete)
+        notInState(_dealId, State.Removed)
     {
         payable(deals[_dealId].buyer).transfer(deals[_dealId].value);
         deals[_dealId].state = State.Aborted;
@@ -204,6 +210,14 @@ contract Delivery {
         return de;
     }
 
+    function removeDeal(uint _dealId)
+        external
+        onlySeller(_dealId)
+        inState(_dealId, State.Archived)
+        
+    {
+        deals[_dealId].state = State.Removed;
+    }
 
     function genCode() private view returns (uint) {
         return (uint(keccak256(abi.encodePacked(block.timestamp,msg.sender))) % 100) * 909 + 10000;
