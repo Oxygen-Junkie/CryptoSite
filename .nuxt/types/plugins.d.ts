@@ -6,20 +6,18 @@ type Decorate<T extends Record<string, any>> = { [K in keyof T as K extends stri
 type InjectionType<A extends Plugin> = A extends Plugin<infer T> ? Decorate<T> : unknown
 
 type NuxtAppInjections = 
-  InjectionType<typeof import("../../node_modules/.pnpm/@pinia+nuxt@0.4.7_p4srtwdgezcoeovfcc2yxzvaue/node_modules/@pinia/nuxt/dist/runtime/plugin.vue3").default> &
+  InjectionType<typeof import("../../node_modules/.pnpm/@pinia+nuxt@0.4.9_typescript@5.0.4_vue@3.2.47/node_modules/@pinia/nuxt/dist/runtime/plugin.vue3").default> &
   InjectionType<typeof import("../components.plugin").default> &
-  InjectionType<typeof import("../../node_modules/.pnpm/nuxt@3.3.2_f2jg2oarjqn3eorqpz46zpgb2a/node_modules/nuxt/dist/head/runtime/plugins/unhead").default> &
-  InjectionType<typeof import("../../node_modules/.pnpm/nuxt@3.3.2_f2jg2oarjqn3eorqpz46zpgb2a/node_modules/nuxt/dist/head/runtime/plugins/vueuse-head-polyfill").default> &
-  InjectionType<typeof import("../../node_modules/.pnpm/nuxt@3.3.2_f2jg2oarjqn3eorqpz46zpgb2a/node_modules/nuxt/dist/pages/runtime/plugins/router").default> &
-  InjectionType<typeof import("../../node_modules/.pnpm/nuxt@3.3.2_f2jg2oarjqn3eorqpz46zpgb2a/node_modules/nuxt/dist/pages/runtime/plugins/prefetch.client").default> &
-  InjectionType<typeof import("../../node_modules/.pnpm/@huntersofbook+naive-ui-nuxt@0.7.1_vue@3.2.47/node_modules/@huntersofbook/naive-ui-nuxt/dist/runtime/config").default> &
-  InjectionType<typeof import("../../node_modules/.pnpm/@huntersofbook+naive-ui-nuxt@0.7.1_vue@3.2.47/node_modules/@huntersofbook/naive-ui-nuxt/dist/runtime/plugin").default> &
-  InjectionType<typeof import("../../node_modules/.pnpm/@nuxtjs+color-mode@3.2.0/node_modules/@nuxtjs/color-mode/dist/runtime/plugin.server").default> &
-  InjectionType<typeof import("../../node_modules/.pnpm/@nuxtjs+color-mode@3.2.0/node_modules/@nuxtjs/color-mode/dist/runtime/plugin.client").default> &
-  InjectionType<typeof import("../../node_modules/.pnpm/@nuxtjs+i18n@8.0.0-beta.10_vue@3.2.47/node_modules/@nuxtjs/i18n/dist/runtime/plugins/composition").default> &
-  InjectionType<typeof import("../../node_modules/.pnpm/@nuxtjs+i18n@8.0.0-beta.10_vue@3.2.47/node_modules/@nuxtjs/i18n/dist/runtime/plugins/i18n").default> &
-  InjectionType<typeof import("../unocss").default> &
-  InjectionType<typeof import("../../node_modules/.pnpm/nuxt@3.3.2_f2jg2oarjqn3eorqpz46zpgb2a/node_modules/nuxt/dist/app/plugins/chunk-reload.client").default>
+  InjectionType<typeof import("../../node_modules/.pnpm/nuxt@3.3.2_@types+node@18.11.12_eslint@8.39.0_sass@1.62.1_typescript@5.0.4_vue-tsc@1.6.3/node_modules/nuxt/dist/head/runtime/plugins/unhead").default> &
+  InjectionType<typeof import("../../node_modules/.pnpm/nuxt@3.3.2_@types+node@18.11.12_eslint@8.39.0_sass@1.62.1_typescript@5.0.4_vue-tsc@1.6.3/node_modules/nuxt/dist/head/runtime/plugins/vueuse-head-polyfill").default> &
+  InjectionType<typeof import("../../node_modules/.pnpm/nuxt@3.3.2_@types+node@18.11.12_eslint@8.39.0_sass@1.62.1_typescript@5.0.4_vue-tsc@1.6.3/node_modules/nuxt/dist/pages/runtime/plugins/router").default> &
+  InjectionType<typeof import("../../node_modules/.pnpm/nuxt@3.3.2_@types+node@18.11.12_eslint@8.39.0_sass@1.62.1_typescript@5.0.4_vue-tsc@1.6.3/node_modules/nuxt/dist/pages/runtime/plugins/prefetch.client").default> &
+  InjectionType<typeof import("../../node_modules/.pnpm/@nuxt+content@2.6.0/node_modules/@nuxt/content/dist/runtime/plugins/ws").default> &
+  InjectionType<typeof import("../../node_modules/.pnpm/@nuxt+content@2.6.0/node_modules/@nuxt/content/dist/runtime/plugins/documentDriven").default> &
+  InjectionType<typeof import("../plugin").default> &
+  InjectionType<typeof import("../../node_modules/.pnpm/nuxt@3.3.2_@types+node@18.11.12_eslint@8.39.0_sass@1.62.1_typescript@5.0.4_vue-tsc@1.6.3/node_modules/nuxt/dist/app/plugins/chunk-reload.client").default> &
+  InjectionType<typeof import("../../plugins/navbar").default> &
+  InjectionType<typeof import("../../node_modules/.pnpm/@vueuse+nuxt@10.1.2_nuxt@3.3.2_vue@3.2.47/node_modules/@vueuse/nuxt/ssr-plugin").default>
 
 declare module '#app' {
   interface NuxtApp extends NuxtAppInjections { }

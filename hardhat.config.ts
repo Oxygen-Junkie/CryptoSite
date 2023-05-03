@@ -1,14 +1,15 @@
 import { HardhatUserConfig } from 'hardhat/config'
 import '@nomicfoundation/hardhat-toolbox'
 import '@typechain/hardhat'
+import '@nomiclabs/hardhat-ethers'
 
 const config: HardhatUserConfig = {
   solidity: '0.8.18',
   paths: {
-    artifacts: './src/artifacts',
+    artifacts: './artifacts',
   },
   typechain: {
-    outDir: 'src/types/typechain',
+    outDir: 'types/typechain',
   },
   /* networks: {
     hardhat: {

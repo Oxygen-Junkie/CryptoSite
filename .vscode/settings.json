@@ -1,45 +1,23 @@
 {
-  "prettier.enable": false,
-  "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true
-  },
-  "files.associations": {
-    "*.css": "postcss"
-  },
-  "editor.formatOnSave": false,
-  "i18n-ally.localesPaths": [
-    "src/locales"
-  ],
+  "editor.tabSize": 2,
   "cSpell.words": [
-    "antfu",
-    "automerge",
-    "Datasources",
-    "Dstate",
+    "commitlint",
     "ethersproject",
     "headlessui",
-    "huntersofbook",
     "iconify",
-    "IPFS",
-    "ipfsauth",
-    "ipfshash",
-    "Isnt",
+    "intlify",
+    "lintfix",
     "nomicfoundation",
     "nomiclabs",
-    "nuxi",
     "nuxt",
+    "nuxtdotjs",
     "nuxtjs",
     "pinia",
-    "postcss",
-    "PUBLICPASSPHRASE",
-    "PUBLICUUID",
     "redaxios",
-    "spacehq",
-    "tailwindcss",
+    "Tailwindcss",
     "typechain",
-    "unocss",
-    "ustate",
-    "walletconnect"
-  ],
-  "dotenv.enableAutocloaking": false,
-  "solidity.compileUsingRemoteVersion": "v0.8.19+commit.7dd6d404"
+    "unplugin",
+    "viandwi",
+    "windicss"
+  ]
 }

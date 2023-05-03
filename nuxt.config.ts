@@ -1,86 +1,104 @@
-import presetIcons from '@unocss/preset-icons'
-import '@nomicfoundation/hardhat-toolbox'
+import UnpluginComponentsVite from 'unplugin-vue-components/vite'
+import IconsResolver from 'unplugin-icons/resolver'
 
+// https://v3.nuxtjs.org/docs/directory-structure/nuxt.config
 export default defineNuxtConfig({
-  srcDir: 'src',
-  modules: [
-    '@vueuse/nuxt',
-    '@nuxtjs/tailwindcss',
-    '@pinia/nuxt',
-    // unocss plugin - https://github.com/unocss/unocss
-    '@unocss/nuxt',
-    '@nuxtjs/i18n',
-    '@nuxtjs/color-mode',
-    // https://github.com/huntersofbook/huntersofbook/tree/main/packages/naive-ui-nuxt
-    '@huntersofbook/naive-ui-nuxt',
-  ],
+  // server side rendering mode
+  ssr: true,
+
+  // typescripts
+  typescript: {
+    strict: true,
+    typeCheck: true,
+  },
+
+  // css
+  css: ['~/assets/sass/vendor.scss', '~/assets/sass/app.scss'],
+
+  // plugins
+  plugins: ['~/plugins/navbar.ts'],
+
+  // build
   build: {
     transpile: ['@headlessui/vue'],
   },
-  plugins: ['plugins/web3.ts'],
-  unocss: {
-    uno: false,
-    preflight: false,
-    icons: true,
-    presets: [
-      presetIcons({
-        scale: 1.2,
-        extraProperties: {
-          display: 'inline-block',
-        },
+
+  // modules
+  modules: [
+    'unplugin-icons/nuxt',
+    '@intlify/nuxt3',
+    '@pinia/nuxt',
+    '@nuxt/content',
+    '@vueuse/nuxt',
+    'nuxt-windicss',
+  ],
+
+  // experimental features
+  experimental: {
+    reactivityTransform: false,
+  },
+
+  // auto import components
+  components: true,
+
+  // vite plugins
+  vite: {
+    plugins: [
+      UnpluginComponentsVite({
+        dts: true,
+        resolvers: [
+          IconsResolver({
+            prefix: 'Icon',
+          }),
+        ],
       }),
     ],
-    safelist: ['i-twemoji-flag-us-outlying-islands', 'i-twemoji-flag-turkey'],
+  },
+
+  // app config
+  app: {
+    // global transition
+    pageTransition: { name: 'page', mode: 'out-in' },
+    layoutTransition: { name: 'layout', mode: 'out-in' },
   },
 
   // localization - i18n config
-  i18n: {
-    locales: [
-      {
-        code: 'en',
-        file: 'en-US.json',
-      },
-      { code: 'tr', file: 'tr-TR.json' },
-    ],
-    defaultLocale: 'tr',
-    lazy: true,
-    langDir: 'locales/',
-    strategy: 'prefix_except_default',
-    detectBrowserLanguage: {
-      useCookie: true,
-      cookieKey: 'i18n_redirected',
-      redirectOn: 'root', // recommended
-    },
+  intlify: {
+    localeDir: 'locales',
     vueI18n: {
-      legacy: false,
-      locale: 'tr',
-      fallbackLocale: 'tr',
-      availableLocales: ['en', 'tr'],
+      locale: 'en',
+      fallbackLocale: 'en',
+      availableLocales: ['en', 'id', 'ja', 'ko'],
     },
   },
 
-  typescript: {
-    tsConfig: {
-      compilerOptions: {
-        strict: true,
-        types: ['@pinia/nuxt', './type.d.ts'],
+  // vueuse
+  vueuse: {
+    ssrHandlers: true,
+  },
+
+  // windicss
+  windicss: {
+    analyze: {
+      analysis: {
+        interpretUtilities: false,
+      },
+      server: {
+        port: 4000,
+        open: false,
       },
     },
-  },
-  colorMode: {
-    classSuffix: '',
-    fallback: 'light',
-    storageKey: 'color-mode',
+    scan: true,
   },
 
-  tailwindcss: {
-    configPath: './tailwind.config.ts',
-  },
-
-  vite: {
-    logLevel: 'info',
-  },
-  redirect: {
-    home: '/',
+  // content
+  content: {
+    documentDriven: true,
+    markdown: {
+      mdc: true,
+    },
+    highlight: {
+      theme: 'github-dark',
+    },
   },
 })

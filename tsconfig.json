@@ -1,3 +1,23 @@
 {
+  // https://v3.nuxtjs.org/concepts/typescript
   "extends": "./.nuxt/tsconfig.json",
+  "target": "es2022",
+  "module": "CommonJS",
+  "ts-node": {
+    "compilerOptions": {
+      "module": "commonjs"
+    }
+  },
+  "compilerOptions": {
+    "strict": true,
+    "skipLibCheck": true,
+    "module": "esnext",
+    "types": [
+      "nuxt-windicss",
+      "@vueuse/nuxt",
+      "@intlify/nuxt3",
+      "@pinia/nuxt",
+      "unplugin-icons/types/vue"
+    ]
+  }
 }

@@ -4,7 +4,28 @@ declare module 'nitropack' {
   type Awaited<T> = T extends PromiseLike<infer U> ? Awaited<U> : T
   interface InternalApi {
     '/__nuxt_error': {
-      'default': Simplify<Serialize<Awaited<ReturnType<typeof import('../../node_modules/.pnpm/nuxt@3.3.2_f2jg2oarjqn3eorqpz46zpgb2a/node_modules/nuxt/dist/core/runtime/nitro/renderer').default>>>>
+      'default': Simplify<Serialize<Awaited<ReturnType<typeof import('../../node_modules/.pnpm/nuxt@3.3.2_@types+node@18.11.12_eslint@8.39.0_sass@1.62.1_typescript@5.0.4_vue-tsc@1.6.3/node_modules/nuxt/dist/core/runtime/nitro/renderer').default>>>>
+    }
+    '/api/_content/query/:qid/**:params': {
+      'get': Simplify<Serialize<Awaited<ReturnType<typeof import('../../node_modules/.pnpm/@nuxt+content@2.6.0/node_modules/@nuxt/content/dist/runtime/server/api/query').default>>>>
+    }
+    '/api/_content/query/:qid': {
+      'get': Simplify<Serialize<Awaited<ReturnType<typeof import('../../node_modules/.pnpm/@nuxt+content@2.6.0/node_modules/@nuxt/content/dist/runtime/server/api/query').default>>>>
+    }
+    '/api/_content/query': {
+      'get': Simplify<Serialize<Awaited<ReturnType<typeof import('../../node_modules/.pnpm/@nuxt+content@2.6.0/node_modules/@nuxt/content/dist/runtime/server/api/query').default>>>>
+    }
+    '/api/_content/cache.json': {
+      'get': Simplify<Serialize<Awaited<ReturnType<typeof import('../../node_modules/.pnpm/@nuxt+content@2.6.0/node_modules/@nuxt/content/dist/runtime/server/api/cache').default>>>>
+    }
+    '/api/_content/navigation/:qid/**:params': {
+      'get': Simplify<Serialize<Awaited<ReturnType<typeof import('../../node_modules/.pnpm/@nuxt+content@2.6.0/node_modules/@nuxt/content/dist/runtime/server/api/navigation').default>>>>
+    }
+    '/api/_content/navigation/:qid': {
+      'get': Simplify<Serialize<Awaited<ReturnType<typeof import('../../node_modules/.pnpm/@nuxt+content@2.6.0/node_modules/@nuxt/content/dist/runtime/server/api/navigation').default>>>>
+    }
+    '/api/_content/navigation': {
+      'get': Simplify<Serialize<Awaited<ReturnType<typeof import('../../node_modules/.pnpm/@nuxt+content@2.6.0/node_modules/@nuxt/content/dist/runtime/server/api/navigation').default>>>>
     }
   }
 }
