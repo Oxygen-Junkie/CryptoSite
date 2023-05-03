@@ -1,35 +1,77 @@
 <script setup lang="ts">
-import { useStateStore } from '../store/state'
-navigateTo('/')
+import { useStateStore } from '~~/store/state'
+import dealPalette from '~~/components/dealPalette.vue'
+import container from '~~/components/container.vue'
+import { dealPaletteMode } from '~~/types/enums'
+import Deal from '~~/types/deal'
+import ItemPublic from '~~/types/itemPublic'
+import card from '~~/components/card.vue'
+import Starter from '~~/components/starter.vue'
 
 const store = useStateStore()
+if (store.isUserLogged) navigateTo('/')
+
+const itemDeals: Ref<{ item: ItemPublic; deals: Deal[] }[]> = ref([])
+
+store.user.buyDeals?.forEach((valued) => {
+  const t = itemDeals.value?.findIndex((value) => value.item === valued.item)
+  if (t) {
+    itemDeals.value![t].item = valued.item
+    itemDeals.value![t].deals.push(valued)
+  } else {
+    itemDeals.value!.push({ item: valued.item, deals: [valued] })
+  }
+})
 </script>
 
 <template>
-  <deal_palette />
+  <div id="home" class="container mx-auto mb-3"></div>
+  <h1><ion-icon name="download-outline" /> Сделки на покупку</h1>
+
+  <container
+    v-for="itemDeal in itemDeals"
+    :key="itemDeal.item.id"
+    class="bg-red shadow p-1 mt-1 rounded w-100"
+  >
+    <div class="row">
+      <div class="col-md-3">
+        <card
+          :id="itemDeal.item.id"
+          :image="itemDeal.item.imageCID"
+          :name="itemDeal.item.name"
+          :price="itemDeal.item.price"
+        />
+      </div>
+    </div>
+    <dealPalette
+      v-for="deal in itemDeal.deals"
+      :key="deal.id"
+      :deal="deal"
+      :item="itemDeal.item"
+      :mode="dealPaletteMode.buyDeal"
+    />
+  </container>
+
   <div id="home" class="container mx-auto mb-3">
     <Container>
       <h1><ion-icon name="download-outline" /> Сделки на покупку</h1>
       <Container>
         <h4>
-          <ion-icon name="chevron-forward-outline" />&nbsp; Запрос на
-          покупку товара Дрель в количестве 1 шт.
+          <ion-icon name="chevron-forward-outline" />&nbsp; Запрос на покупку
+          товара Дрель в количестве 1 шт.
         </h4>
         <h6>Сделка ожидает подтверждения</h6>
-        <p class="card-text text-muted">
-          Стоимость за заказ 700 руб.
-        </p>
+        <p class="card-text text-muted">Стоимость за заказ 700 руб.</p>
         <button
-          type="button" class="btn rounded btn-danger w-50" data-bs-toggle="modal"
+          type="button"
+          class="btn rounded btn-danger w-50"
+          data-bs-toggle="modal"
           data-bs-target="#exampleModal"
         >
           Отменить сделку
         </button>
       </Container>
     </Container>
-    <Modal
-      @refresh="loadProducts()"
-    />
   </div>
 </template>
 

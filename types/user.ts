@@ -1,10 +1,10 @@
 import Deal from './deal'
-import ItemFull from './itemPrivate'
+import ItemPrivate from './itemPrivate'
 
 export default class User {
   cryptoAddress!: string
   vaultHash!: string
-  postedItems: ItemFull[] | undefined
+  postedItems: ItemPrivate[] | undefined
   buyDeals: Deal[] | undefined
   sellDeals: Deal[] | undefined
 

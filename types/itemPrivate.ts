@@ -10,13 +10,14 @@ export default class ItemPrivate {
   defaultPlace!: string
   defaultTime!: string
 
-  constructor(id: string,
+  constructor(
+    id: string,
     name: string,
     tagIds: number[],
     availability: number,
     price: number,
     description: string,
-    producer: string,
+    producer: string
   ) {
     this.id = id
     this.name = name

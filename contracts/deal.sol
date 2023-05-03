@@ -24,7 +24,7 @@ contract Delivery {
         string time;
     }
 
-    mapping (uint => Deal) public deals;
+    mapping (uint => Deal) private deals;
     uint public dealCount;
 
     constructor() {
@@ -191,14 +191,19 @@ contract Delivery {
         return true;    
     }
 
-    function changeRendezvous(uint _dealId, string memory _place, string memory _time) public onlySeller(_dealId) returns(bool) {
+    function changeRendezvous(uint _dealId, string memory _place, string memory _time) external onlySeller(_dealId) returns(bool) {
         deals[_dealId].place = _place;
         deals[_dealId].time = _time;
 
         return true;
     }
 
-    function getDeals() public view returns (Deal[] memory) {
+    function getRendezvous(uint _dealId) view external onlyBuyer(_dealId) returns(string memory p, string memory t) {
+
+        return (deals[_dealId].place, deals[_dealId].time );
+    }
+
+    function getDeals() external view returns (Deal[] memory) {
         Deal[]    memory de = new Deal[](dealCount);
         uint index = 0;
         for (uint i = 0; i < dealCount; i++) {

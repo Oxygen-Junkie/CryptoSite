@@ -1,8 +1,8 @@
 <!-- eslint-disable prettier/prettier -->
 <script setup lang="ts">
-import ItemLimited from '../types/itemPublic'
-import Tag from '../types/tag'
-import { useStateStore } from './store/state'
+import ItemLimited from '~~/types/itemPublic'
+import Tag from '~~/types/tag'
+import { useStateStore } from '~~/store/state'
 
 const pagingIndex = ref(1)
 const itemsOnPage: Ref<

@@ -6,6 +6,7 @@
 import { defineStore } from 'pinia'
 import { ethers } from 'hardhat'
 import { ExternalProvider, JsonRpcFetchFunc } from '@ethersproject/providers'
+import { BigNumberish } from 'ethers'
 import IPFS from '~~/tools/IPFS'
 import User from '~~/types/user'
 import ItemPublic from '~~/types/itemPublic'
@@ -184,7 +185,13 @@ export const useStateStore = defineStore('state', () => {
         if (bd) user.buyDeals![bd].state = allDeal.state
         else
           user.buyDeals?.push(
-            new Deal(allDeal.id, allDeal.amount, allDeal.state, allDeal.seller)
+            new Deal(
+              allDeal.id,
+              allDeal.amount,
+              allDeal.state,
+              allDeal.seller,
+              itemList.find((value) => value.id === allDeal.itemId)!
+            )
           )
       } else if (allDeal.seller.match(userAddress)) {
         const bd = user.sellDeals?.findIndex((value) => value.id === allDeal.id)
@@ -195,7 +202,8 @@ export const useStateStore = defineStore('state', () => {
               allDeal.id,
               allDeal.amount,
               allDeal.state,
-              allDeal.seller
+              allDeal.seller,
+              itemList.find((value) => value.id === allDeal.itemId)!
             ).setRendezvous(allDeal.place, allDeal.time)
           )
       }
@@ -205,7 +213,7 @@ export const useStateStore = defineStore('state', () => {
 
   async function bDealActions(
     actionId: bDealAction,
-    dealId: number,
+    dealId: BigNumberish,
     item?: ItemPublic,
     amount?: number,
     code?: string,
@@ -239,7 +247,7 @@ export const useStateStore = defineStore('state', () => {
 
   async function sDealActions(
     actionId: sDealAction,
-    dealId: number,
+    dealId: BigNumberish,
     place?: string,
     time?: string
   ) {
@@ -261,6 +269,11 @@ export const useStateStore = defineStore('state', () => {
         break
       }
     }
+  }
+
+  async function learnRendezvous(id: BigNumberish) {
+    const rend = await dealProgram.getRendezvous(id)
+    user.buyDeals?.find((deal) => deal.id === id)?.setRendezvous(rend.p, rend.t)
   }
 
   function getCurrency() {
@@ -285,5 +298,7 @@ export const useStateStore = defineStore('state', () => {
     loadingDeals,
     determineCurrency,
     getCurrency,
+    user,
+    learnRendezvous,
   }
 })

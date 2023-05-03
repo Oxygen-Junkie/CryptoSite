@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import { useStateStore } from '../store/state'
-import Deal from '../types/deal'
-import { dealPaletteMode, dealState } from '../types/enums'
-
-import ItemPrivate from '../types/itemPrivate'
-import ItemPublic from '../types/itemPublic'
+import { useStateStore } from '~~/store/state'
+import Deal from '~~/types/deal'
+import { dealPaletteMode, dealState } from '~~/types/enums'
+import ItemPrivate from '~~/types/itemPrivate'
+import ItemPublic from '~~/types/itemPublic'
 
 const props = defineProps<{ deal: Deal; mode: dealPaletteMode; item: ItemPrivate | ItemPublic }>()
 

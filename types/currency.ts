@@ -1,5 +1,5 @@
 import dot from 'dotenv'
-import { getETHPrice } from '../utils/getETHPrice'
+import { getETHPrice } from '~~/utils/getETHPrice'
 
 export default class Currency {
   rub!: number
@@ -7,7 +7,7 @@ export default class Currency {
 
   async determineValues() {
     dot.config()
-    this.rub = parseFloat((process.env.NUXT_RUB)!)
+    this.rub = parseFloat(process.env.NUXT_RUB!)
     this.eth = await getETHPrice()
     return this
   }
