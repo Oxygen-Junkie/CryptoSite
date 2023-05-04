@@ -19,3 +19,4 @@ dist
 /artifacts
 /cache
 /.nuxt
+/pnpm-lock.yaml
