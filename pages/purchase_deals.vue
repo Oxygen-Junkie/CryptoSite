@@ -6,7 +6,6 @@ import { dealPaletteMode } from '~~/types/enums'
 import Deal from '~~/types/deal'
 import ItemPublic from '~~/types/itemPublic'
 import card from '~~/components/card.vue'
-import Starter from '~~/components/starter.vue'
 
 const store = useStateStore()
 if (store.isUserLogged) navigateTo('/')
@@ -45,34 +44,12 @@ store.user.buyDeals?.forEach((valued) => {
     </div>
     <dealPalette
       v-for="deal in itemDeal.deals"
-      :key="deal.id"
+      :key="deal.id.toString"
       :deal="deal"
       :item="itemDeal.item"
       :mode="dealPaletteMode.buyDeal"
     />
   </container>
-
-  <div id="home" class="container mx-auto mb-3">
-    <Container>
-      <h1><ion-icon name="download-outline" /> Сделки на покупку</h1>
-      <Container>
-        <h4>
-          <ion-icon name="chevron-forward-outline" />&nbsp; Запрос на покупку
-          товара Дрель в количестве 1 шт.
-        </h4>
-        <h6>Сделка ожидает подтверждения</h6>
-        <p class="card-text text-muted">Стоимость за заказ 700 руб.</p>
-        <button
-          type="button"
-          class="btn rounded btn-danger w-50"
-          data-bs-toggle="modal"
-          data-bs-target="#exampleModal"
-        >
-          Отменить сделку
-        </button>
-      </Container>
-    </Container>
-  </div>
 </template>
 
 <style scoped>

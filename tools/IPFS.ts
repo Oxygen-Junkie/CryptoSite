@@ -3,8 +3,9 @@ import dot from 'dotenv'
 
 dot.config()
 
-const auth
-    = `Basic ${Buffer.from(`${process.env.NUXT_INFURA_ID}:${process.env.NUXT_INFURA_SECRET_KEY}`).toString('base64')}`
+const auth = `Basic ${Buffer.from(
+  `${process.env.NUXT_INFURA_ID}:${process.env.NUXT_INFURA_SECRET_KEY}`
+).toString('base64')}`
 
 export default create({
   host: 'ipfs.infura.io',

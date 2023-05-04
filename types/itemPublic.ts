@@ -1,10 +1,11 @@
 import { reputation } from './enums'
+import Tag from './tag'
 
 export default class ItemPublic {
   id!: string
   name!: string
   imageCID!: string
-  tagIds!: number[]
+  tag!: Tag[]
   availability!: number
   price!: number
   description!: string

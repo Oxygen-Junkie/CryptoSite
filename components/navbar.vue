@@ -1,5 +1,4 @@
-<script setup lang="ts">
-</script>
+<script setup lang="ts"></script>
 
 <template>
   <div id="nav" class="sticky-top text-center">
@@ -10,7 +9,7 @@
           src="/img/logo.png"
           alt="Logo"
           style="width: 50px; clip-path: circle()"
-        >
+        />
       </router-link>
       <router-link to="/">
         <ion-icon name="home-outline" />
@@ -31,7 +30,9 @@
       <router-link v-show="auth" to="/profile">
         <ion-icon name="person-circle-outline" />
       </router-link>
-      <a v-show="auth" href="/" @click="Logout"><ion-icon name="log-out-outline" /></a>
+      <a v-show="auth" href="/" @click="Logout"
+        ><ion-icon name="log-out-outline"
+      /></a>
     </nav>
   </div>
 </template>

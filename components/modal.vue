@@ -28,40 +28,45 @@ emit(true)
         </div>
         <div class="modal-body">
           <form id="form" @submit.prevent="SendData">
-            <label for="name"><ion-icon name="text-outline" /> Nome do produto</label>
+            <label for="name"
+              ><ion-icon name="text-outline" /> Nome do produto</label
+            >
             <input
               id="name"
               v-model="name"
               type="text"
               class="form-control"
               required
-            >
-            <br>
+            />
+            <br />
             <div class="row">
               <div class="col-md-8">
-                <label for="image"><ion-icon name="image-outline" /> Imagem do
-                  produto</label>
+                <label for="image"
+                  ><ion-icon name="image-outline" /> Imagem do produto</label
+                >
                 <input
                   id="image"
                   v-model="image"
                   type="text"
                   class="form-control"
                   required
-                >
+                />
               </div>
               <div class="col-md-4">
                 <img
                   :src="
-                    image
-                      || 'https://www.signfix.com.au/wp-content/uploads/2017/09/placeholder-600x400.png'
+                    image ||
+                    'https://www.signfix.com.au/wp-content/uploads/2017/09/placeholder-600x400.png'
                   "
                   alt="Imagem"
                   class="image rounded"
-                >
+                />
               </div>
             </div>
-            <br>
-            <label for="price"><ion-icon name="pricetags-outline" /> Preço</label>
+            <br />
+            <label for="price"
+              ><ion-icon name="pricetags-outline" /> Preço</label
+            >
             <input
               id="price"
               v-model="price"
@@ -69,18 +74,21 @@ emit(true)
               min="0"
               step="0.01"
               class="form-control"
+            />
+            <br />
+            <label for="tag"
+              ><ion-icon name="pricetag-outline" /> Categoria do produto</label
             >
-            <br>
-            <label for="tag"><ion-icon name="pricetag-outline" /> Categoria do
-              produto</label>
             <select id="tag" class="form-select" @change="selected($event)">
               <option v-for="tag in tags" :key="tag.id" :value="tag.id">
                 {{ tag.name }}
               </option>
             </select>
-            <br>
-            <label><ion-icon name="fast-food-outline" /> O produto é
-              perecível?</label>
+            <br />
+            <label
+              ><ion-icon name="fast-food-outline" /> O produto é
+              perecível?</label
+            >
             <div class="form-check">
               <input
                 id="opt1"
@@ -89,9 +97,9 @@ emit(true)
                 value="0"
                 name="perishable"
                 class="form-check-input"
-              >
+              />
               <label for="opt1" class="form-check-label">Não</label>
-              <br>
+              <br />
               <input
                 id="opt2"
                 v-model="perishable"
@@ -99,7 +107,7 @@ emit(true)
                 value="1"
                 name="perishable"
                 class="form-check-input"
-              >
+              />
               <label for="opt2" class="form-check-label">Sim</label>
             </div>
           </form>

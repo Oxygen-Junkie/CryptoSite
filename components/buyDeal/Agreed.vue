@@ -2,13 +2,11 @@
 import { useStateStore } from '~~/store/state'
 import Deal from '~~/types/deal'
 import { bDealAction } from '~~/types/enums'
-import ItemPrivate from '~~/types/itemPrivate'
 import ItemPublic from '~~/types/itemPublic'
 
 const props = defineProps<{
-  item: ItemPrivate | ItemPublic
+  item: ItemPublic
   deal: Deal
-  ethPrice: any
 }>()
 
 const complaint = ref('')
@@ -39,9 +37,9 @@ const rendezvous = state.user.buyDeals?.find(
   </p>
   <p class="card-text text-muted">
     {{
-      `Стоимость заказа ${Number(props.item.price / ethPrice).toFixed(
-        2
-      )} $ в валютой форме Eth/Эфира.`
+      `Стоимость заказа ${Number(props.item.price)} $ что эквивалентно ${Number(
+        props.item.price / state.getCurrency().eth
+      ).toFixed(2)} Eth/Эфира.`
     }}
   </p>
   <div class="d-flex justify-content-center">
@@ -78,6 +76,7 @@ const rendezvous = state.user.buyDeals?.find(
     class="btn rounded btn-danger w-50"
     data-bs-toggle="modal"
     data-bs-target="#exampleModal"
+    @click="state.bDealActions(bDealAction.Abort, deal.id)"
   >
     Отменить сделку
   </button>

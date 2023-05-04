@@ -12,7 +12,7 @@ import User from '~~/types/user'
 import ItemPublic from '~~/types/itemPublic'
 import ItemPrivate from '~~/types/itemPrivate'
 import Deal from '~~/types/deal'
-import { bDealAction, sDealAction } from '~~/types/enums'
+import { bDealAction, dealState, sDealAction } from '~~/types/enums'
 import Currency from '~~/types/currency'
 import {
   Delivery,
@@ -221,7 +221,7 @@ export const useStateStore = defineStore('state', () => {
   ) {
     switch (actionId) {
       case bDealAction.Start: {
-        dealProgram.addDeal(
+        await dealProgram.addDeal(
           item!.id,
           item!.seller,
           amount!,
@@ -231,18 +231,19 @@ export const useStateStore = defineStore('state', () => {
         break
       }
       case bDealAction.Abort: {
-        dealProgram.abort(dealId)
+        await dealProgram.abort(dealId)
         break
       }
       case bDealAction.Delivered: {
-        dealProgram.deliverySuccessful(dealId, code!)
+        await dealProgram.deliverySuccessful(dealId, code!)
         break
       }
       case bDealAction.Complain: {
-        dealProgram.productIsntWhatWasPromised(dealId, complaint!)
+        await dealProgram.productIsntWhatWasPromised(dealId, complaint!)
         break
       }
     }
+    return dealProgram.getDealState(dealId)
   }
 
   async function sDealActions(
@@ -253,27 +254,32 @@ export const useStateStore = defineStore('state', () => {
   ) {
     switch (actionId) {
       case sDealAction.Confirm: {
-        dealProgram.confirmDeal(dealId)
+        await dealProgram.confirmDeal(dealId)
         break
       }
       case sDealAction.CallOff: {
-        dealProgram.deliveryCalledOff(dealId)
+        await dealProgram.deliveryCalledOff(dealId)
         break
       }
       case sDealAction.ChangeRendezvous: {
-        dealProgram.changeRendezvous(dealId, place!, time!)
+        await dealProgram.changeRendezvous(dealId, place!, time!)
         break
       }
       case sDealAction.Remove: {
-        dealProgram.removeDeal(dealId)
+        await dealProgram.removeDeal(dealId)
         break
       }
     }
+    return dealProgram.getDealState(dealId)
   }
 
   async function learnRendezvous(id: BigNumberish) {
     const rend = await dealProgram.getRendezvous(id)
     user.buyDeals?.find((deal) => deal.id === id)?.setRendezvous(rend.p, rend.t)
+  }
+
+  async function getPayCode(dealId: BigNumberish) {
+    return dealProgram.getDealPayCode(dealId)
   }
 
   function getCurrency() {
@@ -290,7 +296,6 @@ export const useStateStore = defineStore('state', () => {
     getReputationValueOfUser,
     alert,
     getItems,
-    getDealProgram,
     isUserLogged,
     scanDeals,
     bDealActions,
@@ -300,5 +305,6 @@ export const useStateStore = defineStore('state', () => {
     getCurrency,
     user,
     learnRendezvous,
+    getPayCode,
   }
 })

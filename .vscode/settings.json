@@ -1,14 +1,17 @@
 {
   "editor.tabSize": 2,
   "cSpell.words": [
+    "camelcase",
     "commitlint",
     "ethersproject",
     "headlessui",
     "iconify",
     "intlify",
+    "Isnt",
     "lintfix",
     "nomicfoundation",
     "nomiclabs",
+    "Numberish",
     "nuxt",
     "nuxtdotjs",
     "nuxtjs",

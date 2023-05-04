@@ -1,13 +1,16 @@
 <script setup lang="ts">
+import Starter from '../starter.vue'
 import Deal from '~~/types/deal'
 import ItemPrivate from '~~/types/itemPrivate'
 import ItemPublic from '~~/types/itemPublic'
+import { useStateStore } from '~~/store/state'
 
 const props = defineProps<{
-  item: ItemPrivate | ItemPublic
+  item: ItemPublic
   deal: Deal
-  ethPrice: any
 }>()
+
+const state = useStateStore()
 </script>
 
 <template>
@@ -18,20 +21,12 @@ const props = defineProps<{
     количестве ${deal.amount} шт.`
     }}
   </h4>
-  <h6>Сделка ожидает подтверждения</h6>
+  <h6>Денежный перевод продавцу обрабатывается</h6>
   <p class="card-text text-muted">
     {{
-      `Стоимость заказа ${Number(props.item.price / ethPrice).toFixed(
-        2
-      )} $ в валютой форме Eth/Эфира.`
+      `Стоимость заказа ${Number(props.item.price)} $ что эквивалентно ${Number(
+        props.item.price / state.getCurrency().eth
+      ).toFixed(2)} Eth/Эфира.`
     }}
   </p>
-  <button
-    type="button"
-    class="btn rounded btn-warning w-50"
-    data-bs-toggle="modal"
-    data-bs-target="#exampleModal"
-  >
-    Отменить сделку
-  </button>
 </template>

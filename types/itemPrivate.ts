@@ -1,8 +1,10 @@
+import Tag from './tag'
+
 export default class ItemPrivate {
   id!: string
   name!: string
   imageCID!: string
-  tagIds!: number[]
+  tag!: Tag[]
   availability!: number
   price!: number
   description!: string
@@ -13,7 +15,7 @@ export default class ItemPrivate {
   constructor(
     id: string,
     name: string,
-    tagIds: number[],
+    tag: Tag[],
     availability: number,
     price: number,
     description: string,
@@ -21,7 +23,7 @@ export default class ItemPrivate {
   ) {
     this.id = id
     this.name = name
-    this.tagIds = tagIds
+    this.tag = tag
     this.availability = availability
     this.price = price
     this.producer = producer

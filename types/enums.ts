@@ -17,6 +17,12 @@ export enum dealPaletteMode {
   sellDeal,
 }
 
+export enum itemPaletteMode {
+  inGeneral,
+  inDeal,
+  inPosted,
+}
+
 export enum dealState {
   Created,
   Agreed,

@@ -55,12 +55,12 @@ export default {
       fetch(url, {
         method: 'POST',
         headers: {
-          'Accept': 'application/json',
+          Accept: 'application/json',
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
       })
-        .then(response => response.json())
+        .then((response) => response.json())
         .then((response) => {
           this.user = response.id
         })
@@ -70,7 +70,7 @@ export default {
 
       if (body.length > 0) {
         document.querySelector(
-          '#button',
+          '#button'
         ).innerHTML = `<div class="spinner-border" role="status">
   <span class="visually-hidden">Loading...</span>
 </div>`
@@ -84,20 +84,19 @@ export default {
         fetch(`http://127.0.0.1:8000/api/${pass}/orders`, {
           method: 'POST',
           headers: {
-            'Accept': 'application/json',
+            Accept: 'application/json',
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify(body),
         })
-          .then(response => response.json())
+          .then((response) => response.json())
           .then((response) => {
             this.message = response.message
             if (response.status === 201) {
               localStorage.setItem('cart', JSON.stringify([]))
               this.$router.push('/profile')
-            }
-            else {
+            } else {
               document.querySelector('#button').disabled = false
               document.querySelector('#button').innerHTML = 'Salvar pedido'
               localStorage.setItem('cart', JSON.stringify([]))
@@ -108,8 +107,7 @@ export default {
               this.message = null
             }, 2000)
           })
-      }
-      else {
+      } else {
         this.message = 'O carrinho deve conter items para continuar!'
 
         setTimeout(() => {
@@ -144,21 +142,11 @@ export default {
       <table class="w-full max-w-full mb-4 bg-transparent">
         <thead>
           <tr>
-            <th scope="col">
-              #
-            </th>
-            <th scope="col">
-              Produto
-            </th>
-            <th scope="col">
-              Valor Uni.
-            </th>
-            <th scope="col">
-              Quantidade
-            </th>
-            <th scope="col">
-              Ações
-            </th>
+            <th scope="col">#</th>
+            <th scope="col">Produto</th>
+            <th scope="col">Valor Uni.</th>
+            <th scope="col">Quantidade</th>
+            <th scope="col">Ações</th>
           </tr>
         </thead>
         <tbody>
@@ -175,20 +163,27 @@ export default {
                 :value="item.qtd"
                 class="block appearance-none w-full py-1 px-2 mb-1 text-base leading-normal bg-white text-gray-800 border border-gray-200 rounded"
                 @input="updateValue(`#input${item.id}`, index)"
-              >
+              />
             </td>
             <td>
-              <button class="inline-block align-middle text-center select-none border font-normal whitespace-no-wrap rounded py-1 px-3 leading-normal no-underline bg-red-600 text-white hover:bg-red-700" @click="removeItem(index)">
+              <button
+                class="inline-block align-middle text-center select-none border font-normal whitespace-no-wrap rounded py-1 px-3 leading-normal no-underline bg-red-600 text-white hover:bg-red-700"
+                @click="removeItem(index)"
+              >
                 X
               </button>
             </td>
           </tr>
         </tbody>
       </table>
-      <hr>
+      <hr />
       <h3>Total: R${{ total }}</h3>
-      <hr>
-      <button id="button" class="inline-block align-middle text-center select-none border font-normal whitespace-no-wrap rounded py-1 px-3 leading-normal no-underline bg-green-500 text-white hover:green-600 w-full" @click="SendData">
+      <hr />
+      <button
+        id="button"
+        class="inline-block align-middle text-center select-none border font-normal whitespace-no-wrap rounded py-1 px-3 leading-normal no-underline bg-green-500 text-white hover:green-600 w-full"
+        @click="SendData"
+      >
         Salvar pedido
       </button>
     </div>

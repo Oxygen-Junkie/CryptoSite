@@ -1,5 +1,9 @@
 <script setup lang="ts">
-const props = defineProps<{ image01: string; image02: string; image03: string }>()
+const props = defineProps<{
+  image01: string
+  image02: string
+  image03: string
+}>()
 </script>
 
 <template>
@@ -11,13 +15,25 @@ const props = defineProps<{ image01: string; image02: string; image03: string }>
     >
       <div class="carousel-inner">
         <div class="carousel-item active">
-          <img :src="props.image01" class="block w-full carousel-image" alt="...">
+          <img
+            :src="props.image01"
+            class="block w-full carousel-image"
+            alt="..."
+          />
         </div>
         <div class="carousel-item">
-          <img :src="props.image02" class="block w-full carousel-image" alt="...">
+          <img
+            :src="props.image02"
+            class="block w-full carousel-image"
+            alt="..."
+          />
         </div>
         <div class="carousel-item">
-          <img :src="props.image03" class="block w-full carousel-image" alt="...">
+          <img
+            :src="props.image03"
+            class="block w-full carousel-image"
+            alt="..."
+          />
         </div>
       </div>
       <button

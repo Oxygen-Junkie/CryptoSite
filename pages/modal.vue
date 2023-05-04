@@ -43,7 +43,8 @@ const open = ref(false)
           <span
             class="hidden sm:inline-block sm:h-screen sm:align-middle"
             aria-hidden="true"
-          >&#8203;</span>
+            >&#8203;</span
+          >
           <TransitionChild
             as="template"
             enter="ease-out duration-300"

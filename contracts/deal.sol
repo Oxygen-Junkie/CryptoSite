@@ -65,6 +65,12 @@ contract Delivery {
         _;
     }
 
+    modifier onlyClient(uint _dealId) {
+        if ((msg.sender != deals[_dealId].seller) && (msg.sender != deals[_dealId].buyer))
+            revert OnlySeller();
+        _;
+    }
+
     modifier onlyOwner() {
         if (msg.sender != contractOwner)
             revert OnlyOwner();
@@ -116,12 +122,19 @@ contract Delivery {
         external
         inState(_dealId, State.Created)
         onlySeller(_dealId)
-        returns (string memory)
     {
         string memory code = Strings.toString(genCode());
         deals[_dealId].state = State.Agreed;
         deals[_dealId].code = code;
-        return code;
+    }
+
+    function getDealPayCode(uint _dealId) external view
+        inState(_dealId, State.Agreed)
+        onlySeller(_dealId)
+        returns (string memory)
+    {
+        
+        return deals[_dealId].code;
     }
 
     function deliverySuccessful(uint _dealId, string memory _code)
@@ -203,6 +216,11 @@ contract Delivery {
         return (deals[_dealId].place, deals[_dealId].time );
     }
 
+    function getDealState(uint _dealId) view external onlyClient(_dealId) returns(State) {
+
+        return deals[_dealId].state;
+    }
+
     function getDeals() external view returns (Deal[] memory) {
         Deal[]    memory de = new Deal[](dealCount);
         uint index = 0;
@@ -218,7 +236,7 @@ contract Delivery {
     function removeDeal(uint _dealId)
         external
         onlySeller(_dealId)
-        inState(_dealId, State.Archived)
+        notInState(_dealId, State.Agreed)
         
     {
         deals[_dealId].state = State.Removed;

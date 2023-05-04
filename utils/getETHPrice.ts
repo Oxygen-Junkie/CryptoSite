@@ -1,8 +1,8 @@
-import { ethers } from 'ethers'
+// eslint-disable-next-line import/named
+import { ethers } from 'hardhat'
 
 export async function getETHPrice() {
-  const provider = new
-  ethers.providers.JsonRpcProvider('RPC_URL_HERE')
+  const provider = new ethers.provider.JsonRpcProvider('RPC_URL_HERE')
 
   // This constant describes the ABI interface of the contract, which will provide the price of ETH
   // It looks like a lot, and it is, but this information is generated when we compile the contract
@@ -59,7 +59,11 @@ export async function getETHPrice() {
   // The address of the contract which will provide the price of ETH
   const addr = '0x8A753747A1Fa494EC906cE90E9f37563A8AF630e'
   // We create an instance of the contract which we can interact with
-  const priceFeed = new ethers.Contract(addr, aggregatorV3InterfaceABI, provider)
+  const priceFeed = new ethers.Contract(
+    addr,
+    aggregatorV3InterfaceABI,
+    provider
+  )
   // We get the data from the last round of the contract
   const roundData = await priceFeed.latestRoundData()
   // Determine how many decimals the price feed has (10**decimals)

@@ -20,7 +20,7 @@ const state = useStateStore()
     количестве ${deal.amount} шт.`
     }}
   </h4>
-  <h6>Сделка ожидает подтверждения</h6>
+  <h6>Сделка выполнена</h6>
   <p class="card-text text-muted">
     {{
       `Стоимость заказа ${Number(props.item.price)} $ что эквивалентно ${Number(
@@ -28,15 +28,6 @@ const state = useStateStore()
       ).toFixed(2)} Eth/Эфира.`
     }}
   </p>
-  <button
-    type="button"
-    class="btn rounded btn-danger w-50"
-    data-bs-toggle="modal"
-    data-bs-target="#exampleModal"
-    @click="state.sDealActions(sDealAction.Confirm, deal.id)"
-  >
-    Подтвердить сделку
-  </button>
   <button
     type="button"
     class="btn rounded btn-danger w-50"

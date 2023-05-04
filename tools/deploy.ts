@@ -15,14 +15,18 @@ async function main() {
 
   await deal.deployed()
 
-  console.log(`Deal with unlock timestamp ${unlockTime} deployed to ${deal.address}`)
+  console.log(
+    `Deal with unlock timestamp ${unlockTime} deployed to ${deal.address}`
+  )
 
   const storeFile = await ethers.getContractFactory('store')
   const store = await storeFile.deploy(salt)
 
   await store.deployed()
 
-  console.log(`Store with unlock timestamp ${unlockTime} deployed to ${store.address}`)
+  console.log(
+    `Store with unlock timestamp ${unlockTime} deployed to ${store.address}`
+  )
 }
 
 main()

@@ -3,6 +3,7 @@
 import ItemLimited from '~~/types/itemPublic'
 import Tag from '~~/types/tag'
 import { useStateStore } from '~~/store/state'
+import Container from '~~/components/container.vue'
 
 const pagingIndex = ref(1)
 const itemsOnPage: Ref<

@@ -1,6 +1,8 @@
 <script setup lang="ts">
 const props = defineProps<{ name: string }>()
-const link = computed(() => `https://source.unsplash.com/200x200/?${props.name}`)
+const link = computed(
+  () => `https://source.unsplash.com/200x200/?${props.name}`
+)
 </script>
 
 <template>
