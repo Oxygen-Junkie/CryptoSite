@@ -1,8 +1,7 @@
 <script setup lang="ts">
-const props = defineProps<{ name: string }>()
-const link = computed(
-  () => `https://source.unsplash.com/200x200/?${props.name}`
-)
+import Tag from '~~/types/tag'
+
+const props = defineProps<{ tag: Tag }>()
 </script>
 
 <template>
@@ -10,12 +9,12 @@ const link = computed(
     id="block"
     class="rounded text-center m-1"
     :style="{
-      backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.527),rgba(0, 0, 0, 0.5)) ,url(${link})`,
+      backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.527),rgba(0, 0, 0, 0.5)) ,url(${props.tag.imageURL})`,
     }"
   >
     <span />
     <h3 class="text-white">
-      {{ props.name }}
+      {{ props.tag.name }}
     </h3>
     <span />
   </div>

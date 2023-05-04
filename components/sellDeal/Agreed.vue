@@ -24,10 +24,6 @@ const state = useStateStore()
     Сделка согласована. Чтобы получить оплату покупателю необходимо сообщить код
     оплаты.
   </h6>
-  <h4>
-    <ion-icon name="cash-outline" />&nbsp; Активная сделка на продажу в
-    количестве 10 шт.
-  </h4>
   Код оплаты:<span class="text-danger">
     {{ `${state.getPayCode(deal.id)}` }}
   </span>

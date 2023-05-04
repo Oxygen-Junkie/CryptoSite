@@ -64,9 +64,9 @@ devDependencies:
   '@pinia/nuxt':
     specifier: ^0.4.9
     version: 0.4.9(typescript@5.0.4)(vue@3.2.47)
-  '@typechain/ethers-v5':
-    specifier: ^10.2.0
-    version: 10.2.0(@ethersproject/abi@5.7.0)(@ethersproject/bytes@5.7.0)(@ethersproject/providers@5.7.2)(ethers@6.3.0)(typechain@8.1.1)(typescript@5.0.4)
+  '@typechain/ethers-v6':
+    specifier: latest
+    version: 0.3.0(ethers@6.3.0)(typechain@8.1.1)(typescript@5.0.4)
   '@typechain/hardhat':
     specifier: ^6.1.5
     version: 6.1.5(@ethersproject/abi@5.7.0)(@ethersproject/providers@5.7.2)(@typechain/ethers-v5@10.2.0)(ethers@6.3.0)(hardhat@2.13.0)(typechain@8.1.1)
@@ -4060,6 +4060,20 @@ packages:
       typescript: 5.0.4
     dev: true
 
+  /@typechain/ethers-v6@0.3.0(ethers@6.3.0)(typechain@8.1.1)(typescript@5.0.4):
+    resolution: {integrity: sha512-/dYPGDqwyyb8FG0PEftOEegnB9OEJEfxaln+Z4c4nUfHcX5YEbl5Y/hKueA+oXTQdgJgBOiqksK8F+Bq+0tWIA==}
+    peerDependencies:
+      ethers: 6.x
+      typechain: ^8.1.1
+      typescript: '>=4.7.0'
+    dependencies:
+      ethers: 6.3.0
+      lodash: 4.17.21
+      ts-essentials: 7.0.3(typescript@5.0.4)
+      typechain: 8.1.1(typescript@5.0.4)
+      typescript: 5.0.4
+    dev: true
+
   /@typechain/hardhat@6.1.5(@ethersproject/abi@5.7.0)(@ethersproject/providers@5.7.2)(@typechain/ethers-v5@10.2.0)(ethers@6.3.0)(hardhat@2.13.0)(typechain@8.1.1):
     resolution: {integrity: sha512-lg7LW4qDZpxFMknp3Xool61Fg6Lays8F8TXdFGBG+MxyYcYU5795P1U2XdStuzGq9S2Dzdgh+1jGww9wvZ6r4Q==}
     peerDependencies:
@@ -4121,7 +4135,7 @@ packages:
   /@types/concat-stream@1.6.1:
     resolution: {integrity: sha512-eHE4cQPoj6ngxBZMvVf6Hw7Mh4jMW4U9lpGmS5GBPB9RYxlFg+CHaVN7ErNY4W9XfLIEn20b4VDYaIrbq0q4uA==}
     dependencies:
-      '@types/node': 8.10.66
+      '@types/node': 18.16.3
     dev: true
 
   /@types/debug@4.1.7:
@@ -4167,7 +4181,7 @@ packages:
   /@types/form-data@0.0.33:
     resolution: {integrity: sha512-8BSvG1kGm83cyJITQMZSulnl6QV8jqAGreJsc5tPu1Jq0vTSOiY/k24Wx82JRpWwZSqrala6sd5rWi6aNXvqcw==}
     dependencies:
-      '@types/node': 8.10.66
+      '@types/node': 18.16.3
     dev: true
 
   /@types/glob@7.2.0:
@@ -14979,7 +14993,7 @@ packages:
     resolution: {integrity: sha512-uWjbaKIK3T1OSVptzX7Nl6PvQ3qAGtKEtVRjRuazjfL3Bx5eI409VZSqgND+4UNnmzLVdPj9FqFJNPqBZFve4w==}
     hasBin: true
     dependencies:
-      glob: 7.2.0
+      glob: 7.2.3
     dev: true
 
   /rimraf@3.0.2:
@@ -17980,7 +17994,7 @@ packages:
       require-directory: 2.1.1
       string-width: 4.2.3
       y18n: 5.0.8
-      yargs-parser: 20.2.4
+      yargs-parser: 20.2.9
     dev: true
 
   /yargs@17.7.2:

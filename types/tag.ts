@@ -5,4 +5,5 @@ export default class Tag {
   id!: number
   name!: string
   items!: ItemPrivate | ItemPublic
+  imageURL!: string
 }

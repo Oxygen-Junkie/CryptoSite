@@ -79,7 +79,9 @@ export const useStateStore = defineStore('state', () => {
       } else {
         userAddress = user.cryptoAddress
       }
+      setDealLoader(true)
       dealProgram = Delivery__factory.connect(userContractAddress, provider)
+      setDealLoader(false)
     } catch (e) {
       setUserLoader(false)
       //console.log('e', e)
@@ -129,10 +131,12 @@ export const useStateStore = defineStore('state', () => {
   }
 
   async function updatePersonalInfo() {
+    setUserLoader(true)
     const res = await IPFS.add(JSON.stringify(user))
     await store.changeVaultItemHash(res.cid.toString())
     localStorage.removeItem('user')
     localStorage.setItem('user', JSON.stringify(user))
+    setUserLoader(false)
   }
 
   function setUserLoader(value: boolean) {
@@ -155,6 +159,7 @@ export const useStateStore = defineStore('state', () => {
   }
 
   async function updateItemList() {
+    setItemLoader(true)
     const publicRepItemHash = await store.getPublicVaultItemHash()
     const publicRepTagHash = await store.getPublicVaultTagHash()
     let itemData = ''
@@ -165,10 +170,7 @@ export const useStateStore = defineStore('state', () => {
     for await (const chunk of IPFS.cat(publicRepTagHash))
       tagData += chunk.toString()
     tagList = JSON.parse(tagData) as Tag[]
-  }
-
-  function getDealProgram() {
-    return dealProgram
+    setItemLoader(false)
   }
 
   function getItems() {
@@ -209,6 +211,7 @@ export const useStateStore = defineStore('state', () => {
       }
     })
     setDealLoader(false)
+    updatePersonalInfo()
   }
 
   async function bDealActions(
@@ -307,5 +310,6 @@ export const useStateStore = defineStore('state', () => {
     learnRendezvous,
     getPayCode,
     updatePersonalInfo,
+    updateItemList,
   }
 })

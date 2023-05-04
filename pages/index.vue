@@ -5,6 +5,8 @@ import Tag from '~~/types/tag'
 import { useStateStore } from '~~/store/state'
 import Container from '~~/components/container.vue'
 import { itemPaletteMode } from '~~/types/enums'
+import PagingLine from '~~/components/pagingLine.vue'
+import viewItemModal from '~~/components/modal/viewItemModal.vue'
 
 const pagingIndex = ref(1)
 
@@ -17,19 +19,15 @@ const itemsOnPage: Ref<
     items: ItemPublic[]
   }[]
 > = ref([])
-let content: Ref<{
+
+const state = useStateStore()
+const content: Ref<{
   itemList: ItemPublic[]
   tagList: Tag[]
-}>
-const state = useStateStore()
+}> =  ref(state.getItems())
 
-if (state.isUserLogged) {
-  state.connectWallet().then(() => {
-    content.value = state.getItems()
-    divideOnPages(content.value.itemList)
-  })
-  state.determineCurrency()
-}
+divideOnPages(content.value.itemList)
+
 function divideOnPages(content: ItemPublic[]) {
   if (content.length > 12) {
     let i = 0
@@ -49,14 +47,13 @@ function filterByTag(tag: Tag) {
 
 <template>
   <div id="home" class="container mx-auto mb-3">
-    <img src="https://source.unsplash.com/800x300/?Japan" class="w-100" />
+    <nuxt-img
+      src="https://source.unsplash.com/800x300/?Japan"
+      class="w-100"
+      loading="lazy"
+    />
     <Container>
-      <div v-if="!state.loadingUser" class="loading">
-        <div class="spinner-border" role="status">
-          <span class="visually-hidden">Загрузка...</span>
-        </div>
-      </div>
-      <div v-show="state.loadingUser" class="loaded">
+      <div class="loaded">
         <div class="row">
           <div class="col-md p-5">
             <h1>Здравствуйте! 👋</h1>
@@ -91,133 +88,70 @@ function filterByTag(tag: Tag) {
       </div>
     </div> -->
     <Container>
-      <h1><ion-icon name="apps-outline" /> Категории</h1>
-      <div v-if="!state.loadingItems" class="loading">
-        <div class="spinner-border" role="status">
-          <span class="visually-hidden">Loading...</span>
-        </div>
-      </div>
-      <div v-show="state.loadingItems" class="loaded">
+      <h1><ion-icon name="apps-outline" /> Тэги</h1>
+      <div class="loaded">
         <div class="row">
           <div class="wrapper">
             <div v-for="tag in content.tagList" :key="tag.id" class="col">
-              <Block :name="tag.name" @click="filterByTag(tag)" />
+              <Block :tag="tag" @click="filterByTag(tag)" />
             </div>
           </div>
         </div>
       </div>
     </Container>
     <Container>
-      <h1>
-        <ion-icon name="balloon-outline" /> Товары ({{
-          content.itemList.length
-        }})
-      </h1>
-      <div v-if="!state.loadingItems" class="loading">
-        <div class="spinner-border" role="status">
-          <span class="visually-hidden">Загрузка...</span>
-        </div>
+      <div class="inline-flex">
+        <h1>
+          <ion-icon name="balloon-outline" /> Товары ({{
+            content.itemList.length
+          }})
+        </h1>
+        <button
+          type="button"
+          class="btn rounded btn-green w-50"
+          @click="state.updateItemList()"
+        >
+          Обновить перечень
+        </button>
       </div>
-      <div v-show="state.loadingItems">
+
+      <div>
         <div class="row">
           <div
             v-for="product in itemsOnPage[pagingIndex].items"
             :key="product.id"
             class="col-md-3"
           >
-            <Card :item="product" :mode="itemPaletteMode.inGeneral" />
+            <Card
+              data-modal-target="viewItem-modal"
+              data-modal-toggle="viewItem-modal"
+              :item="product"
+              :mode="itemPaletteMode.inGeneral"
+            />
           </div>
         </div>
-        <nav
-          v-if="itemsOnPage.length < 2"
-          class="isolate inline-flex -space-x-px rounded-md shadow-sm"
-          aria-label="Pagination"
-        >
-          <a
-            href="#"
-            class="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
-          >
-            <span class="sr-only">Прошлая</span>
-            <svg
-              class="h-5 w-5"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-              aria-hidden="true"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z"
-                clip-rule="evenodd"
-              />
-            </svg>
-          </a>
-          <!-- Current: "z-10 bg-indigo-600 text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600", Default: "text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:outline-offset-0" -->
-          <a
-            v-if="pagingIndex > 2"
-            href="#"
-            aria-current="page"
-            class="relative z-10 inline-flex items-center bg-indigo-600 px-4 py-2 text-sm font-semibold text-white focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-            @click="pagingIndex = 0"
-            >1</a
-          >
-          <a
-            v-if="itemsOnPage[pagingIndex - 2]"
-            href="#"
-            class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
-            @click="pagingIndex -= 2"
-            >{{ pagingIndex - 1 }}</a
-          >
-          <a
-            v-if="itemsOnPage[pagingIndex - 1]"
-            href="#"
-            class="relative hidden items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 md:inline-flex"
-            @click="pagingIndex -= 1"
-            >{{ pagingIndex }}</a
-          >
-          <span
-            class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-700 ring-1 ring-inset ring-gray-300 focus:outline-offset-0"
-            >...</span
-          >
-          // eslint-disable-next-line vue/no-parsing-error
-          <a
-            href="#"
-            class="relative hidden items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 md:inline-flex"
-            >{{ pagingIndex + 1 }}</a
-          >
-          // eslint-disable-next-line vue/no-parsing-error
-          <a
-            href="#"
-            class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
-            @click="pagingIndex + 1"
-            >{{ pagingIndex + 2 }}</a
-          >
-          <a
-            href="#"
-            class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
-            @click="pagingIndex = Number(itemsOnPage.lastIndexOf)"
-            >{{ Number(itemsOnPage?.lastIndexOf) + 1 }}</a
-          >
-          <a
-            href="#"
-            class="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
-          >
-            <span class="sr-only">Следующая</span>
-            <svg
-              class="h-5 w-5"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-              aria-hidden="true"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z"
-                clip-rule="evenodd"
-              />
-            </svg>
-          </a>
-        </nav>
+        <PagingLine
+          :paging-index="pagingIndex"
+          :items-on-page="itemsOnPage"
+          @change-page-by="
+            (pagingIndexDif) => {
+              pagingIndex += pagingIndexDif
+            }
+          "
+          @change-page-to="
+            (pagingIndexEq) => {
+              pagingIndex = pagingIndexEq
+            }
+          "
+        />
         <p v-if="content.itemList.length < 1">Список доступных товаров пуст</p>
       </div>
     </Container>
   </div>
+  <viewItemModal
+    id="viewItem-modal"
+    tabindex="-1"
+    aria-hidden="true"
+    class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full"
+  />
 </template>

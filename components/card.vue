@@ -11,19 +11,15 @@ const props = defineProps<{
 
 const state = useStateStore()
 const currency = state.getCurrency()
-
-function view() {
-  if (props.mode === itemPaletteMode.inGeneral) {
-  }
-}
 </script>
 
 <template>
-  <div class="card border-0 w-100" @click="view">
-    <img
+  <div class="card border-0 w-100">
+    <nuxt-img
       :src="`https://ipfs.io/ipfs/${item.imageCID}`"
       class="card-img-top"
       :alt="`Image of ${item.name}`"
+      loading="lazy"
     />
     <div class="card-body">
       <h5 class="card-title">
