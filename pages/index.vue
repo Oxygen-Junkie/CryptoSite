@@ -40,8 +40,7 @@ function divideOnPages(content: ItemPublic[]) {
 
 function filterByTag(tag: Tag) {
   divideOnPages(
-    content.value.itemList.filter((value) => value.tag.includes(tag))
-  )
+    tag.items as ItemPublic[])
 }
 </script>
 
