@@ -1,7 +1,5 @@
 <template>
-  <footer class="text-center p-6">
-    Criado por Matheus Manzoli | @manzolimatheus - 2021
-  </footer>
+  <footer class="text-center p-6">СГТУ | @Oxygen-Junkie - 2023</footer>
 </template>
 
 <style>

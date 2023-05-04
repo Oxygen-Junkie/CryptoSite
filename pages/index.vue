@@ -1,18 +1,24 @@
 <!-- eslint-disable prettier/prettier -->
 <script setup lang="ts">
-import ItemLimited from '~~/types/itemPublic'
+import ItemPublic from '~~/types/itemPublic'
 import Tag from '~~/types/tag'
 import { useStateStore } from '~~/store/state'
 import Container from '~~/components/container.vue'
+import { itemPaletteMode } from '~~/types/enums'
 
 const pagingIndex = ref(1)
+
+definePageMeta({
+  layout: 'default',
+})
+
 const itemsOnPage: Ref<
   {
-    items: ItemLimited[]
+    items: ItemPublic[]
   }[]
 > = ref([])
 let content: Ref<{
-  itemList: ItemLimited[]
+  itemList: ItemPublic[]
   tagList: Tag[]
 }>
 const state = useStateStore()
@@ -24,7 +30,7 @@ if (state.isUserLogged) {
   })
   state.determineCurrency()
 }
-function divideOnPages(content: ItemLimited[]) {
+function divideOnPages(content: ItemPublic[]) {
   if (content.length > 12) {
     let i = 0
     content.forEach((element, index) => {
@@ -34,9 +40,9 @@ function divideOnPages(content: ItemLimited[]) {
   }
 }
 
-function filterByTag(id: number) {
+function filterByTag(tag: Tag) {
   divideOnPages(
-    content.value.itemList.filter((value) => value.tagIds.includes(id))
+    content.value.itemList.filter((value) => value.tag.includes(tag))
   )
 }
 </script>
@@ -47,7 +53,7 @@ function filterByTag(id: number) {
     <Container>
       <div v-if="!state.loadingUser" class="loading">
         <div class="spinner-border" role="status">
-          <span class="visually-hidden">Loading...</span>
+          <span class="visually-hidden">Загрузка...</span>
         </div>
       </div>
       <div v-show="state.loadingUser" class="loaded">
@@ -95,7 +101,7 @@ function filterByTag(id: number) {
         <div class="row">
           <div class="wrapper">
             <div v-for="tag in content.tagList" :key="tag.id" class="col">
-              <Block :name="tag.name" @click="filterByTag(tag.id)" />
+              <Block :name="tag.name" @click="filterByTag(tag)" />
             </div>
           </div>
         </div>
@@ -109,7 +115,7 @@ function filterByTag(id: number) {
       </h1>
       <div v-if="!state.loadingItems" class="loading">
         <div class="spinner-border" role="status">
-          <span class="visually-hidden">Loading...</span>
+          <span class="visually-hidden">Загрузка...</span>
         </div>
       </div>
       <div v-show="state.loadingItems">
@@ -119,12 +125,7 @@ function filterByTag(id: number) {
             :key="product.id"
             class="col-md-3"
           >
-            <Card
-              :id="product.id"
-              :image="product.imageCID"
-              :name="product.name"
-              :price="product.price"
-            />
+            <Card :item="product" :mode="itemPaletteMode.inGeneral" />
           </div>
         </div>
         <nav
@@ -136,7 +137,7 @@ function filterByTag(id: number) {
             href="#"
             class="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
           >
-            <span class="sr-only">Previous</span>
+            <span class="sr-only">Прошлая</span>
             <svg
               class="h-5 w-5"
               viewBox="0 0 20 20"
@@ -200,7 +201,7 @@ function filterByTag(id: number) {
             href="#"
             class="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
           >
-            <span class="sr-only">Next</span>
+            <span class="sr-only">Следующая</span>
             <svg
               class="h-5 w-5"
               viewBox="0 0 20 20"
@@ -215,7 +216,7 @@ function filterByTag(id: number) {
             </svg>
           </a>
         </nav>
-        <p v-if="content.itemList.length < 1">List of Items is empty</p>
+        <p v-if="content.itemList.length < 1">Список доступных товаров пуст</p>
       </div>
     </Container>
   </div>

@@ -2,7 +2,7 @@
 import { useStateStore } from '~~/store/state'
 import dealPalette from '~~/components/dealPalette.vue'
 import container from '~~/components/container.vue'
-import { dealPaletteMode } from '~~/types/enums'
+import { dealPaletteMode, itemPaletteMode } from '~~/types/enums'
 import Deal from '~~/types/deal'
 import ItemPublic from '~~/types/itemPublic'
 import card from '~~/components/card.vue'
@@ -34,12 +34,7 @@ store.user.buyDeals?.forEach((valued) => {
   >
     <div class="row">
       <div class="col-md-3">
-        <card
-          :id="itemDeal.item.id"
-          :image="itemDeal.item.imageCID"
-          :name="itemDeal.item.name"
-          :price="itemDeal.item.price"
-        />
+        <card :item="itemDeal.item" :mode="itemPaletteMode.inDeal" />
       </div>
     </div>
     <dealPalette

@@ -306,5 +306,6 @@ export const useStateStore = defineStore('state', () => {
     user,
     learnRendezvous,
     getPayCode,
+    updatePersonalInfo,
   }
 })
