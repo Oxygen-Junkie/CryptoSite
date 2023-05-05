@@ -9,7 +9,12 @@ const props = defineProps<{
   deal: Deal
 }>()
 
+const place = ref()
 const state = useStateStore()
+
+function confirmDeal() {
+  state.sDealActions(sDealAction.Confirm, deal.id, )
+}
 </script>
 
 <template>
@@ -28,6 +33,24 @@ const state = useStateStore()
       ).toFixed(2)} Eth/Эфира.`
     }}
   </p>
+  <small class="block mb-2 font-light text-gray-500 dark:text-white"
+    >Перед продажей проверьте
+  </small>
+  <p class="card-text text-muted">
+    Место
+    <input type="text" v-model="place" class="w-50" :placeholder="props.item.defaultPlace" />
+    &nbsp; Время
+    <VueDatePicker
+      :min-date="minDate"
+      :max-date="maxDate"
+      :range-presets="presets"
+      range
+      fullscreen-mobile
+      :locale="{ lang: 'ru' }"
+      validate
+    />
+  </p>
+
   <button
     type="button"
     class="btn rounded btn-danger w-50"

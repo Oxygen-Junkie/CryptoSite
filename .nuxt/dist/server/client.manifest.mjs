@@ -1,1 +1,1 @@
-export { default } from "file:///C:/Users/FarmUser/Desktop/Web3-Starter-Template/node_modules/.pnpm/@nuxt+vite-builder@3.3.2_@types+node@18.11.12_eslint@8.39.0_sass@1.62.1_typescript@5.0.4_vue-tsc@1.6.3_vue@3.2.47/node_modules/@nuxt/vite-builder/dist/runtime/client.manifest.mjs"
+export { default } from "file:///C:/Users/FarmUser/Desktop/CryptoSite/node_modules/.pnpm/@nuxt+vite-builder@3.4.3_@types+node@18.16.3_eslint@8.39.0_sass@1.62.1_typescript@5.0.4_vue-tsc@1.6.3_vue@3.2.47/node_modules/@nuxt/vite-builder/dist/runtime/client.manifest.mjs"

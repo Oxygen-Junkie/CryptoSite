@@ -5,12 +5,13 @@ import { dealPaletteMode, itemPaletteMode } from '~~/types/enums'
 import ItemPrivate from '~~/types/itemPrivate'
 import PagingLine from '~~/components/pagingLine.vue'
 import addItemModal from '~/components/modal/addItemModal.vue'
+import itemPublic from '~~/types/itemPublic'
 
 const store = useStateStore()
 if (store.isUserLogged) navigateTo('/')
 
 const pagingIndex = ref(1)
-const itemDeals: Ref<{ item: ItemPrivate; deals: Deal[] }[]> = ref([])
+const itemDeals: Ref<{ item: itemPublic; deals: Deal[] }[]> = ref([])
 
 store.user.sellDeals?.forEach((valued) => {
   const t = itemDeals.value?.findIndex((value) => value.item === valued.item)

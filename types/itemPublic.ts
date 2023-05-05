@@ -13,5 +13,6 @@ export default class ItemPublic {
   seller!: string
   sellerReputation!: reputation
   defaultPlace!: string
-  defaultTime!: string
+  schedule!: Date[]
+  hidden!: boolean
 }

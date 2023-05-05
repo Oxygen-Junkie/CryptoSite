@@ -16,20 +16,26 @@ const currency = state.getCurrency()
 <template>
   <div class="card border-0 w-100">
     <nuxt-img
-      :src="`https://ipfs.io/ipfs/${item.imageCID}`"
+      :src="`https://ipfs.io/ipfs/${props.item.imageCID}`"
       class="card-img-top"
-      :alt="`Image of ${item.name}`"
+      :alt="`Image of ${props.item.name}`"
       loading="lazy"
     />
     <div class="card-body">
       <h5 class="card-title">
-        <p class="text-truncate">{{ item.name }}</p>
-        <p class="badge bg-success">${{ item.price }}</p>
+        <p class="text-truncate">{{ props.item.name }}</p>
+        <p class="badge bg-success">
+          {{
+            `${props.item.price}$ или ${Number(
+              props.item.price / currency.eth
+            ).toFixed(2)}eth`
+          }}
+        </p>
       </h5>
       <p class="card-text text-muted">
         {{
-          `${item.tag[1].name}${
-            item.tag[2].name ? `, ${item.tag[2].name}...` : `...`
+          `${props.item.tag[1].name}${
+            props.item.tag[2].name ? `, ${props.item.tag[2].name}...` : `...`
           }`
         }}
       </p>

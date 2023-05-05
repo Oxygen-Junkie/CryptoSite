@@ -1,4 +1,4 @@
-import { NuxtModule } from 'nuxt/schema'
+import { NuxtModule, RuntimeConfig } from 'nuxt/schema'
 declare module 'nuxt/schema' {
   interface NuxtConfig {
     ["intlify"]?: typeof import("@intlify/nuxt3").default extends NuxtModule<infer O> ? Partial<O> : Record<string, any>
@@ -249,3 +249,13 @@ declare module 'nuxt/schema' {
    },
   }
 }
+declare module 'vue' {
+        interface ComponentCustomProperties {
+          $config: RuntimeConfig
+        }
+      }
+declare module '@vue/runtime-dom' {
+        interface ComponentCustomProperties {
+          $config: RuntimeConfig
+        }
+      }

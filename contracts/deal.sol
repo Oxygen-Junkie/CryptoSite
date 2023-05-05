@@ -21,6 +21,7 @@ contract Delivery {
         State state;
         string itemId;
         string place;
+        string schedule;
         string time;
     }
 
@@ -34,10 +35,10 @@ contract Delivery {
 
     }
 
-    function addDeal(string memory _itemId, address _seller, uint _amount, string memory _place, string memory _time) payable public {
+    function addDeal(string memory _itemId, address _seller, uint _amount, string memory _place, string memory _schedule) payable public {
         uint loc_value = msg.value;
         payable(contractOwner).transfer(loc_value);
-        deals[dealCount] = Deal(dealCount,loc_value,_amount,"H",msg.sender,_seller,State.Created,_itemId, _place, _time);
+        deals[dealCount] = Deal(dealCount,loc_value,_amount,"H",msg.sender,_seller,State.Created,_itemId, _place, _schedule, '');
         emit DeliveryAddedEvent(msg.sender, _seller, dealCount);
         dealCount++;
     }
@@ -118,7 +119,7 @@ contract Delivery {
         deals[_dealId].state = State.Aborted;
     }
 
-    function confirmDeal(uint _dealId)
+    function confirmDeal(uint _dealId, string memory _schedule)
         external
         inState(_dealId, State.Created)
         onlySeller(_dealId)
@@ -126,6 +127,7 @@ contract Delivery {
         string memory code = Strings.toString(genCode());
         deals[_dealId].state = State.Agreed;
         deals[_dealId].code = code;
+        deals[_dealId].schedule = _schedule;
     }
 
     function getDealPayCode(uint _dealId) external view
@@ -209,6 +211,11 @@ contract Delivery {
         deals[_dealId].time = _time;
 
         return true;
+    }
+
+    function getSchedule(uint _dealId) view external onlySeller(_dealId) returns(string memory p) {
+
+        return deals[_dealId].schedule;
     }
 
     function getRendezvous(uint _dealId) view external onlyBuyer(_dealId) returns(string memory p, string memory t) {

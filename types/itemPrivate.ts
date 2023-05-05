@@ -11,7 +11,8 @@ export default class ItemPrivate {
   description!: string
   producer!: string
   defaultPlace!: string
-  defaultTime!: string
+  schedule!: Date[]
+  hidden!: boolean
 
   constructor(
     name: string,
@@ -19,7 +20,9 @@ export default class ItemPrivate {
     availability: number,
     price: number,
     description: string,
-    producer: string
+    producer: string,
+    defaultPlace: string,
+    schedule: Date[]
   ) {
     this.id = uuidv4()
     this.name = name
@@ -28,6 +31,8 @@ export default class ItemPrivate {
     this.price = price
     this.producer = producer
     this.description = description
+    this.defaultPlace = defaultPlace
+    this.schedule = schedule
   }
 
   notEmpty() {
@@ -36,20 +41,23 @@ export default class ItemPrivate {
 
     if (this.name === '') {
       message += '"Название" '
-    } else if (this.tag.length === 0) {
+    } else if (this.tag.length < 1) {
       message += '"Тэги" '
-    } else if (this.availability === 0) {
-      message += '"В наличии" '
-    } else if (this.price === 0) {
-      message += '"Цена" '
+    } else if (this.availability < 0 && !Number.isInteger(this.availability)) {
+      message += '"Количество предметов на продажу" '
+    } else if (this.price < 0 && !Number.isInteger(this.price * 100)) {
+      message += '"Цена за один предмет" '
     } else if (this.producer === '') {
       message += '"Производитель" '
+    } else if (this.defaultPlace === '') {
+      message += '"Место совершения сделки" '
+    } else if (this.schedule.length < 1) {
+      message += '"График совершения сделки" '
     } else if (this.description === '') {
       message += '"Описание" '
     } else {
       correct = true
     }
-    message += 'не заданы'
     return { correct, message }
   }
 }

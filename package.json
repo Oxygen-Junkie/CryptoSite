@@ -95,6 +95,7 @@
   },
   "packageManager": "pnpm@8.4.0",
   "dependencies": {
+    "@vuepic/vue-datepicker": "^5.0.1",
     "vue-picture-input": "^2.4.0"
   }
 }
