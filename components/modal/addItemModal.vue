@@ -1,9 +1,49 @@
+<script setup lang="ts">
+import PictureInput from 'vue-picture-input'
+import { useStateStore } from '~~/store/state'
+import ItemPrivate from '~~/types/itemPrivate'
+
+const newItem: Ref<ItemPrivate> = ref(new ItemPrivate('', [], 0, 0, '', ''))
+const store = useStateStore()
+const tags = ref(store.getItems().tagList)
+let uploadedImage: null
+
+function postItem() {
+  const check = newItem.value.notEmpty()
+  if (check.correct || uploadedImage) {
+    store.addItem(newItem.value)
+  } else {
+  }
+}
+
+function onChange(image: any) {
+  if (image) {
+    uploadedImage = image
+  }
+}
+</script>
+
 <template>
   <modal>
     <h3 class="mb-4 text-xl font-medium text-gray-900 dark:text-white">
       Sign in to our platform
     </h3>
-    <form class="space-y-6" action="#">
+    <form class="space-y-6" @submit.prevent="postItem">
+      <picture-input
+        ref="pictureInput"
+        width="600"
+        height="600"
+        margin="16"
+        accept="image/jpeg,image/png"
+        size="10"
+        button-class="btn"
+        :custom-strings="{
+          upload: '<h1>Загружено!</h1>',
+          drag: 'Переместите сюда изображения товара',
+        }"
+        @change="onChange"
+      >
+      </picture-input>
       <div>
         <label
           for="email"
@@ -14,7 +54,7 @@
           id="email"
           type="email"
           name="email"
-          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-red-500 focus:border-red-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
           placeholder="name@company.com"
           required
         />
@@ -30,7 +70,7 @@
           type="password"
           name="password"
           placeholder="••••••••"
-          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-red-500 focus:border-red-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
           required
         />
       </div>
@@ -41,7 +81,7 @@
               id="remember"
               type="checkbox"
               value=""
-              class="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-600 dark:border-gray-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800"
+              class="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-red-300 dark:bg-gray-600 dark:border-gray-500 dark:focus:ring-red-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800"
               required
             />
           </div>
@@ -53,19 +93,19 @@
         </div>
         <a
           href="#"
-          class="text-sm text-blue-700 hover:underline dark:text-blue-500"
+          class="text-sm text-red-700 hover:underline dark:text-red-500"
           >Lost Password?</a
         >
       </div>
       <button
         type="submit"
-        class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+        class="w-full text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
       >
         Login to your account
       </button>
       <div class="text-sm font-medium text-gray-500 dark:text-gray-300">
         Not registered?
-        <a href="#" class="text-blue-700 hover:underline dark:text-blue-500"
+        <a href="#" class="text-red-700 hover:underline dark:text-red-500"
           >Create account</a
         >
       </div>
@@ -99,7 +139,7 @@
             >
             <input
               id="name"
-              v-model="name"
+              v-model="newItem.name"
               type="text"
               class="form-control"
               required

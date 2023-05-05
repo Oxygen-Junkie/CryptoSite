@@ -107,14 +107,20 @@ export const useStateStore = defineStore('state', () => {
   async function addItem(item: ItemPrivate, image: any) {
     setUserLoader(true)
     try {
+      const pubItem = await personalToPublic(item)
+
+      item.tag.forEach((value) => {
+        value.items.push(pubItem)
+      })
+
       //https://ipfs.io/ipfs/${cid}`
       const res = await IPFS.add(JSON.stringify(image))
       item.imageCID = res.cid.toString()
       user.postedItems?.push(item)
       updatePersonalInfo()
       await updateItemList()
-      itemList.push(await personalToPublic(item))
-
+      itemList.push(pubItem)
+      updateTags(item.tag)
       store.changePublicVaultItemHash(
         (await IPFS.add(JSON.stringify(itemList))).cid.toString()
       )
@@ -170,6 +176,21 @@ export const useStateStore = defineStore('state', () => {
     for await (const chunk of IPFS.cat(publicRepTagHash))
       tagData += chunk.toString()
     tagList = JSON.parse(tagData) as Tag[]
+    setItemLoader(false)
+  }
+
+  async function updateTags(changedTags: Tag[]) {
+    setItemLoader(true)
+    let temp: Tag | undefined
+    tagList.forEach((value) => {
+      temp = changedTags.find((val) => val.id === value.id)
+      if (temp) {
+        value.items = temp.items
+      }
+    })
+    store.changePublicVaultTagHash(
+      (await IPFS.add(JSON.stringify(tagList))).cid.toString()
+    )
     setItemLoader(false)
   }
 
