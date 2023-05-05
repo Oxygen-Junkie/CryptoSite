@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useStateStore } from '~~/store/state'
 import Deal from '~~/types/deal'
-import { bDealAction } from '~~/types/enums'
+import { bDealAction, dealState } from '~~/types/enums'
 import ItemPublic from '~~/types/itemPublic'
 
 const props = defineProps<{
@@ -9,7 +9,20 @@ const props = defineProps<{
   deal: Deal
 }>()
 
+const emit = defineEmits<{
+  (event: 'dealt', dealState: dealState): void
+}>()
+
 const state = useStateStore()
+
+function abortDeal() {
+  state
+    .bDealActions(bDealAction.Abort, props.deal.id)
+    .then(() => {
+      emit('dealt', dealState.Aborted)
+    })
+    .catch(() => {})
+}
 </script>
 
 <template>
@@ -33,7 +46,7 @@ const state = useStateStore()
     class="btn rounded btn-danger w-50"
     data-bs-toggle="modal"
     data-bs-target="#exampleModal"
-    @click="state.bDealActions(bDealAction.Abort, deal.id)"
+    @click="abortDeal()"
   >
     Отменить сделку
   </button>

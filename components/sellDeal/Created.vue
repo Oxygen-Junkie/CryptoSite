@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useStateStore } from '~/store/state'
 import type Deal from '~/types/deal'
-import { sDealAction } from '~/types/enums'
+import { sDealAction, dealState } from '~/types/enums'
 import type ItemPrivate from '~/types/itemPrivate'
 
 const props = defineProps<{
@@ -9,11 +9,36 @@ const props = defineProps<{
   deal: Deal
 }>()
 
-const place = ref()
+const emit = defineEmits<{
+  (event: 'dealt', dealState: dealState): void
+}>()
+
+const place = ref('')
+const time: Ref<Date | undefined> = ref()
+const message = ref('')
+
 const state = useStateStore()
 
 function confirmDeal() {
-  state.sDealActions(sDealAction.Confirm, deal.id, )
+  if (time.value) {
+    state
+      .sDealActions(sDealAction.Confirm, props.deal.id, place.value, time.value)
+      .then(() => {
+        emit('dealt', dealState.Agreed)
+      })
+      .catch(() => {})
+  } else {
+    message.value = 'Установите время сделки'
+  }
+}
+
+function removeDeal() {
+  state
+    .sDealActions(sDealAction.Remove, props.deal.id)
+    .then(() => {
+      emit('dealt', dealState.Removed)
+    })
+    .catch(() => {})
 }
 </script>
 
@@ -22,7 +47,7 @@ function confirmDeal() {
     <ion-icon name="chevron-forward-outline" />&nbsp;
     {{
       `Продажа товара ${item.name} в
-    количестве ${deal.amount} шт.`
+    количестве ${props.deal.amount} шт.`
     }}
   </h4>
   <h6>Сделка ожидает подтверждения</h6>
@@ -38,25 +63,34 @@ function confirmDeal() {
   </small>
   <p class="card-text text-muted">
     Место
-    <input type="text" v-model="place" class="w-50" :placeholder="props.item.defaultPlace" />
+    <input
+      v-model="place"
+      type="text"
+      class="w-50"
+      :placeholder="props.deal.place"
+    />
     &nbsp; Время
     <VueDatePicker
-      :min-date="minDate"
-      :max-date="maxDate"
-      :range-presets="presets"
-      range
-      fullscreen-mobile
-      :locale="{ lang: 'ru' }"
-      validate
+      v-model="time"
+      :min-date="new Date()"
+      locale="ru"
+      :allowed-dates="props.deal.schedule"
     />
   </p>
+
+  <div
+    v-if="message"
+    class="relative px-3 py-3 mb-4 border rounded text-red-darker border-red-dark bg-red-lighter"
+  >
+    {{ message }}
+  </div>
 
   <button
     type="button"
     class="btn rounded btn-danger w-50"
     data-bs-toggle="modal"
     data-bs-target="#exampleModal"
-    @click="state.sDealActions(sDealAction.Confirm, deal.id)"
+    @click="confirmDeal()"
   >
     Подтвердить сделку
   </button>
@@ -65,7 +99,7 @@ function confirmDeal() {
     class="btn rounded btn-danger w-50"
     data-bs-toggle="modal"
     data-bs-target="#exampleModal"
-    @click="state.sDealActions(sDealAction.Remove, deal.id)"
+    @click="removeDeal()"
   >
     Удалить сделку
   </button>

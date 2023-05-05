@@ -1,7 +1,7 @@
 
 import type { CustomAppConfig } from 'nuxt/schema'
 import type { Defu } from 'defu'
-import cfg0 from "C:/Users/FarmUser/Desktop/CryptoSite/app.config"
+import cfg0 from "C:/Users/Эксплотатор/Desktop/CryptoSite/app.config"
 
 declare const inlineConfig = {}
 type ResolvedAppConfig = Defu<typeof inlineConfig, [typeof cfg0]>

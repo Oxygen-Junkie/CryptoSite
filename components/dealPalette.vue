@@ -1,14 +1,4 @@
 <script setup lang="ts">
-import aborted from './buyDeal/aborted.vue'
-import archived from './buyDeal/archived.vue'
-import agreed from './buyDeal/agreed.vue'
-import complete from './buyDeal/complete.vue'
-import created from './buyDeal/created.vue'
-import Aborted from './sellDeal/aborted.vue'
-import Archived from './sellDeal/archived.vue'
-import Agreed from './sellDeal/agreed.vue'
-import Complete from './sellDeal/complete.vue'
-import Created from './sellDeal/created.vue'
 import Container from '~~/components/container.vue'
 import { useStateStore } from '~~/store/state'
 import Deal from '~~/types/deal'
@@ -28,57 +18,84 @@ const currency = state.getCurrency()
 
 <template>
   <Container v-if="props.mode === dealPaletteMode.buyDeal">
-    <aborted
-      v-if="deal.state === dealState.Aborted"
-      :deal="deal"
+    <BuyDealAborted
+      v-if="props.deal.state === dealState.Aborted"
+      :deal="props.deal"
       :item="(item as ItemPublic)"
+      @dealt="(dealState: dealState) => {
+        state.scanDeals()
+      }"
     />
-    <archived
-      v-else-if="deal.state === dealState.Archived"
-      :deal="deal"
+    <BuyDealArchived
+      v-else-if="props.deal.state === dealState.Archived"
+      :deal="props.deal"
       :item="(item as ItemPublic)"
+      @dealt="(dealState: dealState) => {
+        state.scanDeals()
+      }"
     />
-    <agreed
-      v-else-if="deal.state === dealState.Agreed"
-      :deal="deal"
+    <BuyDealAgreed
+      v-else-if="props.deal.state === dealState.Agreed"
+      :deal="props.deal"
       :item="(item as ItemPublic)"
+      @dealt="(dealState: dealState) => {
+        state.scanDeals()
+      }"
     />
-    <complete
-      v-else-if="deal.state === dealState.Complete"
-      :deal="deal"
+    <BuyDealComplete
+      v-else-if="props.deal.state === dealState.Complete"
+      :deal="props.deal"
       :item="(item as ItemPublic)"
+      @dealt="(dealState: dealState) => {
+        state.scanDeals()
+      }"
     />
-    <created
-      v-else-if="deal.state === dealState.Created"
-      :deal="deal"
+    <BuyDealCreated
+      v-else-if="props.deal.state === dealState.Created"
+      :deal="props.deal"
       :item="(item as ItemPublic)"
+      @dealt="(dealState: dealState) => {
+        state.scanDeals()
+      }"
     />
   </Container>
   <Container v-if="props.mode === dealPaletteMode.sellDeal">
-    <Aborted
-      v-if="deal.state === dealState.Aborted"
-      :deal="deal"
+    <SellDealAborted
+      v-if="props.deal.state === dealState.Aborted"
+      :deal="props.deal"
       :item="(item as ItemPrivate)"
     />
-    <Archived
-      v-else-if="deal.state === dealState.Archived"
-      :deal="deal"
+    <SellDealArchived
+      v-else-if="props.deal.state === dealState.Archived"
+      :deal="props.deal"
       :item="(item as ItemPrivate)"
+      @dealt="(dealState: dealState) => {
+        state.scanDeals()
+      }"
     />
-    <Agreed
-      v-else-if="deal.state === dealState.Agreed"
-      :deal="deal"
+    <SellDealAgreed
+      v-else-if="props.deal.state === dealState.Agreed"
+      :deal="props.deal"
       :item="(item as ItemPrivate)"
+      @dealt="(dealState: dealState) => {
+        state.scanDeals()
+      }"
     />
-    <Complete
-      v-else-if="deal.state === dealState.Complete"
-      :deal="deal"
+    <SellDealComplete
+      v-else-if="props.deal.state === dealState.Complete"
+      :deal="props.deal"
       :item="(item as ItemPrivate)"
+      @dealt="(dealState: dealState) => {
+        state.scanDeals()
+      }"
     />
-    <Created
-      v-else-if="deal.state === dealState.Created"
-      :deal="deal"
+    <SellDealCreated
+      v-else-if="props.deal.state === dealState.Created"
+      :deal="props.deal"
       :item="(item as ItemPrivate)"
+      @dealt="(dealState: dealState) => {
+        state.scanDeals()
+      }"
     />
   </Container>
 </template>

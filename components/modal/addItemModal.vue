@@ -10,11 +10,14 @@ const store = useStateStore()
 const tags = ref(store.getItems().tagList)
 let uploadedImage: {} | null
 const message = ref('')
+const added = ref(false)
 
 function postItem() {
   const check = newItem.value.notEmpty()
   if (check.correct || uploadedImage) {
-    store.addItem(newItem.value, uploadedImage)
+    store.addItem(newItem.value, uploadedImage).then(() => {
+      added.value = true
+    })
   } else {
     message.value += check.message
     if (!uploadedImage) {
@@ -189,7 +192,7 @@ function onChange(image: {}) {
             />
             &nbsp; График совершения сделки
             <VueDatePicker
-              v-model="newItem.preferredTime"
+              v-model="newItem.schedule"
               :min-date="new Date()"
               multi-dates
               locale="ru"
@@ -210,6 +213,16 @@ function onChange(image: {}) {
         </button>
       </form>
     </div>
-    <div v-else></div>
+    <div v-else>
+      <h3 class="mb-4 text-xl font-medium text-gray-900 dark:text-white">
+        Товар успешно размещён
+      </h3>
+      <button
+        type="submit"
+        class="w-full text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
+      >
+        Ок
+      </button>
+    </div>
   </modal>
 </template>

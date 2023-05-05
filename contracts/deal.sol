@@ -119,7 +119,7 @@ contract Delivery {
         deals[_dealId].state = State.Aborted;
     }
 
-    function confirmDeal(uint _dealId, string memory _schedule)
+    function confirmDeal(uint _dealId, string memory _time, string memory _place)
         external
         inState(_dealId, State.Created)
         onlySeller(_dealId)
@@ -127,7 +127,8 @@ contract Delivery {
         string memory code = Strings.toString(genCode());
         deals[_dealId].state = State.Agreed;
         deals[_dealId].code = code;
-        deals[_dealId].schedule = _schedule;
+        deals[_dealId].time = _time;
+        deals[_dealId].place = _place;
     }
 
     function getDealPayCode(uint _dealId) external view
@@ -171,7 +172,7 @@ contract Delivery {
     {
         emit ProductIsNotWhatWasPromised(contractOwner, deals[_dealId].seller, deals[_dealId].itemId, _complaint);
         
-        deals[_dealId].state = State.Created;
+        deals[_dealId].state = State.Aborted;
 
     }
 
@@ -218,9 +219,9 @@ contract Delivery {
         return deals[_dealId].schedule;
     }
 
-    function getRendezvous(uint _dealId) view external onlyBuyer(_dealId) returns(string memory p, string memory t) {
+    function getPlace(uint _dealId) view external onlyBuyer(_dealId) returns(string memory p) {
 
-        return (deals[_dealId].place, deals[_dealId].time );
+        return deals[_dealId].place;
     }
 
     function getDealState(uint _dealId) view external onlyClient(_dealId) returns(State) {
@@ -235,6 +236,7 @@ contract Delivery {
             if ((deals[i].seller == msg.sender) || (deals[i].buyer == msg.sender)) 
             {
                 de[index] = deals[i];
+                de[index].code = ''; 
             }
         }
         return de;

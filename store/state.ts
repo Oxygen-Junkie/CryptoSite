@@ -75,6 +75,7 @@ export const useStateStore = defineStore('state', () => {
         else await createIPFSRecord()
         setUserLoader(false)
         await updateItemList()
+        await updateTagList()
         setItemLoader(false)
       } else {
         userAddress = user.cryptoAddress
@@ -119,6 +120,7 @@ export const useStateStore = defineStore('state', () => {
       user.postedItems?.push(item)
       updatePersonalInfo()
       await updateItemList()
+      await updateTagList()
       itemList.push(pubItem)
       updateTags(item.tag)
       store.changePublicVaultItemHash(
@@ -169,11 +171,16 @@ export const useStateStore = defineStore('state', () => {
   async function updateItemList() {
     setItemLoader(true)
     const publicRepItemHash = await store.getPublicVaultItemHash()
-    const publicRepTagHash = await store.getPublicVaultTagHash()
     let itemData = ''
     for await (const chunk of IPFS.cat(publicRepItemHash))
       itemData += chunk.toString()
     itemList = JSON.parse(itemData) as ItemPublic[]
+    setItemLoader(false)
+  }
+
+  async function updateTagList() {
+    setItemLoader(true)
+    const publicRepTagHash = await store.getPublicVaultTagHash()
     let tagData = ''
     for await (const chunk of IPFS.cat(publicRepTagHash))
       tagData += chunk.toString()
@@ -248,53 +255,81 @@ export const useStateStore = defineStore('state', () => {
   ) {
     switch (actionId) {
       case bDealAction.Start: {
-        await dealProgram.addDeal(
-          item!.id,
-          item!.seller,
-          amount!,
-          item!.defaultPlace,
-          JSON.stringify(schedule!)
-        )
+        const i = itemList.findIndex((value) => value.id === item!.id)!
+        itemList[i].availability = amount!
+        updateItemList()
+        dealProgram
+          .addDeal(
+            item!.id,
+            item!.seller,
+            amount!,
+            item!.defaultPlace,
+            JSON.stringify(schedule!)
+          )
+          .catch((e) => {
+            throw e
+          })
         break
       }
       case bDealAction.Abort: {
-        await dealProgram.abort(dealId)
+        dealProgram.abort(dealId).catch((e) => {
+          throw e
+        })
         break
       }
       case bDealAction.Delivered: {
-        await dealProgram.deliverySuccessful(dealId, code!)
+        dealProgram.deliverySuccessful(dealId, code!).catch((e) => {
+          throw e
+        })
         break
       }
       case bDealAction.Complain: {
-        await dealProgram.productIsntWhatWasPromised(dealId, complaint!)
+        dealProgram
+          .productIsntWhatWasPromised(dealId, complaint!)
+          .catch((e) => {
+            throw e
+          })
         break
       }
     }
-    return dealProgram.getDealState(dealId)
+    return dealProgram.getDealState(dealId).catch((e) => {
+      throw e
+    })
   }
 
   async function sDealActions(
     actionId: sDealAction,
     dealId: BigNumberish,
     place?: string,
-    schedule?: Date[],
     time?: Date
   ) {
     switch (actionId) {
       case sDealAction.Confirm: {
-        await dealProgram.confirmDeal(dealId, JSON.stringify(schedule))
+        dealProgram
+          .confirmDeal(dealId, JSON.stringify(time), place!)
+          .catch((e) => {
+            throw e
+          })
         break
       }
       case sDealAction.CallOff: {
-        await dealProgram.deliveryCalledOff(dealId)
+        dealProgram.deliveryCalledOff(dealId).catch((e) => {
+          throw e
+        })
         break
       }
       case sDealAction.ChangeRendezvous: {
-        await dealProgram.changeRendezvous(dealId, place!, time!)
+        dealProgram
+          .changeRendezvous(dealId, place!, JSON.stringify(time!))
+          .catch((e) => {
+            throw e
+          })
         break
       }
       case sDealAction.Remove: {
-        await dealProgram.removeDeal(dealId)
+        dealProgram.removeDeal(dealId).catch((e) => {
+          throw e
+        })
         break
       }
     }
@@ -305,11 +340,6 @@ export const useStateStore = defineStore('state', () => {
     const schedule = await dealProgram.getSchedule(id)
     const index = user.sellDeals!.findIndex((deal) => deal.id === id)
     user.sellDeals![index].schedule = JSON.parse(schedule) as Date[]
-  }
-
-  async function getRendezvous(id: BigNumberish) {
-    const rend = await dealProgram.getRendezvous(id)
-    user.buyDeals?.find((deal) => deal.id === id)?.setRendezvous(rend.p, rend.t)
   }
 
   async function getPayCode(dealId: BigNumberish) {
@@ -341,7 +371,6 @@ export const useStateStore = defineStore('state', () => {
     getPayCode,
     updatePersonalInfo,
     updateItemList,
-    getRendezvous,
-    getBuyersSchedule
+    getBuyersSchedule,
   }
 })

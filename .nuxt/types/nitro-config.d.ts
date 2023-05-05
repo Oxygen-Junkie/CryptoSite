@@ -3,7 +3,7 @@
 // App Config
 import type { Defu } from 'defu'
 
-import type { default as appConfig0 } from "C:/Users/FarmUser/Desktop/CryptoSite/app.config";
+import type { default as appConfig0 } from "C:/Users/Эксплотатор/Desktop/CryptoSite/app.config";
 
 type UserAppConfig = Defu<{}, [typeof appConfig0]>
 

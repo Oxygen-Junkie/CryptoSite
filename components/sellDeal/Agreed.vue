@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useStateStore } from '~/store/state'
 import type Deal from '~/types/deal'
-import { sDealAction } from '~/types/enums'
+import { sDealAction, dealState } from '~/types/enums'
 import type ItemPrivate from '~/types/itemPrivate'
 
 const props = defineProps<{
@@ -9,7 +9,37 @@ const props = defineProps<{
   deal: Deal
 }>()
 
+const emit = defineEmits<{
+  (event: 'dealt', dealState: dealState): void
+}>()
+
 const state = useStateStore()
+
+const place = ref(props.deal.place)
+const time = ref(props.deal.time)
+
+function callOffDeal() {
+  if (place.value === props.deal.place && time.value === props.deal.time) {
+    state
+      .sDealActions(sDealAction.CallOff, props.deal.id)
+      .then(() => {
+        emit('dealt', dealState.Created)
+      })
+      .catch(() => {})
+  } else {
+    state
+      .sDealActions(
+        sDealAction.ChangeRendezvous,
+        props.deal.id,
+        place.value,
+        time.value
+      )
+      .then(() => {
+        emit('dealt', dealState.Created)
+      })
+      .catch(() => {})
+  }
+}
 </script>
 
 <template>
@@ -34,12 +64,32 @@ const state = useStateStore()
       ).toFixed(2)} Eth/Эфира.`
     }}
   </p>
+  <small class="block mb-2 font-light text-gray-500 dark:text-white"
+    >НЕОБЯЗАТЕЛЬНО. При отзывании сделки вы можете изменить место и время ёё
+    проведения
+  </small>
+  <p class="card-text text-muted">
+    Место
+    <input
+      v-model="place"
+      type="text"
+      class="w-50"
+      :placeholder="props.deal.place"
+    />
+    &nbsp; Время
+    <VueDatePicker
+      v-model="time"
+      :min-date="new Date()"
+      locale="ru"
+      :allowed-dates="props.deal.schedule"
+    />
+  </p>
   <button
     type="button"
     class="btn rounded btn-danger w-50"
     data-bs-toggle="modal"
     data-bs-target="#exampleModal"
-    @click="state.sDealActions(sDealAction.CallOff, deal.id)"
+    @click="callOffDeal"
   >
     Отозвать сделку
   </button>
