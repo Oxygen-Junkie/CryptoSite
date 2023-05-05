@@ -125,8 +125,10 @@ export const useStateStore = defineStore('state', () => {
         (await IPFS.add(JSON.stringify(itemList))).cid.toString()
       )
       setUserLoader(false)
+      return true
     } catch (e) {
       setUserLoader(false)
+      return false
       //console.log('e', e)
     }
   }
@@ -241,7 +243,8 @@ export const useStateStore = defineStore('state', () => {
     item?: ItemPublic,
     amount?: number,
     code?: string,
-    complaint?: string
+    complaint?: string,
+    schedule?: Date[]
   ) {
     switch (actionId) {
       case bDealAction.Start: {
@@ -250,7 +253,7 @@ export const useStateStore = defineStore('state', () => {
           item!.seller,
           amount!,
           item!.defaultPlace,
-          item!.defaultTime
+          JSON.stringify(schedule!)
         )
         break
       }
@@ -274,11 +277,12 @@ export const useStateStore = defineStore('state', () => {
     actionId: sDealAction,
     dealId: BigNumberish,
     place?: string,
-    time?: string
+    schedule?: Date[],
+    time?: Date
   ) {
     switch (actionId) {
       case sDealAction.Confirm: {
-        await dealProgram.confirmDeal(dealId)
+        await dealProgram.confirmDeal(dealId, JSON.stringify(schedule))
         break
       }
       case sDealAction.CallOff: {
@@ -297,7 +301,13 @@ export const useStateStore = defineStore('state', () => {
     return dealProgram.getDealState(dealId)
   }
 
-  async function learnRendezvous(id: BigNumberish) {
+  async function getBuyersSchedule(id: BigNumberish) {
+    const schedule = await dealProgram.getSchedule(id)
+    const index = user.sellDeals!.findIndex((deal) => deal.id === id)
+    user.sellDeals![index].schedule = JSON.parse(schedule) as Date[]
+  }
+
+  async function getRendezvous(id: BigNumberish) {
     const rend = await dealProgram.getRendezvous(id)
     user.buyDeals?.find((deal) => deal.id === id)?.setRendezvous(rend.p, rend.t)
   }
@@ -328,9 +338,10 @@ export const useStateStore = defineStore('state', () => {
     determineCurrency,
     getCurrency,
     user,
-    learnRendezvous,
     getPayCode,
     updatePersonalInfo,
     updateItemList,
+    getRendezvous,
+    getBuyersSchedule
   }
 })

@@ -3,20 +3,28 @@ import PictureInput from 'vue-picture-input'
 import { useStateStore } from '~~/store/state'
 import ItemPrivate from '~~/types/itemPrivate'
 
-const newItem: Ref<ItemPrivate> = ref(new ItemPrivate('', [], 0, 0, '', ''))
+const newItem: Ref<ItemPrivate> = ref(
+  new ItemPrivate('', [], 0, 0, '', '', '', [])
+)
 const store = useStateStore()
 const tags = ref(store.getItems().tagList)
-let uploadedImage: null
+let uploadedImage: {} | null
+const message = ref('')
 
 function postItem() {
   const check = newItem.value.notEmpty()
   if (check.correct || uploadedImage) {
-    store.addItem(newItem.value)
+    store.addItem(newItem.value, uploadedImage)
   } else {
+    message.value += check.message
+    if (!uploadedImage) {
+      message.value += '"Изображение товара" '
+    }
+    message.value += 'неправильно заданы'
   }
 }
 
-function onChange(image: any) {
+function onChange(image: {}) {
   if (image) {
     uploadedImage = image
   }
@@ -25,217 +33,183 @@ function onChange(image: any) {
 
 <template>
   <modal>
-    <h3 class="mb-4 text-xl font-medium text-gray-900 dark:text-white">
-      Sign in to our platform
-    </h3>
-    <form class="space-y-6" @submit.prevent="postItem">
-      <picture-input
-        ref="pictureInput"
-        width="600"
-        height="600"
-        margin="16"
-        accept="image/jpeg,image/png"
-        size="10"
-        button-class="btn"
-        :custom-strings="{
-          upload: '<h1>Загружено!</h1>',
-          drag: 'Переместите сюда изображения товара',
-        }"
-        @change="onChange"
-      >
-      </picture-input>
-      <div>
-        <label
-          for="email"
-          class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-          >Your email</label
-        >
-        <input
-          id="email"
-          type="email"
-          name="email"
-          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-red-500 focus:border-red-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-          placeholder="name@company.com"
-          required
-        />
-      </div>
-      <div>
-        <label
-          for="password"
-          class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-          >Your password</label
-        >
-        <input
-          id="password"
-          type="password"
-          name="password"
-          placeholder="••••••••"
-          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-red-500 focus:border-red-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-          required
-        />
-      </div>
-      <div class="flex justify-between">
-        <div class="flex items-start">
-          <div class="flex items-center h-5">
-            <input
-              id="remember"
-              type="checkbox"
-              value=""
-              class="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-red-300 dark:bg-gray-600 dark:border-gray-500 dark:focus:ring-red-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800"
-              required
-            />
-          </div>
+    <div v-if="added">
+      <h3 class="mb-4 text-xl font-medium text-gray-900 dark:text-white">
+        Добавьте новый товар на продажу
+      </h3>
+      <form class="space-y-6" @submit.prevent="postItem">
+        <div>
           <label
-            for="remember"
-            class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-            >Remember me</label
+            for="email"
+            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            >Изображение товара</label
           >
+          <picture-input
+            ref="pictureInput"
+            width="600"
+            height="600"
+            margin="16"
+            accept="image/jpeg,image/png"
+            size="10"
+            button-class="btn"
+            :custom-strings="{
+              upload: '<h1>Загружено!</h1>',
+              drag: 'Переместите сюда изображения товара',
+            }"
+            @change="onChange"
+          >
+          </picture-input>
         </div>
-        <a
-          href="#"
-          class="text-sm text-red-700 hover:underline dark:text-red-500"
-          >Lost Password?</a
-        >
-      </div>
-      <button
-        type="submit"
-        class="w-full text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
-      >
-        Login to your account
-      </button>
-      <div class="text-sm font-medium text-gray-500 dark:text-gray-300">
-        Not registered?
-        <a href="#" class="text-red-700 hover:underline dark:text-red-500"
-          >Create account</a
-        >
-      </div>
-    </form>
-  </modal>
-
-  <div
-    id="exampleModal"
-    class="modal fade"
-    tabindex="-1"
-    aria-labelledby="exampleModalLabel"
-    aria-hidden="true"
-  >
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 id="exampleModalLabel" class="modal-title">
-            Cadastrar novo produto
-          </h5>
-          <button
-            type="button"
-            class="btn-close"
-            data-bs-dismiss="modal"
-            aria-label="Close"
+        <div>
+          <label
+            for="name"
+            class="block mb-2 text-sm font-light text-gray-900 dark:text-white"
+            >Название</label
+          >
+          <input
+            id="name"
+            v-model="newItem.name"
+            type="text"
+            name="name"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-red-500 focus:border-red-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+            placeholder="До 50 символов"
+            required
           />
         </div>
-        <div class="modal-body">
-          <form id="form" @submit.prevent="SendData">
-            <label for="name"
-              ><ion-icon name="text-outline" /> Nome do produto</label
-            >
+        <div>
+          <label
+            for="description"
+            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            >Описание</label
+          >
+          <textarea
+            id="description"
+            v-model.trim="newItem.description"
+            class="block appearance-none w-full py-1 px-2 mb-1 text-base leading-normal bg-white text-grey-darker border border-grey rounded"
+            required
+            name="description"
+            placeholder="Введите описание товара"
+          />
+        </div>
+        <div>
+          <label
+            for="tag"
+            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            >Тэги предмета</label
+          >
+          <small
+            for="tag"
+            class="block mb-2 font-light text-gray-500 dark:text-white"
+            >Если подходящего тэга нет, значит предмет запрещён к продаже</small
+          >
+          <select
+            id="tag"
+            v-model="newItem.tag"
+            multiple
+            class="border-2 border-dark"
+          >
+            <option disabled selected>Выберете подходящие тэги</option>
+            <option v-for="tag in tags" :key="tag.id" :value="tag.id">
+              {{ tag.name }}
+            </option>
+          </select>
+        </div>
+        <div>
+          <label
+            for="price"
+            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            >Цена за один предмет</label
+          >
+          <input
+            id="price"
+            v-model="newItem.price"
+            min="1"
+            type="number"
+            name="price"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-red-500 focus:border-red-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+            placeholder="0"
+            required
+          />
+        </div>
+        <div>
+          <label
+            for="availability"
+            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            >Количество предметов на продажу</label
+          >
+          <input
+            id="availability"
+            v-model="newItem.availability"
+            min="1"
+            type="number"
+            name="availability"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-red-500 focus:border-red-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+            placeholder="0"
+            required
+          />
+        </div>
+        <div>
+          <label
+            for="producer"
+            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            >Производитель / Импортер / Или иной гарант качества предмета</label
+          >
+          <small
+            for="producer"
+            class="block mb-2 font-medium text-gray-500 dark:text-white"
+            >Предметы запрещенные к обороту в РФ запрещены на этом сайте</small
+          >
+          <input
+            id="producer"
+            v-model="newItem.producer"
+            type="text"
+            name="producer"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-red-500 focus:border-red-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+            placeholder="Источник"
+            required
+          />
+        </div>
+        <div>
+          <label
+            for="producer"
+            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            >Производитель / Импортер / Или иной гарант качества предмета</label
+          >
+          <small
+            for="producer"
+            class="block mb-2 font-medium text-gray-500 dark:text-white"
+            >Предметы запрещенные к обороту в РФ запрещены на этом сайте</small
+          >
+          <p class="card-text text-muted">
+            Место совершения сделки
             <input
-              id="name"
-              v-model="newItem.name"
               type="text"
-              class="form-control"
-              required
+              class="bg-gray-50 w-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-red-500 focus:border-red-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+              :placeholder="newItem.defaultPlace"
             />
-            <br />
-            <div class="row">
-              <div class="col-md-8">
-                <label for="image"
-                  ><ion-icon name="image-outline" /> Imagem do produto</label
-                >
-                <input
-                  id="image"
-                  v-model="image"
-                  type="text"
-                  class="form-control"
-                  required
-                />
-              </div>
-              <div class="col-md-4">
-                <img
-                  :src="
-                    image ||
-                    'https://www.signfix.com.au/wp-content/uploads/2017/09/placeholder-600x400.png'
-                  "
-                  alt="Imagem"
-                  class="image rounded"
-                />
-              </div>
-            </div>
-            <br />
-            <label for="price"
-              ><ion-icon name="pricetags-outline" /> Preço</label
-            >
-            <input
-              id="price"
-              v-model="price"
-              type="number"
-              min="0"
-              step="0.01"
-              class="form-control"
+            &nbsp; График совершения сделки
+            <VueDatePicker
+              v-model="newItem.preferredTime"
+              :min-date="new Date()"
+              multi-dates
+              locale="ru"
             />
-            <br />
-            <label for="tag"
-              ><ion-icon name="pricetag-outline" /> Categoria do produto</label
-            >
-            <select id="tag" class="form-select" @change="selected($event)">
-              <option v-for="tag in tags" :key="tag.id" :value="tag.id">
-                {{ tag.name }}
-              </option>
-            </select>
-            <br />
-            <label
-              ><ion-icon name="fast-food-outline" /> O produto é
-              perecível?</label
-            >
-            <div class="form-check">
-              <input
-                id="opt1"
-                v-model="perishable"
-                type="radio"
-                value="0"
-                name="perishable"
-                class="form-check-input"
-              />
-              <label for="opt1" class="form-check-label">Não</label>
-              <br />
-              <input
-                id="opt2"
-                v-model="perishable"
-                type="radio"
-                value="1"
-                name="perishable"
-                class="form-check-input"
-              />
-              <label for="opt2" class="form-check-label">Sim</label>
-            </div>
-          </form>
+          </p>
         </div>
-        <div class="modal-footer">
-          <button
-            type="button"
-            class="btn btn-secondary"
-            data-bs-dismiss="modal"
-          >
-            Fechar
-          </button>
-          <button
-            type="submit"
-            class="btn btn-success"
-            data-bs-dismiss="modal"
-            @click="SendForm"
-          >
-            Salvar
-          </button>
+        <div
+          v-if="message"
+          class="relative px-3 py-3 mb-4 border rounded text-red-darker border-red-dark bg-red-lighter"
+        >
+          {{ message }}
         </div>
-      </div>
+        <button
+          type="submit"
+          class="w-full text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
+        >
+          Разместить
+        </button>
+      </form>
     </div>
-  </div>
+    <div v-else></div>
+  </modal>
 </template>
