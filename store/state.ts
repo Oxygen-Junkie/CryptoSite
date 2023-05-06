@@ -175,6 +175,7 @@ export const useStateStore = defineStore('state', () => {
     for await (const chunk of IPFS.cat(publicRepItemHash))
       itemData += chunk.toString()
     itemList = JSON.parse(itemData) as ItemPublic[]
+    itemList.sort((a, b) => a.sellerReputation - b.sellerReputation)
     setItemLoader(false)
   }
 

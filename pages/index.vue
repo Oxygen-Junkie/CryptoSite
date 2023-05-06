@@ -4,7 +4,7 @@ import ItemPublic from '~~/types/itemPublic'
 import Tag from '~~/types/tag'
 import { useStateStore } from '~~/store/state'
 import Container from '~~/components/container.vue'
-import { itemPaletteMode } from '~~/types/enums'
+import { itemPaletteMode, reputation } from '~~/types/enums'
 import PagingLine from '~~/components/pagingLine.vue'
 import viewItemModal from '~~/components/modal/viewItemModal.vue'
 
@@ -64,7 +64,7 @@ function filterByTag(tag: Tag) {
               src="https://assets7.lottiefiles.com/packages/lf20_3vbOcw.json"
               background="transparent"
               speed="1"
-              style="width = ref(300px; height = ref(300px"
+              style="width: 300px; height: 300px"
               loop
               autoplay
             />
@@ -122,6 +122,7 @@ function filterByTag(tag: Tag) {
             class="col-md-3"
           >
             <Card
+              v-show="product.sellerReputation === reputation.BadActor"
               data-modal-target="viewItem-modal"
               data-modal-toggle="viewItem-modal"
               :item="product"

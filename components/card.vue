@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useStateStore } from '~~/store/state'
-import { itemPaletteMode } from '~~/types/enums'
+import { itemPaletteMode, reputation } from '~~/types/enums'
 import ItemPrivate from '~~/types/itemPrivate'
 import ItemPublic from '~~/types/itemPublic'
 
@@ -10,7 +10,29 @@ const props = defineProps<{
 }>()
 
 const state = useStateStore()
+const color = ref('currentColor')
 const currency = state.getCurrency()
+
+if (props.item instanceof ItemPublic) {
+  switch (props.item.sellerReputation) {
+    case reputation.OneDeal: {
+      color.value = '#fbff00'
+      break
+    }
+    case reputation.FewDeals: {
+      color.value = '#ceff48'
+      break
+    }
+    case reputation.Established: {
+      color.value = '#2bff00'
+      break
+    }
+    default: {
+      color.value = 'currentColor'
+      break
+    }
+  }
+}
 </script>
 
 <template>
@@ -23,7 +45,9 @@ const currency = state.getCurrency()
     />
     <div class="card-body">
       <h5 class="card-title">
-        <p class="text-truncate">{{ props.item.name }}</p>
+        <p class="text-truncate" style="color: currentColor">
+          {{ props.item.name }}
+        </p>
         <p class="badge bg-success">
           {{
             `${props.item.price}$ или ${Number(
