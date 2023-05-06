@@ -10,7 +10,7 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (event: 'dealt', dealState: dealState): void
+  (event: 'dealt', sync: boolean): void
 }>()
 
 const place = ref('')
@@ -22,9 +22,9 @@ const state = useStateStore()
 function confirmDeal() {
   if (time.value) {
     state
-      .sDealActions(sDealAction.Confirm, props.deal.id, place.value, time.value)
+      .sDealActions(sDealAction.Confirm, props.deal, place.value, time.value)
       .then((dealState) => {
-        emit('dealt', dealState)
+        emit('dealt', false)
       })
       .catch(() => {})
   } else {
@@ -34,9 +34,9 @@ function confirmDeal() {
 
 function removeDeal() {
   state
-    .sDealActions(sDealAction.Remove, props.deal.id)
+    .sDealActions(sDealAction.Remove, props.deal)
     .then((dealState) => {
-      emit('dealt', dealState)
+      emit('dealt', true)
     })
     .catch(() => {})
 }

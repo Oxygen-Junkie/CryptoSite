@@ -5,7 +5,7 @@ import ItemPrivate from '~~/types/itemPrivate'
 import ItemPublic from '~~/types/itemPublic'
 
 const props = defineProps<{
-  item: ItemPublic
+  item: ItemPublic | ItemPrivate
   deal: Deal
 }>()
 

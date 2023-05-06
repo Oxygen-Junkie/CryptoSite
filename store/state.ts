@@ -12,7 +12,7 @@ import User from '~~/types/user'
 import ItemPublic from '~~/types/itemPublic'
 import ItemPrivate from '~~/types/itemPrivate'
 import Deal from '~~/types/deal'
-import { bDealAction, dealState, sDealAction } from '~~/types/enums'
+import { bDealAction, dealPaletteMode, sDealAction } from '~~/types/enums'
 import Currency from '~~/types/currency'
 import {
   Delivery,
@@ -42,7 +42,7 @@ export const useStateStore = defineStore('state', () => {
 
   async function determineCurrency() {
     if (localStorage.getItem('currency')) {
-      currency = JSON.parse(localStorage.getItem('currency')!)
+      currency = JSON.parse(localStorage.getItem('currency')!) as Currency
     } else {
       await currency.determineValues()
       localStorage.setItem('currency', JSON.stringify(currency))
@@ -214,8 +214,16 @@ export const useStateStore = defineStore('state', () => {
     const buyDeals = await dealProgram.getBuyDeals()
     buyDeals.forEach((buyDeal) => {
       const bd = user.buyDeals?.findIndex((value) => value.id === buyDeal.id)
-      if (bd) user.buyDeals![bd].state = buyDeal.state
-      else
+      if (bd) {
+        if (buyDeal.state !== user.buyDeals![bd].state)
+          dealProgram.changeSync(buyDeal.id, true)
+        user.buyDeals![bd].state = buyDeal.state
+        user.buyDeals![bd].schedule = JSON.parse(buyDeal.schedule) as Date[]
+        user.buyDeals![bd].place = buyDeal.place
+        user.buyDeals![bd].time = JSON.parse(buyDeal.time) as Date
+        user.buyDeals![bd].synced = { buyer: true, seller: buyDeal.sync }
+      } else {
+        dealProgram.changeSync(buyDeal.id, true)
         user.buyDeals?.push(
           new Deal(
             buyDeal.id,
@@ -223,33 +231,43 @@ export const useStateStore = defineStore('state', () => {
             buyDeal.state,
             buyDeal.seller,
             itemList.find((value) => value.id === buyDeal.itemId)!,
-            JSON.parse(buyDeal.schedule),
+            JSON.parse(buyDeal.schedule) as Date[],
+            JSON.parse(buyDeal.time) as Date,
             buyDeal.place,
-            { buyer: buyDeal.sync, seller: true }
+            { buyer: true, seller: buyDeal.sync }
           )
         )
-      dealProgram.changeSync(buyDeal.id, true)
+      }
     })
 
     user.sellDeals = []
     const sellDeals = await dealProgram.getSellDeals()
     sellDeals.forEach((sellDeal) => {
       const bd = user.buyDeals?.findIndex((value) => value.id === sellDeal.id)
-      if (bd) user.buyDeals![bd].state = sellDeal.state
-      else
+      if (bd) {
+        if (sellDeal.state !== user.sellDeals![bd].state)
+          dealProgram.changeSync(sellDeal.id, true)
+        user.sellDeals![bd].state = sellDeal.state
+        user.sellDeals![bd].schedule = JSON.parse(sellDeal.schedule) as Date[]
+        user.sellDeals![bd].place = sellDeal.place
+        user.sellDeals![bd].time = JSON.parse(sellDeal.time) as Date
+        user.sellDeals![bd].synced = { buyer: sellDeal.sync, seller: true }
+      } else {
+        dealProgram.changeSync(sellDeal.id, true)
         user.sellDeals?.push(
           new Deal(
             sellDeal.id,
             sellDeal.amount,
             sellDeal.state,
-            sellDeal.seller,
+            sellDeal.buyer,
             itemList.find((value) => value.id === sellDeal.itemId)!,
-            JSON.parse(sellDeal.schedule),
+            JSON.parse(sellDeal.schedule) as Date[],
+            JSON.parse(sellDeal.time) as Date,
             sellDeal.place,
-            { buyer: true, seller: sellDeal.sync }
+            { buyer: sellDeal.sync, seller: true }
           )
         )
-      dealProgram.changeSync(sellDeal.id, true)
+      }
     })
     setDealLoader(false)
     updatePersonalInfo()
@@ -257,7 +275,7 @@ export const useStateStore = defineStore('state', () => {
 
   async function bDealActions(
     actionId: bDealAction,
-    dealId: BigNumberish,
+    dealZ: Deal,
     item?: ItemPublic,
     amount?: number,
     code?: string,
@@ -283,72 +301,72 @@ export const useStateStore = defineStore('state', () => {
         break
       }
       case bDealAction.Abort: {
-        dealProgram.abort(dealId).catch((e) => {
+        dealProgram.abort(dealZ.id).catch((e) => {
           throw e
         })
-        dealProgram.changeSync(dealId, false)
+        changeSync(dealZ, false, dealPaletteMode.buyDeal)
         break
       }
       case bDealAction.Delivered: {
-        dealProgram.deliverySuccessful(dealId, code!).catch((e) => {
+        dealProgram.deliverySuccessful(dealZ.id, code!).catch((e) => {
           throw e
         })
         break
       }
       case bDealAction.Complain: {
         dealProgram
-          .productIsntWhatWasPromised(dealId, complaint!)
+          .productIsntWhatWasPromised(dealZ.id, complaint!)
           .catch((e) => {
             throw e
           })
         break
       }
     }
-    return dealProgram.getDealState(dealId).catch((e) => {
+    return dealProgram.getDealState(dealZ.id).catch((e) => {
       throw e
     })
   }
 
   async function sDealActions(
     actionId: sDealAction,
-    dealId: BigNumberish,
+    dealZ: Deal,
     place?: string,
     time?: Date
   ) {
     switch (actionId) {
       case sDealAction.Confirm: {
         dealProgram
-          .confirmDeal(dealId, JSON.stringify(time), place!)
+          .confirmDeal(dealZ.id, JSON.stringify(time), place!)
           .catch((e) => {
             throw e
           })
-        dealProgram.changeSync(dealId, false)
+        changeSync(dealZ, false, dealPaletteMode.sellDeal)
         break
       }
       case sDealAction.CallOff: {
-        dealProgram.deliveryCalledOff(dealId).catch((e) => {
+        dealProgram.deliveryCalledOff(dealZ.id).catch((e) => {
           throw e
         })
-        dealProgram.changeSync(dealId, false)
+        changeSync(dealZ, false, dealPaletteMode.sellDeal)
         break
       }
       case sDealAction.ChangeRendezvous: {
         dealProgram
-          .changeRendezvous(dealId, place!, JSON.stringify(time!))
+          .changeRendezvous(dealZ.id, place!, JSON.stringify(time!))
           .catch((e) => {
             throw e
           })
-        dealProgram.changeSync(dealId, false)
+        changeSync(dealZ, false, dealPaletteMode.sellDeal)
         break
       }
       case sDealAction.Remove: {
-        dealProgram.removeDeal(dealId).catch((e) => {
+        dealProgram.removeDeal(dealZ.id).catch((e) => {
           throw e
         })
         break
       }
     }
-    return dealProgram.getDealState(dealId).catch((e) => {
+    return dealProgram.getDealState(dealZ.id).catch((e) => {
       throw e
     })
   }
@@ -365,6 +383,24 @@ export const useStateStore = defineStore('state', () => {
 
   function getCurrency() {
     return currency
+  }
+
+  async function changeSync(
+    deal: Deal,
+    sync: boolean,
+    dealType: dealPaletteMode
+  ) {
+    const p = dealProgram.changeSync(deal.id, sync)
+    if (dealType === dealPaletteMode.buyDeal)
+      user.buyDeals![
+        user.buyDeals!.findIndex((buyDeal) => deal.id === buyDeal.id)!
+      ].synced.seller = false
+    if (dealType === dealPaletteMode.sellDeal)
+      user.sellDeals![
+        user.sellDeals!.findIndex((sellDeal) => deal.id === sellDeal.id)!
+      ].synced.buyer = false
+    updatePersonalInfo()
+    await p
   }
 
   return {

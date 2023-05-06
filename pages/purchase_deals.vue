@@ -42,7 +42,6 @@ store.user.buyDeals?.forEach((valued) => {
       :deal="deal"
       :item="itemDeal.item"
       :mode="dealPaletteMode.buyDeal"
-      @synced="(synced) => {}"
     />
   </container>
 </template>

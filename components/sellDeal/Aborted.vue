@@ -10,16 +10,16 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (event: 'dealt', dealState: dealState): void
+  (event: 'dealt', sync: boolean): void
 }>()
 
 const state = useStateStore()
 
 function removeDeal() {
   state
-    .sDealActions(sDealAction.Remove, props.deal.id)
+    .sDealActions(sDealAction.Remove, props.deal)
     .then((dealState) => {
-      emit('dealt', dealState)
+      emit('dealt', true)
     })
     .catch(() => {})
 }

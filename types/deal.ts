@@ -22,6 +22,7 @@ export default class Deal {
     cryptoAddress: string,
     item: ItemPublic,
     schedule: Date[],
+    time: Date,
     place: string,
     synced: { buyer: boolean; seller: boolean }
   ) {
@@ -33,6 +34,7 @@ export default class Deal {
     this.schedule = schedule
     this.place = place
     this.synced = synced
+    this.time = time
   }
 
   setRendezvous(place: string, time: string) {

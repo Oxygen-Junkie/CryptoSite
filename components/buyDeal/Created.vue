@@ -10,16 +10,16 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (event: 'dealt', sync: dealState): void
+  (event: 'dealt', sync: boolean): void
 }>()
 
 const state = useStateStore()
 
 function abortDeal() {
   state
-    .bDealActions(bDealAction.Abort, props.deal.id)
+    .bDealActions(bDealAction.Abort, props.deal)
     .then((dealState) => {
-      emit('dealt', dealState)
+      emit('dealt', false)
     })
     .catch(() => {})
 }
