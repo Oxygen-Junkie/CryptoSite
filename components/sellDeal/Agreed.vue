@@ -22,8 +22,8 @@ function callOffDeal() {
   if (place.value === props.deal.place && time.value === props.deal.time) {
     state
       .sDealActions(sDealAction.CallOff, props.deal.id)
-      .then(() => {
-        emit('dealt', dealState.Created)
+      .then((dealState) => {
+        emit('dealt', dealState)
       })
       .catch(() => {})
   } else {
@@ -34,8 +34,8 @@ function callOffDeal() {
         place.value,
         time.value
       )
-      .then(() => {
-        emit('dealt', dealState.Created)
+      .then((dealState) => {
+        emit('dealt', dealState)
       })
       .catch(() => {})
   }

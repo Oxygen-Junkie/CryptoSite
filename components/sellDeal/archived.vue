@@ -18,8 +18,8 @@ const state = useStateStore()
 function removeDeal() {
   state
     .sDealActions(sDealAction.Remove, props.deal.id)
-    .then(() => {
-      emit('dealt', dealState.Removed)
+    .then((dealState) => {
+      emit('dealt', dealState)
     })
     .catch(() => {})
 }

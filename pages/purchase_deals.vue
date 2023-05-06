@@ -8,7 +8,6 @@ import ItemPublic from '~~/types/itemPublic'
 import card from '~~/components/card.vue'
 
 const store = useStateStore()
-if (store.isUserLogged) navigateTo('/')
 
 const itemDeals: Ref<{ item: ItemPublic; deals: Deal[] }[]> = ref([])
 
@@ -43,6 +42,7 @@ store.user.buyDeals?.forEach((valued) => {
       :deal="deal"
       :item="itemDeal.item"
       :mode="dealPaletteMode.buyDeal"
+      @synced="(synced) => {}"
     />
   </container>
 </template>

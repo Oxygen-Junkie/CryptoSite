@@ -8,7 +8,6 @@ import addItemModal from '~/components/modal/addItemModal.vue'
 import itemPublic from '~~/types/itemPublic'
 
 const store = useStateStore()
-if (store.isUserLogged) navigateTo('/')
 
 const pagingIndex = ref(1)
 const itemDeals: Ref<{ item: itemPublic; deals: Deal[] }[]> = ref([])

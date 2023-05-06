@@ -8,11 +8,12 @@ export default class Deal {
   amount!: BigNumberish
   state!: dealState
   item!: ItemPublic
-  place?: string
+  place!: string
   time?: Date
   schedule!: Date[]
   cryptoAddress!: string
   code?: string
+  synced!: { buyer: boolean; seller: boolean }
 
   constructor(
     id: BigNumberish,
@@ -20,7 +21,9 @@ export default class Deal {
     state: dealState,
     cryptoAddress: string,
     item: ItemPublic,
-    schedule: Date[]
+    schedule: Date[],
+    place: string,
+    synced: { buyer: boolean; seller: boolean }
   ) {
     this.amount = amount
     this.id = id
@@ -28,6 +31,8 @@ export default class Deal {
     this.cryptoAddress = cryptoAddress
     this.item = item
     this.schedule = schedule
+    this.place = place
+    this.synced = synced
   }
 
   setRendezvous(place: string, time: string) {

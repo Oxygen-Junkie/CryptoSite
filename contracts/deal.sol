@@ -23,6 +23,7 @@ contract Delivery {
         string place;
         string schedule;
         string time;
+        bool sync;
     }
 
     mapping (uint => Deal) private deals;
@@ -38,7 +39,7 @@ contract Delivery {
     function addDeal(string memory _itemId, address _seller, uint _amount, string memory _place, string memory _schedule) payable public {
         uint loc_value = msg.value;
         payable(contractOwner).transfer(loc_value);
-        deals[dealCount] = Deal(dealCount,loc_value,_amount,"H",msg.sender,_seller,State.Created,_itemId, _place, _schedule, '');
+        deals[dealCount] = Deal(dealCount,loc_value,_amount,"H",msg.sender,_seller,State.Created,_itemId, _place, _schedule, '', false);
         emit DeliveryAddedEvent(msg.sender, _seller, dealCount);
         dealCount++;
     }
@@ -229,17 +230,34 @@ contract Delivery {
         return deals[_dealId].state;
     }
 
-    function getDeals() external view returns (Deal[] memory) {
+    function getBuyDeals() external view returns (Deal[] memory) {
         Deal[]    memory de = new Deal[](dealCount);
         uint index = 0;
         for (uint i = 0; i < dealCount; i++) {
-            if ((deals[i].seller == msg.sender) || (deals[i].buyer == msg.sender)) 
+            if ((deals[i].buyer == msg.sender)) 
             {
                 de[index] = deals[i];
                 de[index].code = ''; 
             }
         }
         return de;
+    }
+
+    function getSellDeals() external view returns (Deal[] memory) {
+        Deal[]    memory de = new Deal[](dealCount);
+        uint index = 0;
+        for (uint i = 0; i < dealCount; i++) {
+            if ((deals[i].seller == msg.sender)) 
+            {
+                de[index] = deals[i];
+                de[index].code = ''; 
+            }
+        }
+        return de;
+    }
+
+    function changeSync(uint _dealId, bool _sync) external onlyClient(_dealId) {
+        deals[_dealId].sync = _sync;
     }
 
     function removeDeal(uint _dealId)

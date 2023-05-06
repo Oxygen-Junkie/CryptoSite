@@ -10,7 +10,7 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (event: 'dealt', dealState: dealState): void
+  (event: 'dealt', sync: dealState): void
 }>()
 
 const complaint = ref('')
@@ -30,8 +30,8 @@ function complain() {
       '',
       complaint.value
     )
-    .then(() => {
-      emit('dealt', dealState.Aborted)
+    .then((dealState) => {
+      emit('dealt', dealState)
     })
     .catch(() => {})
 }
@@ -45,8 +45,8 @@ function delivered() {
       1,
       code.value
     )
-    .then(() => {
-      emit('dealt', dealState.Complete)
+    .then((dealState) => {
+      emit('dealt', dealState)
     })
     .catch(() => {
       message.value = 'Код не правильный'
@@ -56,8 +56,8 @@ function delivered() {
 function abortDeal() {
   state
     .bDealActions(bDealAction.Abort, props.deal.id)
-    .then(() => {
-      emit('dealt', dealState.Aborted)
+    .then((dealState) => {
+      emit('dealt', dealState)
     })
     .catch(() => {})
 }

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useStateStore } from '~~/store/state'
 import Deal from '~~/types/deal'
-import { bDealAction, dealState } from '~~/types/enums'
+import ItemPrivate from '~~/types/itemPrivate'
 import ItemPublic from '~~/types/itemPublic'
 
 const props = defineProps<{
@@ -9,20 +9,7 @@ const props = defineProps<{
   deal: Deal
 }>()
 
-const emit = defineEmits<{
-  (event: 'dealt', sync: dealState): void
-}>()
-
 const state = useStateStore()
-
-function abortDeal() {
-  state
-    .bDealActions(bDealAction.Abort, props.deal.id)
-    .then((dealState) => {
-      emit('dealt', dealState)
-    })
-    .catch(() => {})
-}
 </script>
 
 <template>
@@ -33,7 +20,7 @@ function abortDeal() {
     количестве ${deal.amount} шт.`
     }}
   </h4>
-  <h6>Сделка ожидает подтверждения</h6>
+  <h6>Сделка совершена. Продавец получил оплату.</h6>
   <p class="card-text text-muted">
     {{
       `Стоимость заказа ${Number(props.item.price)} $ что эквивалентно ${Number(
@@ -41,13 +28,4 @@ function abortDeal() {
       ).toFixed(2)} Eth/Эфира.`
     }}
   </p>
-  <button
-    type="button"
-    class="btn rounded btn-danger w-50"
-    data-bs-toggle="modal"
-    data-bs-target="#exampleModal"
-    @click="abortDeal()"
-  >
-    Отменить сделку
-  </button>
 </template>

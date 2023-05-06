@@ -23,8 +23,8 @@ function confirmDeal() {
   if (time.value) {
     state
       .sDealActions(sDealAction.Confirm, props.deal.id, place.value, time.value)
-      .then(() => {
-        emit('dealt', dealState.Agreed)
+      .then((dealState) => {
+        emit('dealt', dealState)
       })
       .catch(() => {})
   } else {
@@ -35,8 +35,8 @@ function confirmDeal() {
 function removeDeal() {
   state
     .sDealActions(sDealAction.Remove, props.deal.id)
-    .then(() => {
-      emit('dealt', dealState.Removed)
+    .then((dealState) => {
+      emit('dealt', dealState)
     })
     .catch(() => {})
 }

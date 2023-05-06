@@ -12,6 +12,10 @@ const props = defineProps<{
   item: ItemPrivate | ItemPublic
 }>()
 
+const emit = defineEmits<{
+  (event: 'synced', synced: { buyer: boolean; seller: boolean }): void
+}>()
+
 const state = useStateStore()
 const currency = state.getCurrency()
 </script>
@@ -23,7 +27,7 @@ const currency = state.getCurrency()
       :deal="props.deal"
       :item="(item as ItemPublic)"
       @dealt="(dealState: dealState) => {
-        state.scanDeals()
+        emit('synced', {buyer: false, seller: true})
       }"
     />
     <BuyDealArchived
@@ -31,7 +35,7 @@ const currency = state.getCurrency()
       :deal="props.deal"
       :item="(item as ItemPublic)"
       @dealt="(dealState: dealState) => {
-        state.scanDeals()
+        emit('synced', {buyer: false, seller: true})
       }"
     />
     <BuyDealAgreed
@@ -39,7 +43,7 @@ const currency = state.getCurrency()
       :deal="props.deal"
       :item="(item as ItemPublic)"
       @dealt="(dealState: dealState) => {
-        state.scanDeals()
+        emit('synced', {buyer: false, seller: true})
       }"
     />
     <BuyDealComplete
@@ -47,7 +51,7 @@ const currency = state.getCurrency()
       :deal="props.deal"
       :item="(item as ItemPublic)"
       @dealt="(dealState: dealState) => {
-        state.scanDeals()
+        emit('synced', {buyer: false, seller: true})
       }"
     />
     <BuyDealCreated
@@ -55,7 +59,7 @@ const currency = state.getCurrency()
       :deal="props.deal"
       :item="(item as ItemPublic)"
       @dealt="(dealState: dealState) => {
-        state.scanDeals()
+        emit('synced', {buyer: false, seller: true})
       }"
     />
   </Container>
@@ -63,14 +67,14 @@ const currency = state.getCurrency()
     <SellDealAborted
       v-if="props.deal.state === dealState.Aborted"
       :deal="props.deal"
-      :item="(item as ItemPrivate)"
+      :item="(item as ItemPublic)"
     />
     <SellDealArchived
       v-else-if="props.deal.state === dealState.Archived"
       :deal="props.deal"
       :item="(item as ItemPrivate)"
       @dealt="(dealState: dealState) => {
-        state.scanDeals()
+        emit('synced', {buyer: true, seller: false})
       }"
     />
     <SellDealAgreed
@@ -78,7 +82,7 @@ const currency = state.getCurrency()
       :deal="props.deal"
       :item="(item as ItemPrivate)"
       @dealt="(dealState: dealState) => {
-        state.scanDeals()
+        emit('synced', {buyer: true, seller: false})
       }"
     />
     <SellDealComplete
@@ -86,7 +90,7 @@ const currency = state.getCurrency()
       :deal="props.deal"
       :item="(item as ItemPrivate)"
       @dealt="(dealState: dealState) => {
-        state.scanDeals()
+        emit('synced', {buyer: true, seller: false})
       }"
     />
     <SellDealCreated
@@ -94,7 +98,7 @@ const currency = state.getCurrency()
       :deal="props.deal"
       :item="(item as ItemPrivate)"
       @dealt="(dealState: dealState) => {
-        state.scanDeals()
+        emit('synced', {buyer: true, seller: false})
       }"
     />
   </Container>

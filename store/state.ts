@@ -209,36 +209,46 @@ export const useStateStore = defineStore('state', () => {
 
   async function scanDeals() {
     setDealLoader(true)
+    user.buyDeals = []
+    const buyDeals = await dealProgram.getBuyDeals()
+    buyDeals.forEach((buyDeal) => {
+      const bd = user.buyDeals?.findIndex((value) => value.id === buyDeal.id)
+      if (bd) user.buyDeals![bd].state = buyDeal.state
+      else
+        user.buyDeals?.push(
+          new Deal(
+            buyDeal.id,
+            buyDeal.amount,
+            buyDeal.state,
+            buyDeal.seller,
+            itemList.find((value) => value.id === buyDeal.itemId)!,
+            JSON.parse(buyDeal.schedule),
+            buyDeal.place,
+            { buyer: buyDeal.sync, seller: true }
+          )
+        )
+      dealProgram.changeSync(buyDeal.id, true)
+    })
+
     user.sellDeals = []
-    const allDeals = await dealProgram.getDeals()
-    allDeals.forEach((allDeal) => {
-      if (allDeal.buyer.match(userAddress)) {
-        const bd = user.buyDeals?.findIndex((value) => value.id === allDeal.id)
-        if (bd) user.buyDeals![bd].state = allDeal.state
-        else
-          user.buyDeals?.push(
-            new Deal(
-              allDeal.id,
-              allDeal.amount,
-              allDeal.state,
-              allDeal.seller,
-              itemList.find((value) => value.id === allDeal.itemId)!
-            )
+    const sellDeals = await dealProgram.getSellDeals()
+    sellDeals.forEach((sellDeal) => {
+      const bd = user.buyDeals?.findIndex((value) => value.id === sellDeal.id)
+      if (bd) user.buyDeals![bd].state = sellDeal.state
+      else
+        user.sellDeals?.push(
+          new Deal(
+            sellDeal.id,
+            sellDeal.amount,
+            sellDeal.state,
+            sellDeal.seller,
+            itemList.find((value) => value.id === sellDeal.itemId)!,
+            JSON.parse(sellDeal.schedule),
+            sellDeal.place,
+            { buyer: true, seller: sellDeal.sync }
           )
-      } else if (allDeal.seller.match(userAddress)) {
-        const bd = user.sellDeals?.findIndex((value) => value.id === allDeal.id)
-        if (bd) user.sellDeals![bd].state = allDeal.state
-        else
-          user.sellDeals?.push(
-            new Deal(
-              allDeal.id,
-              allDeal.amount,
-              allDeal.state,
-              allDeal.seller,
-              itemList.find((value) => value.id === allDeal.itemId)!
-            ).setRendezvous(allDeal.place, allDeal.time)
-          )
-      }
+        )
+      dealProgram.changeSync(sellDeal.id, true)
     })
     setDealLoader(false)
     updatePersonalInfo()
@@ -275,6 +285,7 @@ export const useStateStore = defineStore('state', () => {
         dealProgram.abort(dealId).catch((e) => {
           throw e
         })
+        dealProgram.changeSync(dealId, false)
         break
       }
       case bDealAction.Delivered: {
@@ -310,12 +321,14 @@ export const useStateStore = defineStore('state', () => {
           .catch((e) => {
             throw e
           })
+        dealProgram.changeSync(dealId, false)
         break
       }
       case sDealAction.CallOff: {
         dealProgram.deliveryCalledOff(dealId).catch((e) => {
           throw e
         })
+        dealProgram.changeSync(dealId, false)
         break
       }
       case sDealAction.ChangeRendezvous: {
@@ -324,6 +337,7 @@ export const useStateStore = defineStore('state', () => {
           .catch((e) => {
             throw e
           })
+        dealProgram.changeSync(dealId, false)
         break
       }
       case sDealAction.Remove: {
@@ -333,7 +347,9 @@ export const useStateStore = defineStore('state', () => {
         break
       }
     }
-    return dealProgram.getDealState(dealId)
+    return dealProgram.getDealState(dealId).catch((e) => {
+      throw e
+    })
   }
 
   async function getBuyersSchedule(id: BigNumberish) {
