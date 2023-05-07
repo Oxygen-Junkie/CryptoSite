@@ -31,6 +31,9 @@ function onChange(image: {}) {
 
 <template>
   <modal>
+    
+  </modal>
+  <modal>
     <h3 class="mb-4 text-xl font-medium text-gray-900 dark:text-white">
       Sign in to our platform
     </h3>
