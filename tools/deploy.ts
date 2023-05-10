@@ -1,4 +1,5 @@
 /* eslint-disable no-console */
+// eslint-disable-next-line import/named
 import { ethers } from 'hardhat'
 import dot from 'dotenv'
 
@@ -13,19 +14,19 @@ async function main() {
   const dealFile = await ethers.getContractFactory('deal')
   const deal = await dealFile.deploy()
 
-  await deal.deployed()
+  await deal.getDeployedCode()
 
   console.log(
-    `Deal with unlock timestamp ${unlockTime} deployed to ${deal.address}`
+    `Deal with unlock timestamp ${unlockTime} deployed to ${deal.getAddress}`
   )
 
   const storeFile = await ethers.getContractFactory('store')
   const store = await storeFile.deploy(salt)
 
-  await store.deployed()
+  await store.getDeployedCode()
 
   console.log(
-    `Store with unlock timestamp ${unlockTime} deployed to ${store.address}`
+    `Store with unlock timestamp ${unlockTime} deployed to ${store.getAddress}`
   )
 }
 
