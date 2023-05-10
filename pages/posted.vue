@@ -6,6 +6,9 @@ import ItemPrivate from '~~/types/itemPrivate'
 import PagingLine from '~~/components/pagingLine.vue'
 import addItemModal from '~/components/modal/addItemModal.vue'
 import itemPublic from '~~/types/itemPublic'
+import Card from '~~/components/card.vue'
+import container from '~~/components/container.vue'
+import ChangeItemModal from '~/components/modal/changeItemModal.vue'
 
 const store = useStateStore()
 
@@ -96,7 +99,19 @@ divideOnPages()
         :key="product.id"
         class="col-md-3"
       >
-        <Card :item="product" :mode="itemPaletteMode.inPosted" />
+        <Card
+          :item="product"
+          data-modal-target="changeItem-modal"
+          data-modal-toggle="changeItem-modal"
+          :mode="itemPaletteMode.inPosted"
+        />
+        <ChangeItemModal
+          id="changeItem-modal"
+          tabindex="-1"
+          aria-hidden="true"
+          :old-item="product"
+          class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full"
+        />
       </div>
     </div>
     <PagingLine

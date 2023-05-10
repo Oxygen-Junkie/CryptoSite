@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import PictureInput from 'vue-picture-input'
+import modal from './modal.vue'
 import { useStateStore } from '~~/store/state'
 import ItemPrivate from '~~/types/itemPrivate'
 
@@ -173,16 +174,6 @@ function onChange(image: {}) {
           />
         </div>
         <div>
-          <label
-            for="producer"
-            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >Производитель / Импортер / Или иной гарант качества предмета</label
-          >
-          <small
-            for="producer"
-            class="block mb-2 font-medium text-gray-500 dark:text-white"
-            >Предметы запрещенные к обороту в РФ запрещены на этом сайте</small
-          >
           <p class="card-text text-muted">
             Место совершения сделки
             <input

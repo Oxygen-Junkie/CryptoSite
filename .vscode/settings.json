@@ -27,5 +27,6 @@
     "viandwi",
     "windicss",
     "СГТУ"
-  ]
+  ],
+  "dotenv.enableAutocloaking": false
 }

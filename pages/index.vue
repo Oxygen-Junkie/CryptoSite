@@ -7,6 +7,7 @@ import Container from '~~/components/container.vue'
 import { itemPaletteMode, reputation } from '~~/types/enums'
 import PagingLine from '~~/components/pagingLine.vue'
 import viewItemModal from '~~/components/modal/viewItemModal.vue'
+import Card from '~~/components/card.vue'
 
 const pagingIndex = ref(1)
 
@@ -122,11 +123,21 @@ function filterByTag(tag: Tag) {
             class="col-md-3"
           >
             <Card
-              v-show="product.sellerReputation === reputation.BadActor"
+              v-show="
+                product.sellerReputation !== reputation.BadActor ||
+                !product.hidden
+              "
               data-modal-target="viewItem-modal"
               data-modal-toggle="viewItem-modal"
               :item="product"
               :mode="itemPaletteMode.inGeneral"
+            />
+            <viewItemModal
+              id="viewItem-modal"
+              tabindex="-1"
+              :item="product"
+              aria-hidden="true"
+              class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full"
             />
           </div>
         </div>
@@ -148,10 +159,4 @@ function filterByTag(tag: Tag) {
       </div>
     </Container>
   </div>
-  <viewItemModal
-    id="viewItem-modal"
-    tabindex="-1"
-    aria-hidden="true"
-    class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full"
-  />
 </template>

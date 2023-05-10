@@ -15,7 +15,6 @@ const emit = defineEmits<{
 
 const complaint = ref('')
 const code = ref('')
-const buyerSchedule = ref()
 const message = ref('')
 
 const state = useStateStore()
@@ -24,11 +23,12 @@ function complain() {
   state
     .bDealActions(
       bDealAction.Complain,
-      props.deal,
       new ItemPublic(),
       1,
       '',
-      complaint.value
+      complaint.value,
+      [new Date()],
+      props.deal
     )
     .then((dealState) => {
       emit('dealt', true)
@@ -40,10 +40,12 @@ function delivered() {
   state
     .bDealActions(
       bDealAction.Delivered,
-      props.deal,
       new ItemPublic(),
       1,
-      code.value
+      code.value,
+      '',
+      [new Date()],
+      props.deal
     )
     .then((dealState) => {
       emit('dealt', true)
@@ -55,7 +57,15 @@ function delivered() {
 
 function abortDeal() {
   state
-    .bDealActions(bDealAction.Abort, props.deal)
+    .bDealActions(
+      bDealAction.Abort,
+      new ItemPublic(),
+      1,
+      '',
+      '',
+      [new Date()],
+      props.deal
+    )
     .then((dealState) => {
       emit('dealt', false)
     })
@@ -74,14 +84,8 @@ function abortDeal() {
   <h6>Сделка подтверждена. Место сделки задано.</h6>
   <p class="card-text text-muted">Место &nbsp; {{ props.deal.place }}</p>
   <p>
-    Удобные для вас даты получения товара &nbsp;
-    <VueDatePicker
-      v-model="buyerSchedule"
-      :min-date="new Date()"
-      multi-dates
-      locale="ru"
-      :allowed-dates="props.deal.schedule"
-    />
+    Дата получения товара установленная покупателем: &nbsp;
+    {{ props.deal.time?.toLocaleString }}
   </p>
   <p class="card-text text-muted">
     {{

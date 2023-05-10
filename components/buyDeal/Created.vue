@@ -17,7 +17,15 @@ const state = useStateStore()
 
 function abortDeal() {
   state
-    .bDealActions(bDealAction.Abort, props.deal)
+    .bDealActions(
+      bDealAction.Abort,
+      new ItemPublic(),
+      1,
+      '',
+      '',
+      [new Date()],
+      props.deal
+    )
     .then((dealState) => {
       emit('dealt', false)
     })

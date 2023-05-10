@@ -12,12 +12,7 @@ import User from '~~/types/user'
 import ItemPublic from '~~/types/itemPublic'
 import ItemPrivate from '~~/types/itemPrivate'
 import Deal from '~~/types/deal'
-import {
-  bDealAction,
-  dealPaletteMode,
-  reputation,
-  sDealAction,
-} from '~~/types/enums'
+import { bDealAction, dealPaletteMode, sDealAction } from '~~/types/enums'
 import Currency from '~~/types/currency'
 import {
   Delivery,
@@ -31,7 +26,7 @@ const userContractAddress = '0xEb3B8A7bF4E853d11aD233e15438852Ac067e253'
 const storeContractAddress = '0xEb3B8A7bF4E853d11aD233e15438852Ac067e253'
 const storedUser = localStorage.getItem('user')
 
-export const useStateStore = defineStore('state', () => {
+export const usetateStore = defineStore('state', () => {
   let isUserLogged = false
   const loadingUser = ref(false)
   const loadingItems = ref(false)
@@ -49,106 +44,44 @@ export const useStateStore = defineStore('state', () => {
     if (localStorage.getItem('currency')) {
       currency = JSON.parse(localStorage.getItem('currency')!) as Currency
     } else {
-      currency = new Currency()
-      currency.rub = 85
-      currency.eth = 1850
+      currency = await currency.determineValues()
       localStorage.setItem('currency', JSON.stringify(currency))
     }
   }
 
   async function connectWallet() {
     try {
-      const tag1: Tag = {
-        imageURL: 'https://divandi.ru/public/images/articles/2021/032/001.jpg',
-        name: 'Строительные инструменты',
-        id: 1,
-        items: [],
+      const { ethereum } = window
+      if (!ethereum) {
+        alert.value = 'Установите MetaMask!'
+        return
       }
-      const tag2: Tag = {
-        imageURL:
-          'https://fs01.cap.ru//www21/kozlov/news/2021/05/13/ffce736e-f8cc-4e2c-880b-5546b675b9c2/pokupka-tovarov_df3o0apg.jpg',
-        name: 'Поддержанный товар',
-        id: 2,
-        items: [],
-      }
-      const tag3: Tag = {
-        imageURL: 'https://www.rektor.ru/img/rektor-img22-03-04-17.jpg',
-        name: 'Компьютерная периферия',
-        id: 3,
-        items: [],
-      }
-      const item1: ItemPublic = {
-        id: '',
-        name: 'Перфоратор AEG KH24IE 4935451555',
-        imageCID: 'QmTraHi8PSzsEvFcqPoFucgQhmbNrAEL4bwYGpyVSLkh4A',
-        availability: 10,
-        price: 4,
-        producer: 'Китай',
-        hidden: false,
-        seller: 'gjksljgklwejr',
-        defaultPlace: 'улица Астраханская, 1а',
-        sellerReputation: reputation.None,
-        schedule: [new Date(2023, 9, 2, 9, 10), new Date(2023, 9, 3, 11, 30)],
-        tag: [tag1, tag2],
-        description:
-          'Тип двигателя:щеточный Тип хвостовика:sds-plus Мощность:800 Вт Количество режимов:3 Max сила удара:2.4 Дж Реверс:электронный',
-      }
-
-      const item2: ItemPublic = {
-        id: '',
-        name: 'УШМ (болгарка) MAKITA GA5030',
-        imageCID: 'QmPXNYLQTakZmBQ691dyQn5pF4nWQXNF82BwbJFPKBsvcR',
-        availability: 7,
-        price: 7,
-        producer: 'Индия',
-        hidden: false,
-        seller: 'gjksljgklwejr',
-        defaultPlace: 'улица Высокая, 2б',
-        sellerReputation: reputation.None,
-        schedule: [new Date(2023, 8, 2, 12, 10), new Date(2023, 8, 10, 11, 30)],
-        tag: [tag1],
-        description:
-          'Вес брутто: 3.34 кг Вес нетто: 1.8 кг Резьба шпинделя: М14',
-      }
-
-      const item3: ItemPublic = {
-        id: '',
-        name: 'Видеокарта KFA2 GeForce 210',
-        imageCID: 'QmTraHi8PSzsEvFcqPoFucgQhmbNrAEL4bwYGpyVSLkh4A',
-        availability: 7,
-        price: 7,
-        producer: 'США',
-        hidden: false,
-        seller: 'gjksljgklwejr',
-        defaultPlace: 'улица Радищева, 3',
-        sellerReputation: reputation.FewDeals,
-        schedule: [new Date(2023, 8, 2, 12, 10), new Date(2023, 8, 10, 11, 30)],
-        tag: [tag3],
-        description:
-          'Видеокарта KFA2 GeForce 210 [21GGF4HI00NK] представляет собой компактный графический модуль в виде платы расширения, который станет отличным дополнением для вашего домашнего или офисного компьютера, обеспечивая его более высокую производительность в различных графических задачах. Основой модели является вычислительный блок, выполненный по микроархитектуре Tesla, а также 1 ГБ видеопамяти, что позволит вам комфортно выполнять различные базовые задачи. Кроме того, графический ускоритель также отличается невысокими рабочими температурами, что обусловлено эффективной системой воздушного охлаждения.',
-      }
-
-      tagList = [tag1, tag2, tag3]
-
-      itemList = [item1, item2, item3]
+      await authUser(ethereum)
       isUserLogged = true
     } catch (error) {
       console.log(error)
     }
   }
 
-  async function authUser() {
+  async function authUser(ethereum: ExternalProvider | JsonRpcFetchFunc) {
     setUserLoader(true)
     setItemLoader(true)
     try {
+      const provider = new ethers.provider.Web3Provider(ethereum)
+      userAddress = await provider.getSigner()._address
+      store = StoreUsers__factory.connect(storeContractAddress, provider)
       if (!user) {
         if (await store.isStored()) await authThroughIPFS()
+        else await createIPFSRecord()
         setUserLoader(false)
+        await updateItemList()
+        await updateTagList()
         setItemLoader(false)
       } else {
         userAddress = user.cryptoAddress
       }
       setDealLoader(true)
+      dealProgram = Delivery__factory.connect(userContractAddress, provider)
       setDealLoader(false)
     } catch (e) {
       setUserLoader(false)
