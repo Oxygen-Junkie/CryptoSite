@@ -16,7 +16,6 @@ const props = defineProps<{
 const sync = ref(true)
 
 const state = useStateStore()
-const currency = state.getCurrency()
 </script>
 
 <template>
