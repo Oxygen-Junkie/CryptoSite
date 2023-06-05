@@ -24,7 +24,7 @@ import Tag from '~~/types/tag'
 
 const userContractAddress = '0xEb3B8A7bF4E853d11aD233e15438852Ac067e253'
 const storeContractAddress = '0xEb3B8A7bF4E853d11aD233e15438852Ac067e253'
-const storedUser = localStorage.getItem('user')
+const storedUser = process.client ? localStorage.getItem('user') : ''
 
 export const usetateStore = defineStore('state', () => {
   let isUserLogged = false
@@ -41,12 +41,13 @@ export const usetateStore = defineStore('state', () => {
   let currency: Currency
 
   async function determineCurrency() {
+ if (process.client){
     if (localStorage.getItem('currency')) {
       currency = JSON.parse(localStorage.getItem('currency')!) as Currency
     } else {
       currency = await currency.determineValues()
       localStorage.setItem('currency', JSON.stringify(currency))
-    }
+    }}
   }
 
   async function connectWallet() {
