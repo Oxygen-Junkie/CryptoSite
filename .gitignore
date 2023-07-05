@@ -1,17 +1,10 @@
-*.log
-nuxt.d.ts
-
-# private config
-.env
-
-# deps
-node_modules
-
-# build or generate
-.nuxt
+.DS_store
+.vite-ssg-dist
+.vite-ssg-temp
+*.local
 dist
-.output
-
-# IDE
-.idea
-.vercel
+dist-ssr
+node_modules
+.idea/
+*.log
+cypress/downloads

@@ -1,3 +1,48 @@
 {
-  "editor.tabSize": 2
+  "cSpell.words": [
+    "angellist",
+    "antfu",
+    "datepicker",
+    "demi",
+    "ethersproject",
+    "iconify",
+    "iconoir",
+    "intlify",
+    "listify",
+    "nomicfoundation",
+    "nomiclabs",
+    "nprogress",
+    "octicon",
+    "pinia",
+    "pnpm",
+    "primevue",
+    "recaptcha",
+    "sizecheck",
+    "statusz",
+    "taze",
+    "typechain",
+    "typecheck",
+    "unocss",
+    "unplugin",
+    "Vite",
+    "vitejs",
+    "Vitesse",
+    "vitest",
+    "vuepic",
+    "vueuse",
+    "webfont",
+    "СГТУ"
+  ],
+  "i18n-ally.sourceLanguage": "en",
+  "i18n-ally.keystyle": "nested",
+  "i18n-ally.localesPaths": "locales",
+  "i18n-ally.sortKeys": true,
+  "prettier.enable": false,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  "files.associations": {
+    "*.css": "postcss"
+  },
+  "editor.formatOnSave": false
 }
