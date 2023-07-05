@@ -7,26 +7,26 @@ import { defineStore } from 'pinia'
 import { ethers } from 'hardhat'
 import { ExternalProvider, JsonRpcFetchFunc } from '@ethersproject/providers'
 import { BigNumberish } from 'ethers'
-import IPFS from '~~/tools/IPFS'
-import User from '~~/types/user'
-import ItemPublic from '~~/types/itemPublic'
-import ItemPrivate from '~~/types/itemPrivate'
-import Deal from '~~/types/deal'
-import { bDealAction, dealPaletteMode, sDealAction } from '~~/types/enums'
-import Currency from '~~/types/currency'
+import IPFS from '~/tools/IPFS'
+import User from '~/types/user'
+import ItemPublic from '~/types/itemPublic'
+import ItemPrivate from '~/types/itemPrivate'
+import Deal from '~/types/deal'
+import { bDealAction, dealPaletteMode, sDealAction } from '~/types/enums'
+import Currency from '~/types/currency'
 import {
   Delivery,
   Delivery__factory,
   StoreUsers,
   StoreUsers__factory,
-} from '~~/types/typechain'
-import Tag from '~~/types/tag'
+} from '~/types/typechain'
+import Tag from '~/types/tag'
 
 const userContractAddress = '0xEb3B8A7bF4E853d11aD233e15438852Ac067e253'
 const storeContractAddress = '0xEb3B8A7bF4E853d11aD233e15438852Ac067e253'
 const storedUser = localStorage.getItem('user')
 
-export const usetateStore = defineStore('state', () => {
+export const useStateStore = defineStore('state', () => {
   let isUserLogged = false
   const loadingUser = ref(false)
   const loadingItems = ref(false)
@@ -92,21 +92,19 @@ if (localStorage.getItem('currency')) {
 
   async function authThroughIPFS() {
     const hash = await store.getHash()
-    let data = ''
-    for await (const chunk of IPFS.cat(hash)) data += chunk.toString()
+    user = await IPFS.get(hash) as User
 
-    user = JSON.parse(data) as User
     localStorage.setItem('user', JSON.stringify(user))
   }
 
   async function createIPFSRecord() {
     user = new User(userAddress)
-    const res = await IPFS.add(JSON.stringify(user))
+    const hash = await (await IPFS.add(user)).toString()
     localStorage.setItem('user', JSON.stringify(user))
-    store.storeUser(res.cid.toString())
+    store.storeUser(hash)
   }
 
-  async function addItem(item: ItemPrivate, image: any) {
+  async function addItem(item: ItemPrivate, image: File) {
     setUserLoader(true)
     try {
       const pubItem = await personalToPublic(item)
@@ -116,8 +114,8 @@ if (localStorage.getItem('currency')) {
       })
 
       //https://ipfs.io/ipfs/${cid}`
-      const res = await IPFS.add(JSON.stringify(image))
-      item.imageCID = res.cid.toString()
+      const res = await IPFS.add(image)
+      item.imageCID = res.toString()
       user.postedItems?.push(item)
       updatePersonalInfo()
       await updateItemList()
@@ -126,7 +124,7 @@ if (localStorage.getItem('currency')) {
 
       updateTags(item.tag)
       store.changePublicVaultItemHash(
-        (await IPFS.add(JSON.stringify(itemList))).cid.toString()
+        ((await IPFS.add(itemList)).toString())
       )
       setUserLoader(false)
       return true
@@ -137,7 +135,7 @@ if (localStorage.getItem('currency')) {
     }
   }
 
-  async function changeItem(item: ItemPrivate, image: any) {
+  async function changeItem(item: ItemPrivate, image: File) {
     setUserLoader(true)
     try {
       const pubItem = await personalToPublic(item)
@@ -146,9 +144,9 @@ if (localStorage.getItem('currency')) {
         value.items.push(pubItem)
       })
 
-      //https://ipfs.io/ipfs/${cid}`
-      const res = await IPFS.add(JSON.stringify(image))
-      item.imageCID = res.cid.toString()
+      //https://IPFS.io/IPFS/${cid}`
+      const res = await IPFS.add(image, )
+      item.imageCID = res.toString()
       let id = user.postedItems!.findIndex((value) => item.id === value.id)!
       user.postedItems![id] = item
       updatePersonalInfo()
@@ -159,7 +157,7 @@ if (localStorage.getItem('currency')) {
 
       updateTags(item.tag)
       store.changePublicVaultItemHash(
-        (await IPFS.add(JSON.stringify(itemList))).cid.toString()
+        ((await IPFS.add(itemList)).toString())
       )
       setUserLoader(false)
       return true
@@ -177,8 +175,8 @@ if (localStorage.getItem('currency')) {
 
   async function updatePersonalInfo() {
     setUserLoader(true)
-    const res = await IPFS.add(JSON.stringify(user))
-    await store.changeVaultItemHash(res.cid.toString())
+    const res = await IPFS.add(user)
+    await store.changeVaultItemHash(res.toString())
     localStorage.removeItem('user')
     localStorage.setItem('user', JSON.stringify(user))
     setUserLoader(false)
