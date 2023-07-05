@@ -1,17 +1,6 @@
-import { create } from 'ipfs-http-client'
-import dot from 'dotenv'
+import { createHelia } from 'helia'
+import { json } from '@helia/json'
 
-dot.config()
+const helia = await createHelia()
 
-const auth = `Basic ${Buffer.from(
-  `${process.env.NUXT_INFURA_ID}:${process.env.NUXT_INFURA_SECRET_KEY}`
-).toString('base64')}`
-
-export default create({
-  host: 'ipfs.infura.io',
-  port: 5001,
-  protocol: 'https',
-  headers: {
-    authorization: auth,
-  },
-})
+export default json(helia)

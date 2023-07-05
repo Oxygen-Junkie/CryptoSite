@@ -47,7 +47,7 @@ function callOffDeal() {
 
 <template>
   <h4 class="inline-flex font-medium">
-    <span class="i-octicon:code-of-conduct-24" />&nbsp;
+    <span class="i-octicon-code-of-conduct-24" />&nbsp;
     <span>{{
       `Продажа товара ${item.name} в
     количестве ${deal.amount} шт.`

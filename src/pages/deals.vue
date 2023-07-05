@@ -32,7 +32,7 @@ listify(store.getUser().buyDeals!)
   <div id="home" class="mx-auto mb-3 text-left container">
     <div class="my-2 inline-flex">
       <h1 class="mb-1 flex items-center justify-center font-bold">
-        <span class="i-fluent:handshake-24-regular" /> &nbsp; Сделки на покупку
+        <span class="i-fluent-handshake-24-regular" /> &nbsp; Сделки на покупку
       </h1>
       &nbsp; &nbsp; &nbsp;
       <button
