@@ -1,9 +1,9 @@
 {
   "compilerOptions": {
     "baseUrl": ".",
-    "target": "ES2015",
-    "module": "commonjs",
-    "lib": ["DOM", "ES2015"],
+    "target": "es2016",
+    "module": "ESNExt",
+    "lib": ["DOM", "ESNExt"],
     "strict": true,
     "esModuleInterop": true,
     "jsx": "preserve",

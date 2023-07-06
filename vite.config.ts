@@ -34,15 +34,12 @@ export default defineConfig({
       },
     }),
 
-    // https://github.com/hannoeru/vite-plugin-pages
     Pages({
       extensions: ['vue', 'md'],
     }),
 
-    // https://github.com/JohnCampionJr/vite-plugin-vue-layouts
     Layouts(),
 
-    // https://github.com/antfu/unplugin-auto-import
     AutoImport({
       imports: [
         'vue',
@@ -59,27 +56,19 @@ export default defineConfig({
       vueTemplate: true,
     }),
 
-    // https://github.com/antfu/unplugin-vue-components
     Components({
-      // allow auto load markdown components under `./src/components/`
       extensions: ['vue', 'md'],
-      // allow auto import and register components used in markdown
       include: [/\.vue$/, /\.vue\?vue/, /\.md$/],
       dts: 'src/components.d.ts',
     }),
 
-    // https://github.com/antfu/unocss
-    // see uno.config.ts for config
     Unocss(),
 
-    // https://github.com/antfu/vite-plugin-vue-markdown
-    // Don't need this? Try vitesse-lite: https://github.com/antfu/vitesse-lite
     Markdown({
       wrapperClasses: 'prose prose-sm m-auto text-left',
       headEnabled: true,
       markdownItSetup(md) {
-        // https://prismjs.com/
-        md.use(Shiki, {
+         md.use(Shiki, {
           theme: {
             light: 'vitesse-light',
             dark: 'vitesse-dark',
@@ -95,7 +84,6 @@ export default defineConfig({
       },
     }),
 
-    // https://github.com/antfu/vite-plugin-pwa
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg', 'safari-pinned-tab.svg'],
@@ -124,7 +112,6 @@ export default defineConfig({
       },
     }),
 
-    // https://github.com/intlify/bundle-tools/tree/main/packages/unplugin-vue-i18n
     VueI18n({
       runtimeOnly: true,
       compositionOnly: true,
@@ -132,14 +119,11 @@ export default defineConfig({
       include: [path.resolve(__dirname, 'locales/**')],
     }),
 
-    // https://github.com/feat-agency/vite-plugin-webfont-dl
     WebfontDownload(),
 
-    // https://github.com/webfansplz/vite-plugin-vue-devtools
     VueDevTools(),
   ],
 
-  // https://github.com/vitest-dev/vitest
   test: {
     include: ['test/**/*.test.ts'],
     environment: 'jsdom',
@@ -148,7 +132,6 @@ export default defineConfig({
     },
   },
 
-  // https://github.com/antfu/vite-ssg
   ssgOptions: {
     script: 'async',
     formatting: 'minify',
