@@ -1,9 +1,13 @@
-Goods: Товары
-Deals: Сделки
-Posted: Выложенное
-Posted_Items: Выложено вами
-Post_New: Разместить новый товар
-Purchase_Deals: Сделки на продажу
-Refresh: Обновить
-SSTU: СГТУ
-or: или
+button:
+  about: Про шаблон
+  back: Назад
+  go: Перейти
+  home: Головна
+  toggle_dark: Переключити темний режим
+  toggle_langs: Змінити мову
+intro:
+  desc: Самостійний початковий шаблон Vite
+  dynamic-route: Демо динамічного маршруту
+  hi: Привіт, {name}!
+  whats-your-name: Як тебе звати?
+not-found: Не знайдено

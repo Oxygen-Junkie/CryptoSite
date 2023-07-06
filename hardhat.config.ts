@@ -1,15 +1,19 @@
-import type { HardhatUserConfig } from 'hardhat/config'
-import '@nomicfoundation/hardhat-toolbox'
 import '@typechain/hardhat'
-import '@nomiclabs/hardhat-ethers'
+import '@nomicfoundation/hardhat-ethers'
+import '@nomicfoundation/hardhat-chai-matchers'
+
+import type { HardhatUserConfig } from 'hardhat/types'
 
 const config: HardhatUserConfig = {
-  solidity: '0.8.18',
+  solidity: {
+    compilers: [{ version: '0.8.18', settings: {} }],
+  },
   paths: {
-    artifacts: '~/artifacts',
+    artifacts: 'src/artifacts',
+    sources: 'src/contracts',
   },
   typechain: {
-    outDir: '~/types/typechain',
+    outDir: 'src/types/typechain',
   },
   /* networks: {
     hardhat: {
