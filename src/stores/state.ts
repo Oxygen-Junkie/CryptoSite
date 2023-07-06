@@ -21,6 +21,7 @@ import {
   StoreUsers__factory,
 } from '~/types/typechain'
 import Tag from '~/types/tag'
+import { MetaMaskInpageProvider } from '@metamask/providers'
 
 const userContractAddress = '0xEb3B8A7bF4E853d11aD233e15438852Ac067e253'
 const storeContractAddress = '0xEb3B8A7bF4E853d11aD233e15438852Ac067e253'
@@ -41,13 +42,12 @@ export const useStateStore = defineStore('state', () => {
   let currency: Currency
 
   async function determineCurrency() {
-if ()    
-if (localStorage.getItem('currency')) {
+    if (localStorage.getItem('currency')) 
       currency = JSON.parse(localStorage.getItem('currency')!) as Currency
-    } else {
+     else 
       currency = await currency.determineValues()
       localStorage.setItem('currency', JSON.stringify(currency))
-    }
+    
   }
 
   async function connectWallet() {
@@ -64,12 +64,12 @@ if (localStorage.getItem('currency')) {
     }
   }
 
-  async function authUser(ethereum: ExternalProvider | JsonRpcFetchFunc) {
+  async function authUser(ethereum: MetaMaskInpageProvider) {
     setUserLoader(true)
     setItemLoader(true)
     try {
-      const provider = new ethers.provider.Web3Provider(ethereum)
-      userAddress = await provider.getSigner()._address
+      const provider = new ethers.BrowserProvider(ethereum)
+      userAddress = (await provider.getSigner()).address
       store = StoreUsers__factory.connect(storeContractAddress, provider)
       if (!user) {
         if (await store.isStored()) await authThroughIPFS()
