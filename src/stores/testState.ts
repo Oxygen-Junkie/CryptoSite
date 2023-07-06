@@ -32,7 +32,7 @@ const userContractAddress = '0xEb3B8A7bF4E853d11aD233e15438852Ac067e253'
 const storeContractAddress = '0xEb3B8A7bF4E853d11aD233e15438852Ac067e253'
 const storedUser = localStorage.getItem('user')
 
-export const useStateStore = defineStore('state', () => {
+export const usetateStore = defineStore('state', () => {
   let isUserLogged = false
   const loadingUser = ref(false)
   const loadingItems = ref(false)

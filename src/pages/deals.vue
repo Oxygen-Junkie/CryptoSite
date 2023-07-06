@@ -25,7 +25,7 @@ function listify(bDeals: Deal[]) {
   })
 }
 
-listify(store.getUser().buyDeals!)
+listify(store.user.buyDeals!)
 </script>
 
 <template>

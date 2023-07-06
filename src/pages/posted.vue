@@ -40,8 +40,8 @@ function listify(sDeals: Deal[]) {
   })
 }
 
-listify(store.getUser().sellDeals!)
-const сo: Ref<ItemPrivate[]> = ref(store.getUser().postedItems!)
+listify(store.user.sellDeals!)
+const сo: Ref<ItemPrivate[]> = ref(store.user.postedItems!)
 divideOnPages(сo.value)
 
 function divideOnPages(content: ItemPrivate[]) {

@@ -16,6 +16,10 @@ const emit = defineEmits<{
 
 const purchased = ref(true)
 const store = useStateStore()
+const comission: Ref<number | undefined> = ref()
+store.getComission().then((com) => {
+  comission.value = com
+})
 const color = ref('currentColor')
 const rep = ref('Никакой')
 const amount = ref(1)
@@ -113,7 +117,7 @@ switch (props.item.sellerReputation) {
         </div>
       </div>
     </div>
-    <div class="py-2">
+    <div v-if="comission" class="py-2">
       <label><strong>Введите требуемое вам количество товара:</strong></label><br>
       <input
         v-model="amount"
@@ -126,12 +130,12 @@ switch (props.item.sellerReputation) {
         {{ `${amount}шт по ${props.item.price}₽ ` }}
       </p>
       <p class="mb-2 block text-sm font-thin text-gray-900 dark:text-white">
-        {{ `Цена комиссии ${amount * props.item.price * store.getCommission()}₽ ` }}
+        {{ `Цена комиссии ${amount * props.item.price * comission}₽ ` }}
       </p>
       <strong
         v-show="amount > 1"
         class="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
-      >{{ `СТОИМОСТЬЮ: ${amount * props.item.price * (1 + store.getCommission())!}₽ что эквивалентно ${Number((props.item.price * amount * 1000 * (1 + store.getCommission()) / store.getCurrency().eth / store.getCurrency().rub).toFixed(2))} Mwei` }}</strong>
+      >{{ `СТОИМОСТЬЮ: ${amount * props.item.price * (1 + comission)!}₽ что эквивалентно ${Number((props.item.price * amount * 1000 * (1 + comission) / store.getCurrency().eth / store.getCurrency().rub).toFixed(2))} Mwei` }}</strong>
     </div>
 
     <button

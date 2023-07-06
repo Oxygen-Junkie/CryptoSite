@@ -3,6 +3,7 @@ import type { Ref } from 'vue'
 import '@vuepic/vue-datepicker/dist/main.css'
 import { useStateStore } from '~/stores/state'
 import type ItemPrivate from '~/types/itemPrivate'
+import uploadImage from '../uploadImage.vue'
 
 const props = defineProps<{
   oldItem: ItemPrivate
@@ -15,14 +16,14 @@ const emit = defineEmits<{
 const newItem: Ref<ItemPrivate> = ref(props.oldItem)
 const store = useStateStore()
 const tags = ref(store.getItems().tagList)
-let uploadedImage: {} | null
+let uploadedImage: File | null
 const message = ref('')
 const added = ref(true)
 
 function postItem() {
   const check = newItem.value.notEmpty()
   if (check.correct || uploadedImage) {
-    store.changeItem(newItem.value, uploadedImage).then(() => {
+    store.changeItem(newItem.value, uploadedImage!).then(() => {
       added.value = true
     })
   }

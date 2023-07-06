@@ -208,6 +208,11 @@ contract Delivery {
         return true;    
     }
 
+    function getComissionRate() view external returns(uint)
+    {
+        return commission;    
+    }
+
     function changeRendezvous(uint _dealId, string memory _place, string memory _time) external onlySeller(_dealId) returns(bool) {
         deals[_dealId].place = _place;
         deals[_dealId].time = _time;

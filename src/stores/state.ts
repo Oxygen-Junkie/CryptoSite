@@ -5,8 +5,8 @@
 /* eslint-disable no-console */
 import { defineStore } from 'pinia'
 import { ethers } from 'hardhat'
-import { ExternalProvider, JsonRpcFetchFunc } from '@ethersproject/providers'
 import { BigNumberish } from 'ethers'
+import { CID } from 'multiformats/cid'
 import IPFS from '~/tools/IPFS'
 import User from '~/types/user'
 import ItemPublic from '~/types/itemPublic'
@@ -38,7 +38,6 @@ export const useStateStore = defineStore('state', () => {
   let userAddress = ''
   let itemList: ItemPublic[]
   let tagList: Tag[]
-  const alert = ref('')
   let currency: Currency
 
   async function determineCurrency() {
@@ -54,7 +53,7 @@ export const useStateStore = defineStore('state', () => {
     try {
       const { ethereum } = window
       if (!ethereum) {
-        alert.value = 'Установите MetaMask!'
+        alert('Установите MetaMask!')
         return
       }
       await authUser(ethereum)
@@ -92,7 +91,7 @@ export const useStateStore = defineStore('state', () => {
 
   async function authThroughIPFS() {
     const hash = await store.getHash()
-    user = await IPFS.get(hash) as User
+    user = await IPFS.get(CID.parse(hash)) as User
 
     localStorage.setItem('user', JSON.stringify(user))
   }
@@ -145,7 +144,7 @@ export const useStateStore = defineStore('state', () => {
       })
 
       //https://IPFS.io/IPFS/${cid}`
-      const res = await IPFS.add(image, )
+      const res = await IPFS.add(image)
       item.imageCID = res.toString()
       let id = user.postedItems!.findIndex((value) => item.id === value.id)!
       user.postedItems![id] = item
@@ -196,7 +195,7 @@ export const useStateStore = defineStore('state', () => {
 
   async function personalToPublic(item: ItemPrivate) {
     const itemP: ItemPublic = item as unknown as ItemPublic
-    itemP.sellerReputation = await getReputationValueOfUser(userAddress)
+    itemP.sellerReputation = Number(await getReputationValueOfUser(userAddress))
     itemP.seller = userAddress
     return itemP
   }
@@ -204,10 +203,7 @@ export const useStateStore = defineStore('state', () => {
   async function updateItemList() {
     setItemLoader(true)
     const publicRepItemHash = await store.getPublicVaultItemHash()
-    let itemData = ''
-    for await (const chunk of IPFS.cat(publicRepItemHash))
-      itemData += chunk.toString()
-    itemList = JSON.parse(itemData) as ItemPublic[]
+    itemList = (await IPFS.get(CID.parse(publicRepItemHash))) as ItemPublic[]
     itemList.sort((a, b) => a.sellerReputation - b.sellerReputation)
     setItemLoader(false)
   }
@@ -215,10 +211,7 @@ export const useStateStore = defineStore('state', () => {
   async function updateTagList() {
     setItemLoader(true)
     const publicRepTagHash = await store.getPublicVaultTagHash()
-    let tagData = ''
-    for await (const chunk of IPFS.cat(publicRepTagHash))
-      tagData += chunk.toString()
-    tagList = JSON.parse(tagData) as Tag[]
+    tagList = (await IPFS.get(CID.parse(publicRepTagHash))) as Tag[]
     setItemLoader(false)
   }
 
@@ -232,7 +225,7 @@ export const useStateStore = defineStore('state', () => {
       }
     })
     store.changePublicVaultTagHash(
-      (await IPFS.add(JSON.stringify(tagList))).cid.toString()
+      (await IPFS.add(tagList)).toString()
     )
     setItemLoader(false)
   }
@@ -248,9 +241,9 @@ export const useStateStore = defineStore('state', () => {
     buyDeals.forEach((buyDeal) => {
       const bd = user.buyDeals?.findIndex((value) => value.id === buyDeal.id)
       if (bd) {
-        if (buyDeal.state !== user.buyDeals![bd].state)
+        if (Number(buyDeal.state) !== user.buyDeals![bd].state)
           dealProgram.changeSync(buyDeal.id, true)
-        user.buyDeals![bd].state = buyDeal.state
+        user.buyDeals![bd].state = Number(buyDeal.state)
         user.buyDeals![bd].schedule = JSON.parse(buyDeal.schedule) as Date[]
         user.buyDeals![bd].place = buyDeal.place
         user.buyDeals![bd].time = JSON.parse(buyDeal.time) as Date
@@ -261,7 +254,7 @@ export const useStateStore = defineStore('state', () => {
           new Deal(
             buyDeal.id,
             buyDeal.amount,
-            buyDeal.state,
+            Number(buyDeal.state),
             buyDeal.seller,
             itemList.find((value) => value.id === buyDeal.itemId)!,
             JSON.parse(buyDeal.schedule) as Date[],
@@ -278,9 +271,9 @@ export const useStateStore = defineStore('state', () => {
     sellDeals.forEach((sellDeal) => {
       const bd = user.buyDeals?.findIndex((value) => value.id === sellDeal.id)
       if (bd) {
-        if (sellDeal.state !== user.sellDeals![bd].state)
+        if (Number(sellDeal.state) !== user.sellDeals![bd].state)
           dealProgram.changeSync(sellDeal.id, true)
-        user.sellDeals![bd].state = sellDeal.state
+        user.sellDeals![bd].state = Number(sellDeal.state)
         user.sellDeals![bd].schedule = JSON.parse(sellDeal.schedule) as Date[]
         user.sellDeals![bd].place = sellDeal.place
         user.sellDeals![bd].time = JSON.parse(sellDeal.time) as Date
@@ -291,7 +284,7 @@ export const useStateStore = defineStore('state', () => {
           new Deal(
             sellDeal.id,
             sellDeal.amount,
-            sellDeal.state,
+            Number(sellDeal.state),
             sellDeal.buyer,
             itemList.find((value) => value.id === sellDeal.itemId)!,
             JSON.parse(sellDeal.schedule) as Date[],
@@ -418,8 +411,8 @@ export const useStateStore = defineStore('state', () => {
     return currency
   }
 
-  function getComission() {
-    return dealProgram.commission / 100
+  async function getComission() {
+    return Number(await dealProgram.getComissionRate()) / 100
   }
 
   async function changeSync(
