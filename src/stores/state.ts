@@ -23,8 +23,8 @@ import {
 import Tag from '~/types/tag'
 import { MetaMaskInpageProvider } from '@metamask/providers'
 
-const userContractAddress = '0xEb3B8A7bF4E853d11aD233e15438852Ac067e253'
-const storeContractAddress = '0xEb3B8A7bF4E853d11aD233e15438852Ac067e253'
+const userContractAddress = import.meta.env.VITE_userContractAddress
+const storeContractAddress = import.meta.env.VITE_storeContractAddress
 const storedUser = localStorage.getItem('user')
 
 export const useStateStore = defineStore('state', () => {
