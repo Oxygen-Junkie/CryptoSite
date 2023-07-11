@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@helia/json": "^1.0.0",
+    "@helia/unixfs": "^1.4.0",
     "@openzeppelin/contracts": "^4.9.2",
     "@unhead/vue": "^1.1.30",
     "@unocss/reset": "^0.53.4",

@@ -30,6 +30,7 @@
     "typechain",
     "typecheck",
     "unhead",
+    "unixfs",
     "unocss",
     "unplugin",
     "Vite",

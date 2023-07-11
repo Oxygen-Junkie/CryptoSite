@@ -7,7 +7,7 @@ import { defineStore } from 'pinia'
 import { ethers } from 'hardhat'
 import { BigNumberish } from 'ethers'
 import { CID } from 'multiformats/cid'
-import IPFS from '~/tools/IPFS'
+import { processFile, processJSON } from '~/tools/IPFS'
 import User from '~/types/user'
 import ItemPublic from '~/types/itemPublic'
 import ItemPrivate from '~/types/itemPrivate'
@@ -91,14 +91,14 @@ export const useStateStore = defineStore('state', () => {
 
   async function authThroughIPFS() {
     const hash = await store.getHash()
-    user = await IPFS.get(CID.parse(hash)) as User
+    user = await processJSON.get(CID.parse(hash)) as User
 
     localStorage.setItem('user', JSON.stringify(user))
   }
 
   async function createIPFSRecord() {
     user = new User(userAddress)
-    const hash = await (await IPFS.add(user)).toString()
+    const hash = await (await processJSON.add(user)).toString()
     localStorage.setItem('user', JSON.stringify(user))
     store.storeUser(hash)
   }
@@ -112,8 +112,11 @@ export const useStateStore = defineStore('state', () => {
         value.items.push(pubItem)
       })
 
-      //https://ipfs.io/ipfs/${cid}`
-      const res = await IPFS.add(image)
+      //https://IPFS.io/IPFS/${cid}`
+      const res = await processFile.addFile({
+        path: `./${image.name}`,
+        content: new Uint8Array((await image.arrayBuffer()))
+      })
       item.imageCID = res.toString()
       user.postedItems?.push(item)
       updatePersonalInfo()
@@ -123,7 +126,7 @@ export const useStateStore = defineStore('state', () => {
 
       updateTags(item.tag)
       store.changePublicVaultItemHash(
-        ((await IPFS.add(itemList)).toString())
+        ((await processJSON.add(itemList)).toString())
       )
       setUserLoader(false)
       return true
@@ -144,7 +147,10 @@ export const useStateStore = defineStore('state', () => {
       })
 
       //https://IPFS.io/IPFS/${cid}`
-      const res = await IPFS.add(image)
+      const res = await processFile.addFile({
+        path: `./${image.name}`,
+        content: new Uint8Array((await image.arrayBuffer()))
+      })
       item.imageCID = res.toString()
       let id = user.postedItems!.findIndex((value) => item.id === value.id)!
       user.postedItems![id] = item
@@ -156,7 +162,7 @@ export const useStateStore = defineStore('state', () => {
 
       updateTags(item.tag)
       store.changePublicVaultItemHash(
-        ((await IPFS.add(itemList)).toString())
+        ((await processJSON.add(itemList)).toString())
       )
       setUserLoader(false)
       return true
@@ -174,7 +180,7 @@ export const useStateStore = defineStore('state', () => {
 
   async function updatePersonalInfo() {
     setUserLoader(true)
-    const res = await IPFS.add(user)
+    const res = await processJSON.add(user)
     await store.changeVaultItemHash(res.toString())
     localStorage.removeItem('user')
     localStorage.setItem('user', JSON.stringify(user))
@@ -203,7 +209,7 @@ export const useStateStore = defineStore('state', () => {
   async function updateItemList() {
     setItemLoader(true)
     const publicRepItemHash = await store.getPublicVaultItemHash()
-    itemList = (await IPFS.get(CID.parse(publicRepItemHash))) as ItemPublic[]
+    itemList = (await processJSON.get(CID.parse(publicRepItemHash))) as ItemPublic[]
     itemList.sort((a, b) => a.sellerReputation - b.sellerReputation)
     setItemLoader(false)
   }
@@ -211,7 +217,7 @@ export const useStateStore = defineStore('state', () => {
   async function updateTagList() {
     setItemLoader(true)
     const publicRepTagHash = await store.getPublicVaultTagHash()
-    tagList = (await IPFS.get(CID.parse(publicRepTagHash))) as Tag[]
+    tagList = (await processJSON.get(CID.parse(publicRepTagHash))) as Tag[]
     setItemLoader(false)
   }
 
@@ -225,7 +231,7 @@ export const useStateStore = defineStore('state', () => {
       }
     })
     store.changePublicVaultTagHash(
-      (await IPFS.add(tagList)).toString()
+      (await processJSON.add(tagList)).toString()
     )
     setItemLoader(false)
   }
