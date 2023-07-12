@@ -5,9 +5,9 @@
 /* eslint-disable no-console */
 import { defineStore } from 'pinia'
 import { ethers } from 'hardhat'
-import { ExternalProvider, JsonRpcFetchFunc } from '@ethersproject/providers'
 import { BigNumberish } from 'ethers'
-import IPFS from '~/tools/IPFS'
+import { CID } from 'multiformats/cid'
+import { processFile, processJSON } from '~/tools/IPFS'
 import User from '~/types/user'
 import ItemPublic from '~/types/itemPublic'
 import ItemPrivate from '~/types/itemPrivate'
@@ -21,9 +21,11 @@ import {
   StoreUsers__factory,
 } from '~/types/typechain'
 import Tag from '~/types/tag'
+import { MetaMaskInpageProvider } from '@metamask/providers'
 
-const userContractAddress = '0xEb3B8A7bF4E853d11aD233e15438852Ac067e253'
-const storeContractAddress = '0xEb3B8A7bF4E853d11aD233e15438852Ac067e253'
+const { t } = useI18n()
+const userContractAddress = import.meta.env.VITE_userContractAddress
+const storeContractAddress = import.meta.env.VITE_storeContractAddress
 const storedUser = localStorage.getItem('user')
 
 export const useStateStore = defineStore('state', () => {
@@ -37,24 +39,22 @@ export const useStateStore = defineStore('state', () => {
   let userAddress = ''
   let itemList: ItemPublic[]
   let tagList: Tag[]
-  const alert = ref('')
   let currency: Currency
 
   async function determineCurrency() {
-if ()    
-if (localStorage.getItem('currency')) {
+    if (localStorage.getItem('currency')) 
       currency = JSON.parse(localStorage.getItem('currency')!) as Currency
-    } else {
+     else 
       currency = await currency.determineValues()
       localStorage.setItem('currency', JSON.stringify(currency))
-    }
+    
   }
 
   async function connectWallet() {
     try {
       const { ethereum } = window
       if (!ethereum) {
-        alert.value = 'Установите MetaMask!'
+        alert(t('state.installMetaMask'))
         return
       }
       await authUser(ethereum)
@@ -64,12 +64,12 @@ if (localStorage.getItem('currency')) {
     }
   }
 
-  async function authUser(ethereum: ExternalProvider | JsonRpcFetchFunc) {
+  async function authUser(ethereum: MetaMaskInpageProvider) {
     setUserLoader(true)
     setItemLoader(true)
     try {
-      const provider = new ethers.provider.Web3Provider(ethereum)
-      userAddress = await provider.getSigner()._address
+      const provider = new ethers.BrowserProvider(ethereum)
+      userAddress = (await provider.getSigner()).address
       store = StoreUsers__factory.connect(storeContractAddress, provider)
       if (!user) {
         if (await store.isStored()) await authThroughIPFS()
@@ -92,14 +92,14 @@ if (localStorage.getItem('currency')) {
 
   async function authThroughIPFS() {
     const hash = await store.getHash()
-    user = await IPFS.get(hash) as User
+    user = await processJSON.get(CID.parse(hash)) as User
 
     localStorage.setItem('user', JSON.stringify(user))
   }
 
   async function createIPFSRecord() {
     user = new User(userAddress)
-    const hash = await (await IPFS.add(user)).toString()
+    const hash = await (await processJSON.add(user)).toString()
     localStorage.setItem('user', JSON.stringify(user))
     store.storeUser(hash)
   }
@@ -113,8 +113,11 @@ if (localStorage.getItem('currency')) {
         value.items.push(pubItem)
       })
 
-      //https://ipfs.io/ipfs/${cid}`
-      const res = await IPFS.add(image)
+      //https://IPFS.io/IPFS/${cid}`
+      const res = await processFile.addFile({
+        path: `./${image.name}`,
+        content: new Uint8Array((await image.arrayBuffer()))
+      })
       item.imageCID = res.toString()
       user.postedItems?.push(item)
       updatePersonalInfo()
@@ -124,7 +127,7 @@ if (localStorage.getItem('currency')) {
 
       updateTags(item.tag)
       store.changePublicVaultItemHash(
-        ((await IPFS.add(itemList)).toString())
+        ((await processJSON.add(itemList)).toString())
       )
       setUserLoader(false)
       return true
@@ -145,7 +148,10 @@ if (localStorage.getItem('currency')) {
       })
 
       //https://IPFS.io/IPFS/${cid}`
-      const res = await IPFS.add(image, )
+      const res = await processFile.addFile({
+        path: `./${image.name}`,
+        content: new Uint8Array((await image.arrayBuffer()))
+      })
       item.imageCID = res.toString()
       let id = user.postedItems!.findIndex((value) => item.id === value.id)!
       user.postedItems![id] = item
@@ -157,7 +163,7 @@ if (localStorage.getItem('currency')) {
 
       updateTags(item.tag)
       store.changePublicVaultItemHash(
-        ((await IPFS.add(itemList)).toString())
+        ((await processJSON.add(itemList)).toString())
       )
       setUserLoader(false)
       return true
@@ -175,7 +181,7 @@ if (localStorage.getItem('currency')) {
 
   async function updatePersonalInfo() {
     setUserLoader(true)
-    const res = await IPFS.add(user)
+    const res = await processJSON.add(user)
     await store.changeVaultItemHash(res.toString())
     localStorage.removeItem('user')
     localStorage.setItem('user', JSON.stringify(user))
@@ -196,7 +202,7 @@ if (localStorage.getItem('currency')) {
 
   async function personalToPublic(item: ItemPrivate) {
     const itemP: ItemPublic = item as unknown as ItemPublic
-    itemP.sellerReputation = await getReputationValueOfUser(userAddress)
+    itemP.sellerReputation = Number(await getReputationValueOfUser(userAddress))
     itemP.seller = userAddress
     return itemP
   }
@@ -204,10 +210,7 @@ if (localStorage.getItem('currency')) {
   async function updateItemList() {
     setItemLoader(true)
     const publicRepItemHash = await store.getPublicVaultItemHash()
-    let itemData = ''
-    for await (const chunk of IPFS.cat(publicRepItemHash))
-      itemData += chunk.toString()
-    itemList = JSON.parse(itemData) as ItemPublic[]
+    itemList = (await processJSON.get(CID.parse(publicRepItemHash))) as ItemPublic[]
     itemList.sort((a, b) => a.sellerReputation - b.sellerReputation)
     setItemLoader(false)
   }
@@ -215,10 +218,7 @@ if (localStorage.getItem('currency')) {
   async function updateTagList() {
     setItemLoader(true)
     const publicRepTagHash = await store.getPublicVaultTagHash()
-    let tagData = ''
-    for await (const chunk of IPFS.cat(publicRepTagHash))
-      tagData += chunk.toString()
-    tagList = JSON.parse(tagData) as Tag[]
+    tagList = (await processJSON.get(CID.parse(publicRepTagHash))) as Tag[]
     setItemLoader(false)
   }
 
@@ -232,7 +232,7 @@ if (localStorage.getItem('currency')) {
       }
     })
     store.changePublicVaultTagHash(
-      (await IPFS.add(JSON.stringify(tagList))).cid.toString()
+      (await processJSON.add(tagList)).toString()
     )
     setItemLoader(false)
   }
@@ -248,9 +248,9 @@ if (localStorage.getItem('currency')) {
     buyDeals.forEach((buyDeal) => {
       const bd = user.buyDeals?.findIndex((value) => value.id === buyDeal.id)
       if (bd) {
-        if (buyDeal.state !== user.buyDeals![bd].state)
+        if (Number(buyDeal.state) !== user.buyDeals![bd].state)
           dealProgram.changeSync(buyDeal.id, true)
-        user.buyDeals![bd].state = buyDeal.state
+        user.buyDeals![bd].state = Number(buyDeal.state)
         user.buyDeals![bd].schedule = JSON.parse(buyDeal.schedule) as Date[]
         user.buyDeals![bd].place = buyDeal.place
         user.buyDeals![bd].time = JSON.parse(buyDeal.time) as Date
@@ -261,7 +261,7 @@ if (localStorage.getItem('currency')) {
           new Deal(
             buyDeal.id,
             buyDeal.amount,
-            buyDeal.state,
+            Number(buyDeal.state),
             buyDeal.seller,
             itemList.find((value) => value.id === buyDeal.itemId)!,
             JSON.parse(buyDeal.schedule) as Date[],
@@ -278,9 +278,9 @@ if (localStorage.getItem('currency')) {
     sellDeals.forEach((sellDeal) => {
       const bd = user.buyDeals?.findIndex((value) => value.id === sellDeal.id)
       if (bd) {
-        if (sellDeal.state !== user.sellDeals![bd].state)
+        if (Number(sellDeal.state) !== user.sellDeals![bd].state)
           dealProgram.changeSync(sellDeal.id, true)
-        user.sellDeals![bd].state = sellDeal.state
+        user.sellDeals![bd].state = Number(sellDeal.state)
         user.sellDeals![bd].schedule = JSON.parse(sellDeal.schedule) as Date[]
         user.sellDeals![bd].place = sellDeal.place
         user.sellDeals![bd].time = JSON.parse(sellDeal.time) as Date
@@ -291,7 +291,7 @@ if (localStorage.getItem('currency')) {
           new Deal(
             sellDeal.id,
             sellDeal.amount,
-            sellDeal.state,
+            Number(sellDeal.state),
             sellDeal.buyer,
             itemList.find((value) => value.id === sellDeal.itemId)!,
             JSON.parse(sellDeal.schedule) as Date[],
@@ -418,8 +418,8 @@ if (localStorage.getItem('currency')) {
     return currency
   }
 
-  function getComission() {
-    return dealProgram.commission / 100
+  async function getComission() {
+    return Number(await dealProgram.getComissionRate()) / 100
   }
 
   async function changeSync(

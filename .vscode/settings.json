@@ -2,14 +2,19 @@
   "cSpell.words": [
     "angellist",
     "antfu",
+    "camelcase",
+    "Comission",
+    "confirmz",
     "datepicker",
     "demi",
     "ethersproject",
-    "flagpack",
     "helia",
     "iconify",
     "iconoir",
+    "Inpage",
     "intlify",
+    "Isnt",
+    "itemz",
     "listify",
     "nomicfoundation",
     "nomiclabs",
@@ -20,13 +25,19 @@
     "pnpm",
     "primevue",
     "recaptcha",
+    "repution",
     "sizecheck",
+    "SSTU",
     "statusz",
     "taze",
     "typechain",
     "typecheck",
+    "unhead",
+    "unixfs",
     "unocss",
     "unplugin",
+    "unsynced",
+    "uuidv",
     "Vite",
     "vitejs",
     "Vitesse",
@@ -34,7 +45,11 @@
     "vuepic",
     "vueuse",
     "webfont",
-    "СГТУ"
+    "отзывании",
+    "поже",
+    "СГТУ",
+    "смарт",
+    "Форостин"
   ],
   "i18n-ally.sourceLanguage": "en",
   "i18n-ally.keystyle": "nested",
@@ -47,5 +62,9 @@
   "files.associations": {
     "*.css": "postcss"
   },
-  "editor.formatOnSave": false
+  "editor.formatOnSave": false,
+  "i18n-ally.extract.ignored": [
+    "\r\n      Ок\r\n    ",
+    "\r\n      Ок\r\n    "
+  ]
 }

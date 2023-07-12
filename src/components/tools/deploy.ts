@@ -5,9 +5,11 @@ import dot from 'dotenv'
 
 async function main() {
   dot.config()
-  const salt = import.meta.env.VITE_SALT
+  const salt = process.env.NUXT_SALT
   const currentTimestampInSeconds = Math.round(Date.now() / 1000)
   const unlockTime = currentTimestampInSeconds + 60
+
+  // const lockedAmount = ethers.utils.parseEther('0.001')
 
   const dealFile = await ethers.getContractFactory('deal')
   const deal = await dealFile.deploy()
@@ -15,7 +17,7 @@ async function main() {
   await deal.getDeployedCode()
 
   console.log(
-    `Смарт-контракт сделки был размещён ${unlockTime} по адресу ${deal.getAddress}`
+    `Deal with unlock timestamp ${unlockTime} deployed to ${deal.getAddress}`
   )
 
   const storeFile = await ethers.getContractFactory('store')
@@ -24,7 +26,7 @@ async function main() {
   await store.getDeployedCode()
 
   console.log(
-    `Смарт-контракт хранения данных был размещён ${unlockTime} по адресу ${store.getAddress}`
+    `Store with unlock timestamp ${unlockTime} deployed to ${store.getAddress}`
   )
 }
 

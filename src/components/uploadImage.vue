@@ -7,8 +7,10 @@ const emit = defineEmits<{
   (event: 'uploaded', image: File): void
 }>()
 
+const { t } = useI18n()
+
 const file = ref({
-  name: 'Файл не загружен',
+  name: t('uploadImage.file'),
   size: '',
 })
 
@@ -86,7 +88,7 @@ async function handleFileUpload(fileItem: File) {
           />
         </path>
       </svg>
-      <span v-else>{{ 'Перетащите фалы сюда' }}</span>
+      <span v-else>{{ t('uploadImage.dragHere') }}</span>
     </div>
 
     <div class="upload-footer">
@@ -94,10 +96,10 @@ async function handleFileUpload(fileItem: File) {
         <p class="upload-footer-file-name">
           {{ file.name }}
         </p>
-        <small class="upload-footer-file-size">Вес: {{ file.size }} КБ</small>
+        <small class="upload-footer-file-size">{{t('uploadImage.weight')}}: {{ file.size }} &nbsp; {{t('uploadImage.kb')}}</small>
       </div>
 
-      <input type="file" class="upload-footer-button" accept="image/*" placeholder="Загрузить" @change="(payload) => { handleFileUpload((payload.target! as HTMLInputElement).files![0]) }">
+      <input type="file" class="upload-footer-button" accept="image/*" :placeholder="t('uploadImage.load')" @change="(payload) => { handleFileUpload((payload.target! as HTMLInputElement).files![0]) }">
     </div>
   </section>
 </template>

@@ -9,12 +9,12 @@ import AutoImport from 'unplugin-auto-import/vite'
 import Markdown from 'vite-plugin-vue-markdown'
 import { VitePWA } from 'vite-plugin-pwa'
 import VueI18n from '@intlify/unplugin-vue-i18n/vite'
-import Inspect from 'vite-plugin-inspect'
-import Inspector from 'vite-plugin-vue-inspector'
+import VueDevTools from 'vite-plugin-vue-devtools'
 import LinkAttributes from 'markdown-it-link-attributes'
 import Unocss from 'unocss/vite'
 import Shiki from 'markdown-it-shiki'
 
+// @ts-expect-error failed to resolve types
 import VueMacros from 'unplugin-vue-macros/vite'
 import WebfontDownload from 'vite-plugin-webfont-dl'
 
@@ -68,7 +68,7 @@ export default defineConfig({
       wrapperClasses: 'prose prose-sm m-auto text-left',
       headEnabled: true,
       markdownItSetup(md) {
-        md.use(Shiki, {
+         md.use(Shiki, {
           theme: {
             light: 'vitesse-light',
             dark: 'vitesse-dark',
@@ -119,13 +119,9 @@ export default defineConfig({
       include: [path.resolve(__dirname, 'locales/**')],
     }),
 
-    Inspect(),
-
-    Inspector({
-      toggleButtonVisibility: 'never',
-    }),
-
     WebfontDownload(),
+
+    VueDevTools(),
   ],
 
   test: {
@@ -142,10 +138,13 @@ export default defineConfig({
     crittersOptions: {
       reduceInlineStyles: false,
     },
-    onFinished() { generateSitemap() },
+    onFinished() {
+      generateSitemap()
+    },
   },
 
   ssr: {
+    // TODO: workaround until they support native ESM
     noExternal: ['workbox-window', /vue-i18n/],
   },
 })

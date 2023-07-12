@@ -9,6 +9,8 @@ import PagingLine from '~/components/pagingLine.vue'
 import Card from '~/components/card.vue'
 import { useFlagStore } from '~/stores/flags'
 
+const { t } = useI18n()
+
 const pagingIndex = ref(0)
 const flags = useFlagStore()
 
@@ -75,15 +77,15 @@ function searchDown() {
     >
     <Container>
       <div class="loaded">
-        <h1>Здравствуйте! 👋</h1>
-        <p>С чем вы хотели бы ознакомиться сегодня?</p>
+        <h1>{{t('goods.greetings')}} 👋</h1>
+        <p>{{t('goods.howDoYouDo')}}</p>
         <search @filter="searchUp" @cancel="searchDown" />
       </div>
     </Container>
     <Container>
       <div class="inline-flex">
         <h1 class="mb-1 flex items-center justify-center font-bold">
-          <span class="i-fa6-regular-bookmark" /> &nbsp; Тэги
+          <span class="i-fa6-regular-bookmark" /> &nbsp; {{t('goods.tags')}}
         </h1>
       </div>
       <div class="flex overflow-x-scroll pb-10">
@@ -106,14 +108,14 @@ function searchDown() {
     <Container>
       <div class="mb-1 inline-flex">
         <h1 class="m-1 flex items-center justify-center font-bold">
-          <span class="i-charm-candy" /> &nbsp; Товары ({{ content.itemList.length }})
+          <span class="i-charm-candy" /> &nbsp; {{t('goods.goods')}} ({{ content.itemList.length }})
         </h1>
         &nbsp; &nbsp; &nbsp;
         <button
           class="h-9 border-b-4 border-red-700 rounded bg-red-500 px-4 py-2 font-bold text-white hover:border-red-500 hover:bg-red-400"
           @click="state.updateItemList()"
         >
-          Обновить перечень
+        {{t('goods.refresh')}}
         </button>
       </div>
 
@@ -158,7 +160,7 @@ function searchDown() {
           "
         />
         <p v-if="content.itemList.length < 1">
-          Список доступных товаров пуст
+          {{t('goods.noItems')}}
         </p>
       </div>
     </Container>

@@ -1,9 +1,170 @@
-Goods: Товары
-Deals: Сделки
-Posted: Выложенное
-Posted_Items: Выложено вами
-Post_New: Разместить новый товар
-Purchase_Deals: Сделки на продажу
-Refresh: Обновить
-SSTU: СГТУ
-or: или
+uploadImage:
+   dragHere: Drag files here
+   weight: Weight
+   kb: KB
+   load: load
+   file: File not loaded
+unsynced:
+   unsynced: The other person in the deal hasn't seen your activity yet
+   goods: Goods
+   in: in quantity
+search: Has in the title
+next: Next
+previous: previous
+footer:
+   dis: Switch design
+   lang: Switch language
+   SSTU: SSTU
+itemPrivate:
+   message_start: Fields
+   message_name: "Name"
+   message_tag: "Tags"
+   message_availability: "Number of items for sale"
+   message_price: "Price per item"
+   message_producer: "Producer"
+   message_defaultPlace: "Deal Location"
+   message_schedule: "Trade Schedule"
+   message_description: "Description"
+state:
+   installMetaMask: Install MetaMask!
+posted:
+   emptyDealList: The list of purchase deals is empty
+   emptyItemList: List of purchase deals is empty
+   newItem: Add a new item
+   post: Add
+   postedItems: Items you posted
+   refresh: Refresh the list
+   sellDeals: Sell deals
+goods:
+   greetings: Hello!
+   howDoYouDo: What would you like to learn today?
+   tags: Tags
+   goods: Goods
+   refresh: Refresh the list of available products
+   noItems: List of available items is empty
+deals:
+   deals: Deals to buy
+   refresh: Refresh the list
+   noDeals: List of buy deals is empty
+layout:
+   userData: user data
+   itemData: item data
+   dealData: deal data
+   loading: Loading
+   and: and
+viewModal:
+   none: None
+   acceptable: Acceptable
+   good: good
+   great: Excellent
+   new: Initial
+   name
+   sellerHas: The seller has
+   reputation
+   setSchedule: Set a schedule for when it's convenient for you to pick up the goods
+   prod: Producer / Importer / Or other guarantor of the quality of the item
+   numOfGoods: Enter the quantity of goods you require
+   units: pcs by
+   commission: Commission price
+   cost: COST
+   eq: which is equivalent
+   startDeal: Start a deal
+   go: A deal to purchase an item has begun. Go to the section "Deals" to get acquainted with it.
+changeModal:
+   changeAdded: Change a previously added product
+   newImage: New product image
+   image: "Product Image"
+   inc: incorrectly specified
+   fif: Up to 50 characters
+   newName: New name
+   newDesc: New description
+   changeDesc: Enter a product description
+   newTag: New item tags
+   chooseTag: Choose suitable tags
+   newPrice: New price for one item
+   newNum: New number of items to sell
+   prod: New Item Quality Assurance
+   source: Source
+   newPlace: The new location for the trade
+   newSch: New trade schedule
+   change: Change
+   del: Delete
+   sucChanged: Product changed successfully
+addModal:
+   img: "Product Image"
+   inc: incorrectly specified
+   postNew: Add a new item for sale
+   image: Product image
+   name: Name
+   fif: Up to 50 characters
+   desc: Description
+   changeDesc: Enter a product description
+   tags: Item tags
+   ifTags: If there is no matching tag, then the item is banned from sale
+   chooseTags: Choose suitable tags
+   price: Price per item
+   num: Number of items to sell
+   prod: Producer / Importer / Or other guarantor of the quality of the item
+   disclaimer: Items prohibited for circulation in the Russian Federation are prohibited on this site
+   source: Source
+   place: Place where the transaction took place
+   sch: Transaction schedule
+   post: Post
+   sucPosted: Item successfully posted
+modal:
+   close: Close the window
+buyDeal:
+   cancel: Cancel the deal
+   in: in quantity
+   units: pcs.
+   cost: Order cost
+   eq: ₽ which is equivalent
+   mw: Mwei
+   purchase: Purchase of goods
+   amount: in quantity
+   units: pcs.
+   created:
+     setTime: Set the trade time
+     The transaction is awaiting confirmation
+     confirm: Confirm the deal
+     check: Check before sale
+     time: Location
+     location: Time
+     delete: Delete a deal
+   agreed:
+     confirmz: Confirm receipt
+     agreed: The deal has been confirmed. The place of the transaction is set.
+     fif: 5 digit code
+     complain: Complaint
+     code: The code is invalid
+     un: Date of receipt of the goods set by the buyer
+     recall: Leave a complaint about the product provided
+   aborted:
+     abort: The deal has been cancelled. The seller is not yet aware of this fact.
+   archived:
+     complete: The deal is complete. The seller has received payment.
+   complete:
+     await: Remittance to seller is being processed
+sellDeal:
+   selling: Selling a product
+   in: in quantity
+   units: pcs.
+   cost: Order cost
+   eq: ₽ which is equivalent
+   mw: Mwei
+   created:
+     setTime: Set the trade time
+     The transaction is awaiting confirmation
+     confirm: Confirm the deal
+     check: Check before sale
+     time: Location
+     location: Time
+     delete: Delete a deal
+   agreed:
+     agreed: The deal has been agreed. To receive payment, the buyer must provide the payment code.
+     code: Payment code
+     un: OPTIONAL. When canceling a transaction, you can change the place and time of its execution if you want it to take place later
+     recall: Recall a deal
+   aborted:
+     abort: The transaction was canceled by the buyer.
+   archived:

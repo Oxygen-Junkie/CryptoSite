@@ -8,6 +8,8 @@ const props = defineProps<{
   deal: Deal
 }>()
 
+const { t } = useI18n()
+
 const state = useStateStore()
 </script>
 
@@ -15,20 +17,19 @@ const state = useStateStore()
   <h4 class="inline-flex font-medium">
     <span class="i-la-bitbucket" />&nbsp;
     <span>{{
-      `Покупка товара ${item.name} в
-    количестве ${deal.amount} шт.`
+      `${t('buyDeal.purchase')} ${item.name} ${t('buyDeal.amount')} ${deal.amount} ${t('buyDeal.units')}`
     }}</span>
   </h4>
-  <h6>Сделка отменена. Продавец ещё не ознакомлен с этим фактом.</h6>
+  <h6>{{t('buyDeal.aborted.abort')}}</h6>
   <p class="font-thin">
     {{
-      `Стоимость заказа ${Number(
+      `${t('sellDeal.cost')} ${Number(
         props.item.price * parseInt(deal.amount.toString()),
-      )} ₽ что эквивалентно ${Number(
+      )} ${t('sellDeal.eq')} ${Number(
         (props.item.price * parseInt(deal.amount.toString()) * 1000)
           / state.getCurrency().eth
           / state.getCurrency().rub,
-      ).toFixed(2)} Mwei`
+      ).toFixed(2)} ${t('sellDeal.mw')}`
     }}
   </p>
 </template>

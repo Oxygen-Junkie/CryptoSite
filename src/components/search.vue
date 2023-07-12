@@ -4,6 +4,8 @@ const emit = defineEmits<{
   (event: 'cancel'): void
 }>()
 
+const { t } = useI18n()
+
 const title = ref('')
 const showCross = ref(false)
 
@@ -30,7 +32,7 @@ watchEffect(() => {
         v-model="title"
         class="block form-inputs appearance-none py-1 px-2 mb-1 text-base leading-normal bg-whites border border-grey rounded"
         type="text"
-        placeholder="Имеет в названии..."
+        :placeholder="`${t('search')}...`"
       />
       <button v-if="showCross" @click="cancel">
         <strong class="y text-xl align-center cursor-pointer">&times;</strong>

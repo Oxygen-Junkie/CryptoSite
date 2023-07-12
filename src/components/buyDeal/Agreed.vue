@@ -13,6 +13,8 @@ const emit = defineEmits<{
   (event: 'dealt', sync: boolean): void
 }>()
 
+const { t } = useI18n()
+
 const complaint = ref('')
 const code = ref('')
 const message = ref('')
@@ -51,7 +53,7 @@ function delivered() {
       emit('dealt', true)
     })
     .catch(() => {
-      message.value = 'Код не правильный'
+      message.value = t('buyDeal.agreed.code')
     })
 }
 
@@ -77,29 +79,28 @@ function abortDeal() {
   <h4 class="inline-flex font-medium">
     <span class="i-la-bitbucket" />&nbsp;
     <span>{{
-      `Покупка товара ${item.name} в
-    количестве ${deal.amount} шт.`
+      `${t('buyDeal.purchase')} ${item.name} ${t('buyDeal.amount')} ${deal.amount} ${t('buyDeal.units')}`
     }}</span>
   </h4>
   <h6 class="font-bald text-red-700">
-    Сделка подтверждена. Место сделки задано.
+    {{t('buyDeal.agreed.agreed')}}
   </h6>
   <p class="font-medium">
-    Место &nbsp; {{ props.deal.place }}
+    {{t('buyDeal.created.place')}} &nbsp; {{ props.deal.place }}
   </p>
   <p class="font-medium">
-    Дата получения товара установленная покупателем: &nbsp;
+    {{t('buyDeal.created.un')}}: &nbsp;
     {{ props.deal.time?.toLocaleString() }}
   </p>
   <p class="font-thin">
     {{
-      `Стоимость заказа ${Number(
+      `${t('sellDeal.cost')} ${Number(
         props.item.price * parseInt(deal.amount.toString()),
-      )} ₽ что эквивалентно ${Number(
+      )} ${t('sellDeal.eq')} ${Number(
         (props.item.price * parseInt(deal.amount.toString()) * 1000)
           / state.getCurrency().eth
           / state.getCurrency().rub,
-      ).toFixed(2)} Mwei`
+      ).toFixed(2)} ${t('sellDeal.mw')}`
     }}
   </p>
   <div class="d-flex justify-content-center">
@@ -108,8 +109,8 @@ function abortDeal() {
         v-model="code"
         type="text"
         class="form-control border-black"
-        placeholder="Код из 5 цифр"
-        aria-label="Код из 5 цифр"
+        :placeholder="t('buyDeal.agreed.fif')"
+        :aria-label="t('buyDeal.agreed.fif')"
         aria-describedby="button-addon1"
       >
       <button
@@ -119,7 +120,7 @@ function abortDeal() {
         data-mdb-ripple-color="dark"
         @click="delivered()"
       >
-        Подтвердить получение
+        {{t('buyDeal.agreed.confirmz')}}
       </button>
     </div>
   </div>
@@ -135,8 +136,8 @@ function abortDeal() {
         v-model="complaint"
         type="text"
         class="form-control border-black"
-        placeholder="Жалоба"
-        aria-label="Жалоба"
+        :placeholder="t('buyDeal.agreed.complain')"
+        :aria-label="t('buyDeal.agreed.complain')"
         aria-describedby="button-addon1"
       >
       <button
@@ -145,7 +146,7 @@ function abortDeal() {
         type="button"
         @click="complain()"
       >
-        Оставить жалобу на предоставленный товар
+        {{t('buyDeal.agreed.recall')}}
       </button>
     </div>
   </div>
@@ -154,6 +155,6 @@ function abortDeal() {
     class="h-9 border-b-4 border-yellow-700 rounded bg-yellow-500 px-4 py-2 font-bold text-white hover:border-yellow-500 hover:bg-yellow-400"
     @click="abortDeal()"
   >
-    Отменить сделку
+    {{t('buyDeal.cancel')}}
   </button>
 </template>

@@ -4,6 +4,8 @@ import modal from '~/components/modal/modal.vue'
 import { useStateStore } from '~/stores/state'
 import { useFlagStore } from '~/stores/flags'
 
+const { t } = useI18n()
+
 const state = useStateStore()
 const flags = useFlagStore()
 
@@ -17,8 +19,8 @@ if (!state.isUserLogged) {
 const textForLUser = ref(
   `${
     state.loadingUser
-      ? `данные о пользователе ${
-          (state.loadingItems || state.loadingDeals) ? ' и' : ''
+      ? `${t('layout.userData')} ${
+          (state.loadingItems || state.loadingDeals) ? ` ${t('layout.and')}` : ''
         }`
       : ''
   }`,
@@ -27,12 +29,12 @@ const textForLUser = ref(
 const textForLItems = ref(
   `${
     state.loadingItems
-      ? ` данные о товаре ${state.loadingDeals ? ' и' : ''}`
+      ? ` ${t('layout.itemData')} ${state.loadingDeals ? ` ${t('layout.and')}` : ''}`
       : ''
   }`,
 )
 
-const textForLDeals = ref(`${state.loadingDeals ? ' данные о сделках' : ''}`)
+const textForLDeals = ref(`${state.loadingDeals ? ` ${t('layout.dealData')}` : ''}`)
 </script>
 
 <template>
@@ -47,7 +49,7 @@ const textForLDeals = ref(`${state.loadingDeals ? ' данные о сделка
       class="text-center"
     >
       <h4>
-        {{ `Загружаются ${textForLUser} ${textForLItems} ${textForLDeals}` }}
+        {{ `${t('layout.loading')} ${textForLUser} ${textForLItems} ${textForLDeals}` }}
       </h4>
       <LoadCircle class="h-100 w-100" />
     </div>
