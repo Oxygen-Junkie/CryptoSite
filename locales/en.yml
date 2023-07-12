@@ -1,3 +1,6 @@
+head_goods: Goods
+head_deals: Deals
+head_posted: Posted
 uploadImage:
    dragHere: Drag files here
    weight: Weight
