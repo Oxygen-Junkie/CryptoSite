@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const { t, locale } = useI18n()
+const { t } = useI18n()
 </script>
 
 <template>
@@ -10,21 +10,21 @@ const { t, locale } = useI18n()
           class="mr-2 w-80 border border-b-4 border-r-4 border-black px-10 py-2 font-medium shadow-lg hover:shadow-sm"
           to="/"
         >
-          <span class="flex items-center justify-center"><span class="i-iconoir-3d-select-face" />&nbsp; {{ t('Goods') }}
+          <span class="flex items-center justify-center"><span class="i-iconoir-3d-select-face" />&nbsp; {{ t('head_goods') }}
           </span>
         </router-link>
         <router-link
           class="mr-2 w-80 border border-b-4 border-r-4 border-black px-10 py-2 font-medium shadow-lg hover:shadow-sm"
           to="/deals"
         >
-          <span class="flex items-center justify-center"><span class="i-fluent-handshake-24-regular" />&nbsp; {{ t('Deals') }}
+          <span class="flex items-center justify-center"><span class="i-fluent-handshake-24-regular" />&nbsp; {{ t('head_deals') }}
           </span>
         </router-link>
         <router-link
           class="mr-2 w-80 border border-b-4 border-r-4 border-black px-10 py-2 font-medium shadow-lg hover:shadow-sm"
           to="/posted"
         >
-          <span class="flex items-center justify-center"><span class="i-ph-paperclip" />&nbsp; {{ t('Posted') }}
+          <span class="flex items-center justify-center"><span class="i-ph-paperclip" />&nbsp; {{ t('head_posted') }}
           </span>
         </router-link>
       </span>

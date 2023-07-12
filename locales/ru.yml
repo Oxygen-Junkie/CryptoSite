@@ -1,3 +1,6 @@
+head_goods: Товары
+head_deals: Сделки
+head_posted: Выставленное
 uploadImage:
   dragHere: Перетащите фалы сюда
   weight: Вес
