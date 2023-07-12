@@ -14,6 +14,8 @@ const emit = defineEmits<{
   (event: 'closed'): void
 }>()
 
+const { t, locale } = useI18n()
+
 const purchased = ref(true)
 const store = useStateStore()
 const comission: Ref<number | undefined> = ref()
@@ -21,7 +23,7 @@ store.getComission().then((com) => {
   comission.value = com
 })
 const color = ref('currentColor')
-const rep = ref('Никакой')
+const rep = ref(t('viewModal.none'))
 const amount = ref(1)
 const buyerSchedule: Ref<Date[] | undefined> = ref([new Date(2023, 8, 2, 12, 10), new Date(2023, 8, 10, 11, 30)])
 
@@ -45,22 +47,22 @@ function buy() {
 switch (props.item.sellerReputation) {
   case reputation.OneDeal: {
     color.value = '#fbff00'
-    rep.value = 'Приемлемой'
+    rep.value = t('viewModal.acceptable')
     break
   }
   case reputation.FewDeals: {
     color.value = '#ceff48'
-    rep.value = 'Хорошей'
+    rep.value = t('viewModal.good')
     break
   }
   case reputation.Established: {
     color.value = '#2bff00'
-    rep.value = 'Отличной'
+    rep.value = t('viewModal.great')
     break
   }
   default: {
     color.value = 'currentColor'
-    rep.value = 'Начальной'
+    rep.value = t('viewModal.new')
     break
   }
 }
@@ -75,7 +77,7 @@ switch (props.item.sellerReputation) {
     <div>
       <label><strong
         class="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
-      >Наименование:</strong></label>
+      >{{t('viewModal.name')}}:</strong></label>
       <span>
         {{ props.item.name }}
       </span>
@@ -92,33 +94,32 @@ switch (props.item.sellerReputation) {
         <div class="pb-2">
           <span
             class="mb-2 text-sm font-medium text-gray-900 dark:text-white"
-          >Продавец обладает &nbsp;<span :style="`color: ${color}`">{{ rep }}</span>&nbsp; репутацией</span>
+          >{{t('viewModal.sellerHas')}}&nbsp;<span :style="`color: ${color}`">{{ rep }}</span>&nbsp;{{t('viewModal.reputation')}} </span>
         </div>
         <div class="py-2">
           <label
             class="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
-          >Установите график когда вам удобно забрать товар:</label>
+          >{{t('viewModal.setSchedule')}}:</label>
           <VueDatePicker
             v-model="buyerSchedule"
             :min-date="new Date()"
             multi-dates
             class="w-50"
-            locale="ru"
+            :locale="locale"
             :allowed-dates="props.item.schedule"
           />
         </div>
         <div class="py-2">
           <small
             class="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
-          >Производитель / Импортер / Или иной гарант качества
-            предмета:</small><small>
+          >{{t('viewModal.prod')}}:</small><small>
             {{ ` ${props.item.producer}` }}
           </small>
         </div>
       </div>
     </div>
     <div v-if="comission" class="py-2">
-      <label><strong>Введите требуемое вам количество товара:</strong></label><br>
+      <label><strong>{{t('viewModal.numOfGoods')}}:</strong></label><br>
       <input
         v-model="amount"
         type="number"
@@ -127,28 +128,27 @@ switch (props.item.sellerReputation) {
         min="1"
       >
       <p class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
-        {{ `${amount}шт по ${props.item.price}₽ ` }}
+        {{ `${amount} ${t('viewModal.units')} ${props.item.price}₽ ` }}
       </p>
       <p class="mb-2 block text-sm font-thin text-gray-900 dark:text-white">
-        {{ `Цена комиссии ${amount * props.item.price * comission}₽ ` }}
+        {{ `${t('viewModal.commission')} ${amount * props.item.price * comission}₽ ` }}
       </p>
       <strong
         v-show="amount > 1"
         class="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
-      >{{ `СТОИМОСТЬЮ: ${amount * props.item.price * (1 + comission)!}₽ что эквивалентно ${Number((props.item.price * amount * 1000 * (1 + comission) / store.getCurrency().eth / store.getCurrency().rub).toFixed(2))} Mwei` }}</strong>
+      >{{ ` ${t('viewModal.cost')}: ${amount * props.item.price * (1 + comission)!}₽ ${t('viewModal.eq')} ${Number((props.item.price * amount * 1000 * (1 + comission) / store.getCurrency().eth / store.getCurrency().rub).toFixed(2))} Mwei` }}</strong>
     </div>
 
     <button
       class="rounded-lg bg-red-700 px-5 py-2.5 text-center text-sm font-medium text-white dark:bg-red-600 hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 dark:hover:bg-red-700 dark:focus:ring-red-800"
       @click="buy"
     >
-      Начать сделку
+      {{t('viewModal.startDeal')}}
     </button>
   </div>
   <div v-else>
     <h3 class="mb-4 text-xl font-medium text-gray-900 dark:text-white">
-      Сделка на приобретение товара начата. Перейдите в раздел «Сделки» чтобы
-      ознакомиться с ей.
+      {{t('viewModal.go')}}
     </h3>
     <button
       type="submit"

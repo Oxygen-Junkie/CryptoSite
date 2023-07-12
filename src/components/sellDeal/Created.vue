@@ -16,6 +16,8 @@ const emit = defineEmits<{
   (event: 'dealt', sync: boolean): void
 }>()
 
+const { t } = useI18n()
+
 const place = ref('')
 const time: Ref<Date | undefined> = ref()
 const message = ref('')
@@ -32,7 +34,7 @@ function confirmDeal() {
       .catch(() => {})
   }
   else {
-    message.value = 'Установите время сделки'
+    message.value = t('sellDeal.created.setTime')
   }
 }
 
@@ -50,27 +52,26 @@ function removeDeal() {
   <h4 class="inline-flex font-medium">
     <span class="i-octicon-briefcase-16" />&nbsp;
     <span>{{
-      `Продажа товара ${item.name} в
-    количестве ${deal.amount} шт.`
+      `${t('sellDeal.selling')} ${item.name} ${t('sellDeal.selling')} ${deal.amount} ${t('sellDeal.units')}`
     }}</span>
   </h4>
   <h6 class="font-bald text-red-700">
-    Сделка ожидает подтверждения
+    {{t('sellDeal.created.confirmation')}}
   </h6>
   <p class="font-thin">
     {{
-      `Стоимость заказа ${Number(
+      `${t('sellDeal.cost')} ${Number(
         props.item.price * parseInt(deal.amount.toString()),
-      )} ₽ что эквивалентно ${Number(
+      )} ${t('sellDeal.eq')} ${Number(
         (props.item.price * parseInt(deal.amount.toString()) * 1000)
           / state.getCurrency().eth
           / state.getCurrency().rub,
-      ).toFixed(2)} Mwei`
+      ).toFixed(2)} ${t('sellDeal.mw')}`
     }}
   </p>
-  <small class="font-bald">Перед продажей проверьте </small>
+  <small class="font-bald">{{t('sellDeal.created.check')}}&nbsp; </small>
   <p class="mb-1 font-medium">
-    Место
+    {{t('sellDeal.created.place')}}
   </p>
   &nbsp;
   <input
@@ -80,7 +81,7 @@ function removeDeal() {
     :placeholder="props.deal.place"
   >
   <p class="mb-1 font-medium">
-    Время
+    {{t('sellDeal.created.time')}}
   </p>
   <VueDatePicker
     v-model="time"
@@ -98,13 +99,13 @@ function removeDeal() {
     class="h-9 border-b-4 border-red-700 rounded bg-red-500 px-4 py-2 font-bold text-white hover:border-red-500 hover:bg-red-400"
     @click="confirmDeal()"
   >
-    Подтвердить сделку
+  {{t('sellDeal.created.confirm')}}
   </button>
   <button
     type="button"
     class="h-9 border-b-4 border-yellow-700 rounded bg-yellow-500 px-4 py-2 font-bold text-white hover:border-yellow-500 hover:bg-yellow-400"
     @click="removeDeal()"
   >
-    Удалить сделку
+  {{t('sellDeal.created.delete')}}
   </button>
 </template>

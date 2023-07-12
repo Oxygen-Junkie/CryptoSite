@@ -23,6 +23,7 @@ import {
 import Tag from '~/types/tag'
 import { MetaMaskInpageProvider } from '@metamask/providers'
 
+const { t } = useI18n()
 const userContractAddress = import.meta.env.VITE_userContractAddress
 const storeContractAddress = import.meta.env.VITE_storeContractAddress
 const storedUser = localStorage.getItem('user')
@@ -53,7 +54,7 @@ export const useStateStore = defineStore('state', () => {
     try {
       const { ethereum } = window
       if (!ethereum) {
-        alert('Установите MetaMask!')
+        alert(t('state.installMetaMask'))
         return
       }
       await authUser(ethereum)

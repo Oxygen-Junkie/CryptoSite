@@ -10,6 +10,8 @@ const props = defineProps<{
   pagingIndex: number
 }>()
 
+const { t } = useI18n()
+
 const emit = defineEmits<{
   (event: 'changePageTo', pagingIndexEq: number): void
   (event: 'changePageBy', pagingIndexDif: number): void
@@ -25,7 +27,7 @@ const emit = defineEmits<{
       v-if="props.pagingIndex > 1"
       class="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
     >
-      <span class="sr-only">Прошлая</span>
+      <span class="sr-only">{{t('previous')}}</span>
       <svg
         class="h-5 w-5"
         viewBox="0 0 20 20"
@@ -81,7 +83,7 @@ const emit = defineEmits<{
     <div
       class="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
     >
-      <span class="sr-only">Следующая</span>
+      <span class="sr-only">{{t('next')}}</span>
       <svg
         class="h-5 w-5"
         viewBox="0 0 20 20"

@@ -63,14 +63,14 @@ function divideOnPages(content: ItemPrivate[]) {
   <div id="home" class="mx-auto mb-3 text-left container">
     <div class="my-2 inline-flex">
       <h1 class="mb-1 flex items-center justify-center font-bold">
-        <span class="i-gg-credit-card" /> &nbsp; {{ t('Purchase_Deals') }}
+        <span class="i-gg-credit-card" /> &nbsp; {{ t('posted.sellDeals') }}
       </h1>
       &nbsp; &nbsp; &nbsp;
       <button
         class="h-9 border-b-4 border-red-700 rounded bg-red-500 px-4 py-2 font-bold text-white hover:border-red-500 hover:bg-red-400"
         @click="store.scanDeals()"
       >
-        {{ t('Refresh') }}
+        {{ t('posted.refresh') }}
       </button>
     </div>
 
@@ -89,14 +89,14 @@ function divideOnPages(content: ItemPrivate[]) {
       />
     </container>
     <p v-if="itemDeals.length < 1">
-      Список сделок покупки пуст
+     {{t('posted.emptyItemList')}}
     </p>
   </div>
 
   <container>
     <div class="mb-1 inline-flex">
       <h1 class="mb-1 flex items-center justify-center font-bold">
-        <span class="i-gg-add-r" /> &nbsp; {{ t('Post_New') }}
+        <span class="i-gg-add-r" /> &nbsp; {{ t('posted.newItem') }}
       </h1>
     </div>
     &nbsp;
@@ -109,13 +109,13 @@ function divideOnPages(content: ItemPrivate[]) {
         }
       "
     >
-      + {{ t('Post_New') }}
+      + {{ t('posted.post') }}
     </button>
   </container>
   <container>
     <div class="mb-1 inline-flex">
       <h1 class="mb-1 flex items-center justify-center font-bold">
-        <span class="i-gg-clipboard" /> &nbsp; {{ t('Posted_Items') }} ({{ сo.length }})
+        <span class="i-gg-clipboard" /> &nbsp; {{ t('posted.postedItems') }} ({{ сo.length }})
       </h1>
     </div>
 
@@ -156,7 +156,7 @@ function divideOnPages(content: ItemPrivate[]) {
         "
       />
       <p v-if="itemsOnPage[0].items.length < 1">
-        Список выставленных товаров пуст
+        {{t('posted.emptyItemList')}}
       </p>
     </div>
   </container>

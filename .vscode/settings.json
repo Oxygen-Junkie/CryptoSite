@@ -4,6 +4,7 @@
     "antfu",
     "camelcase",
     "Comission",
+    "confirmz",
     "datepicker",
     "demi",
     "ethersproject",
@@ -24,7 +25,9 @@
     "pnpm",
     "primevue",
     "recaptcha",
+    "repution",
     "sizecheck",
+    "SSTU",
     "statusz",
     "taze",
     "typechain",
@@ -33,6 +36,8 @@
     "unixfs",
     "unocss",
     "unplugin",
+    "unsynced",
+    "uuidv",
     "Vite",
     "vitejs",
     "Vitesse",
@@ -40,6 +45,8 @@
     "vuepic",
     "vueuse",
     "webfont",
+    "отзывании",
+    "поже",
     "СГТУ"
   ],
   "i18n-ally.sourceLanguage": "en",
@@ -53,5 +60,9 @@
   "files.associations": {
     "*.css": "postcss"
   },
-  "editor.formatOnSave": false
+  "editor.formatOnSave": false,
+  "i18n-ally.extract.ignored": [
+    "\r\n      Ок\r\n    ",
+    "\r\n      Ок\r\n    "
+  ]
 }

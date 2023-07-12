@@ -11,6 +11,8 @@ const props = defineProps<{
   deal: Deal
 }>()
 
+const { t } = useI18n()
+
 const emit = defineEmits<{
   (event: 'dealt', sync: boolean): void
 }>()
@@ -49,33 +51,30 @@ function callOffDeal() {
   <h4 class="inline-flex font-medium">
     <span class="i-octicon:code-of-conduct-24" />&nbsp;
     <span>{{
-      `Продажа товара ${item.name} в
-    количестве ${deal.amount} шт.`
+      `${t('sellDeal.selling')} ${item.name} ${t('sellDeal.selling')} ${deal.amount} ${t('sellDeal.units')}`
     }}</span>
   </h4>
   <h6 class="font-bald text-red-700">
-    Сделка согласована. Чтобы получить оплату покупателю необходимо сообщить код
-    оплаты.
+    {{t('sellDeal.agreed.agreed')}}
   </h6>
-  Код оплаты: &nbsp;<span class="text-red">
+  {{ t('sellDeal.agreed.code') }}: &nbsp;<span class="text-red">
     {{ `${state.getPayCode(deal.id)}` }}
   </span>
   <p class="font-thin">
     {{
-      `Стоимость заказа ${Number(
+      `${t('sellDeal.cost')} ${Number(
         props.item.price * parseInt(deal.amount.toString()),
-      )} ₽ что эквивалентно ${Number(
+      )} ${t('sellDeal.eq')} ${Number(
         (props.item.price * parseInt(deal.amount.toString()) * 1000)
           / state.getCurrency().eth
           / state.getCurrency().rub,
-      ).toFixed(2)} Mwei`
+      ).toFixed(2)} ${t('sellDeal.mw')}`
     }}
   </p>
-  <small class="font-thin">НЕОБЯЗАТЕЛЬНО. При отзывании сделки вы можете изменить место и время ёё
-    проведения, если хотите чтобы она состоялась поже
+  <small class="font-thin">{{t('sellDeal.agreed.un')}}
   </small>
   <p class="mb-1 font-medium">
-    Место
+    {{t('sellDeal.created.place')}}
   </p>
   <input
     v-model="place"
@@ -84,7 +83,7 @@ function callOffDeal() {
     :placeholder="props.deal.place"
   >
   <p class="mb-1 font-medium">
-    Время
+    {{t('sellDeal.created.time')}}
   </p>
   <VueDatePicker
     v-model="time"
@@ -98,6 +97,6 @@ function callOffDeal() {
     class="h-9 border-b-4 border-red-700 rounded bg-red-500 px-4 py-2 font-bold text-white hover:border-red-500 hover:bg-red-400"
     @click="callOffDeal()"
   >
-    Отозвать сделку
+    {{t('sellDeal.agreed.recall')}}
   </button>
 </template>

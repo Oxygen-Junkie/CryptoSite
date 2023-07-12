@@ -12,6 +12,8 @@ const props = defineProps<{
   item?: ItemPrivate | ItemPublic
 }>()
 
+const { t } = useI18n()
+
 const flags = useFlagStore()
 </script>
 
@@ -36,7 +38,7 @@ const flags = useFlagStore()
             clip-rule="evenodd"
           />
         </svg>
-        <span class="sr-only">Закрыть окно</span>
+        <span class="sr-only">}{{t('modal.close')}}</span>
       </button>
       <div class="px-6 py-6 lg:px-8">
         <viewItemModal

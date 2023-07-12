@@ -9,6 +9,8 @@ const props = defineProps<{
   deal: Deal
 }>()
 
+const { t } = useI18n()
+
 const state = useStateStore()
 </script>
 
@@ -17,16 +19,19 @@ const state = useStateStore()
     <icon-system-uicons:refresh-alt />&nbsp;
     <span>
       {{
-        `Покупка товара ${item.name} в
-    количестве ${deal.amount} шт.`
+        `${t('unsynced.unsynced')} ${item.name} ${t('sellDeal.in')} ${deal.amount} ${t('sellDeal.units')}`
       }}</span>
   </h4>
-  <h6>Сделка совершена. Продавец получил оплату.</h6>
+  <h6>{{t('unsynced.unsynced')}}</h6>
   <p class="font-thin">
     {{
-      `Стоимость заказа ${Number(props.item.price)} ₽ что эквивалентно ${Number(
-        props.item.price / state.getCurrency().eth / state.getCurrency().rub,
-      ).toFixed(2)} Mwei`
+      `${t('sellDeal.cost')} ${Number(
+        props.item.price * parseInt(deal.amount.toString()),
+      )} ${t('sellDeal.eq')} ${Number(
+        (props.item.price * parseInt(deal.amount.toString()) * 1000)
+          / state.getCurrency().eth
+          / state.getCurrency().rub,
+      ).toFixed(2)} ${t('sellDeal.mw')}`
     }}
   </p>
 </template>

@@ -1,6 +1,8 @@
 import { v4 as uuidv4 } from 'uuid'
 import type Tag from './tag'
 
+const { t } = useI18n()
+
 export default class ItemPrivate {
   id!: string
   name!: string
@@ -37,31 +39,31 @@ export default class ItemPrivate {
 
   notEmpty() {
     let correct = false
-    let message = 'Поля '
+    let message = `${t('itemPrivate.message_start')} `
 
     if (this.name === '')
-      message += '"Название" '
+      message += `${t('itemPrivate.message_name')} `
 
     else if (this.tag.length < 1)
-      message += '"Тэги" '
+      message += `${t('itemPrivate.message_tag')} `
 
     else if (this.availability < 0 && !Number.isInteger(this.availability))
-      message += '"Количество предметов на продажу" '
+      message += `${t('itemPrivate.message_availability')} `
 
     else if (this.price < 0 && !Number.isInteger(this.price * 100))
-      message += '"Цена за один предмет" '
+      message += `${t('itemPrivate.message_price')} `
 
     else if (this.producer === '')
-      message += '"Производитель" '
+      message += `${t('itemPrivate.message_producer')} `
 
     else if (this.defaultPlace === '')
-      message += '"Место совершения сделки" '
+      message += `${t('itemPrivate.message_defaultPlace')} `
 
     else if (this.schedule.length < 1)
-      message += '"График совершения сделки" '
+      message += `${t('itemPrivate.message_schedule')} `
 
     else if (this.description === '')
-      message += '"Описание" '
+      message += `${t('itemPrivate.message_description')} `
 
     else
       correct = true
