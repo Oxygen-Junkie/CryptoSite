@@ -10,3 +10,5 @@ https://www.youtube.com/watch?v=1tPxVVYB7lo
 -Смена расцветки<br />
 
 Автор - Форостин Максим Леонидович
+
+![alt text](https://github.com/Oxygen-Junkie/CryptoSite/blob/master/Patent.jpg?raw=true)
